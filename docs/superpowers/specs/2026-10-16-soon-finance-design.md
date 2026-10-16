@@ -48,7 +48,7 @@ Séminaires et mode de groupe, fiche imprimable / export PDF, conversion entre d
 - **Devise** : l'utilisateur choisit sa devise ; tous les calculs se font dans cette devise, **sans conversion**. Formatage via `Intl.NumberFormat` (nombre de décimales selon la devise : 0 pour XOF/XAF, 2 pour EUR/USD).
 - **Langues** : français et anglais dès le lancement, même mécanique que Soon Horizons (segment `[lang]`, dictionnaires typés, pas de librairie i18n).
 - **Données sensibles** : un revenu est une donnée personnelle sensible. Collecte minimale, chacun ne voit que ses données.
-- **Identité** : même famille visuelle que Soon Horizons (marque Soon), avec une personnalité propre à la finance. Définie dans un sous-projet dédié (voir § 11).
+- **Identité** : charte dans `docs/brand-guidelines.md` (Horizon Vert, vouvoiement, slogan « Chaque mois, un pas de plus. »), tokens dans `assets/design-tokens.*`.
 
 ## 4. Architecture
 
@@ -75,7 +75,7 @@ Navigateur ──► Next.js (Vercel) ──/api/*──► FastAPI (Render ou R
 
 ### Public (sans compte)
 
-1. **Accueil** : promesse, et champ « Ton revenu mensuel » + devise dans la première section. Une première répartition s'affiche dès la saisie.
+1. **Accueil** : promesse, et champ « Votre revenu mensuel » + devise dans la première section. Une première répartition s'affiche dès la saisie.
 2. **Simulateur** : revenu + devise, les six méthodes en cartes avec montants en direct ; choix d'une méthode → répartition détaillée avec sous-enveloppes modifiables, alerte si le total ≠ 100 %, suggestions en direct ; comparaison de 2 ou 3 méthodes côte à côte. Trois questions facultatives (§ 6.3).
 3. **Apprendre** : une fiche par méthode ; bases : épargne ≠ investissement, réserve d'urgence, risques et frais. Contenu éducatif.
 4. **Pages légales** : mentions légales, confidentialité, avertissement « pas un conseil financier ».
@@ -84,7 +84,7 @@ Navigateur ──► Next.js (Vercel) ──/api/*──► FastAPI (Render ou R
 
 5. **Inscription / connexion** par lien magique. La simulation en cours (gardée dans le navigateur) est **rattachée au compte** à la première connexion.
 6. **Tableau de bord** : budget du mois, prévu / réel par enveloppe, épargne cumulée, série de mois tenus, suggestions.
-7. **Clôture du mois** : saisie des montants réels, bilan (ce qui a marché, ce que je change), note facultative « Soon Finance t'aide-t-il ? » (1 à 5). Le mois suivant est prérempli.
+7. **Clôture du mois** : saisie des montants réels, bilan (ce qui a marché, ce que je change), note facultative « Soon Finance vous aide-t-il ? » (1 à 5). Le mois suivant est prérempli.
 8. **Objectifs** : 1 à 3 objectifs (libellé, montant cible, date, montant épargné) avec progression.
 9. **Paramètres** : devise, langue, prénom facultatif, export des données (JSON), suppression définitive du compte.
 
@@ -97,7 +97,7 @@ Navigateur ──► Next.js (Vercel) ──/api/*──► FastAPI (Render ou R
 | Sans compte | Avec compte gratuit |
 |---|---|
 | Six méthodes, montants en direct, comparaison | Tout ce qui précède |
-| **2 suggestions** + aperçu « +N autres conseils pour ta situation » | Toutes les suggestions, y compris celles fondées sur l'historique |
+| **2 suggestions** + aperçu « +N autres conseils pour votre situation » | Toutes les suggestions, y compris celles fondées sur l'historique |
 | Pages Apprendre | Sauvegarde, suivi mensuel, objectifs, bilan, série |
 
 Pas de mur bloquant ni de dark pattern : la valeur est montrée, l'inscription est proposée.
@@ -120,7 +120,7 @@ Sous-enveloppes du modèle Soon 10/70/20 (reprises du PDF, modifiables par l'uti
 - Épargne et investissement (70 %) : Investissements 50 %, Réserve d'urgence 20 %, Projets long terme / retraite 20 %, Formation financière 10 %.
 - Dépenses personnelles (20 %) : Loisirs 30 %, Livres et développement personnel 25 %, Cadeaux / générosité 20 %, Bien-être 15 %, Réserve flexible 10 %.
 
-Le **Soon 10/70/20** n'est jamais proposé par défaut et s'affiche avec l'avertissement : « Ce modèle convient si tes dépenses essentielles sont déjà couvertes. » Il n'est pas présenté comme « la » méthode FIRE.
+Le **Soon 10/70/20** n'est jamais proposé par défaut et s'affiche avec l'avertissement : « Ce modèle convient si vos dépenses essentielles sont déjà couvertes. » Il n'est pas présenté comme « la » méthode FIRE.
 
 Chaque méthode porte ses libellés FR et EN et une courte description pédagogique.
 
@@ -143,15 +143,15 @@ Chaque règle : identifiant, condition, message FR/EN, priorité, besoin d'un co
 
 | # | Condition | Suggestion | Compte |
 |---|---|---|---|
-| 1 | Part laissée pour vivre < dépenses essentielles | Cette méthode ne couvre pas tes besoins essentiels : essaie 50/30/20 ou une répartition personnalisée. | non |
-| 2 | Dettes déclarées | Rembourse d'abord les dettes coûteuses avant d'investir. | non |
-| 3 | Épargne actuelle < 3 × dépenses essentielles | Construis d'abord ta réserve d'urgence (3 à 6 mois de dépenses). | non |
-| 4 | Part d'épargne < 10 % | Commence par mettre 10 % de côté : c'est l'habitude qui compte. | non |
-| 5 | Épargne actuelle ≥ 3 × dépenses essentielles | Ta réserve est solide : découvre les bases de l'investissement (lien Apprendre). | non |
-| 6 | Une enveloppe dépassée 2 mois de suite | Ton enveloppe X déborde : ajuste son pourcentage ou tes dépenses. | oui |
-| 7 | Épargne prévue tenue 3 mois de suite | Bravo ! Essaie d'augmenter ton épargne de 5 points. | oui |
-| 8 | Objectif en retard sur son rythme | Pour atteindre ton objectif à temps, mets de côté X par mois. | oui |
-| 9 | Mois précédent non clôturé | Fais le bilan de ton mois pour suivre ta progression. | oui |
+| 1 | Part laissée pour vivre < dépenses essentielles | Cette méthode ne couvre pas vos besoins essentiels : essayez 50/30/20 ou une répartition personnalisée. | non |
+| 2 | Dettes déclarées | Remboursez d'abord les dettes coûteuses avant d'investir. | non |
+| 3 | Épargne actuelle < 3 × dépenses essentielles | Construisez d'abord votre réserve d'urgence (3 à 6 mois de dépenses). | non |
+| 4 | Part d'épargne < 10 % | Commencez par mettre 10 % de côté : c'est l'habitude qui compte. | non |
+| 5 | Épargne actuelle ≥ 3 × dépenses essentielles | Votre réserve est solide : découvrez les bases de l'investissement (lien Apprendre). | non |
+| 6 | Une enveloppe dépassée 2 mois de suite | Votre enveloppe X déborde : ajustez son pourcentage ou vos dépenses. | oui |
+| 7 | Épargne prévue tenue 3 mois de suite | Bravo ! Essayez d'augmenter votre épargne de 5 points. | oui |
+| 8 | Objectif en retard sur son rythme | Pour atteindre votre objectif à temps, mettez de côté X par mois. | oui |
+| 9 | Mois précédent non clôturé | Faites le bilan de votre mois pour suivre votre progression. | oui |
 
 La règle 1 ne s'applique que si les dépenses essentielles sont renseignées ; les règles 3 et 5, que si les dépenses essentielles **et** l'épargne actuelle le sont. La règle 2 exclut la règle 5 (pas d'invitation à investir en cas de dettes).
 
@@ -196,7 +196,7 @@ Montants stockés en `NUMERIC` dans la devise de l'utilisateur. `ON DELETE CASCA
 |---|---|---|
 | C. Utilisation | Visiteurs ; simulations commencées / terminées ; comparaisons ; taux simulation → inscription | Vercel Analytics + `events` |
 | B. Fidélité | % d'inscrits ayant clôturé M1, M2, M3 (par cohorte d'inscription) ; série médiane ; retour M+1 | `months` |
-| A. Épargne réelle | Taux d'épargne déclaré (épargne réelle ÷ revenu) et son évolution ; % d'utilisateurs dont le taux a augmenté depuis leur premier mois ; note moyenne « Soon Finance t'aide-t-il ? » | `months` |
+| A. Épargne réelle | Taux d'épargne déclaré (épargne réelle ÷ revenu) et son évolution ; % d'utilisateurs dont le taux a augmenté depuis leur premier mois ; note moyenne « Soon Finance vous aide-t-il ? » | `months` |
 
 - **Jamais d'addition entre devises** : l'impact s'exprime en pourcentages ; les montants ne s'affichent que devise par devise.
 - Filtres : période, devise, langue.
