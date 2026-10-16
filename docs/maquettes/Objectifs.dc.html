@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Objectifs</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&amp;family=Instrument+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1f4d3a}a:hover{color:#163a2b}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1100px; box-sizing: border-box; background: #f4f1eb; color: #141414; font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="display: flex; flex-direction: column; gap: 20px; padding: 16px 20px 28px; flex: 1">
+    <header style="display: flex; align-items: center; justify-content: space-between; height: 48px">
+      <svg width="28" height="28" viewBox="0 0 64 64" role="img" aria-label="Soon Finance"><rect x="13" y="38" width="8" height="10" rx="1.5" fill="#1f4d3a"></rect><rect x="24" y="31" width="8" height="17" rx="1.5" fill="#1f4d3a"></rect><rect x="35" y="24" width="8" height="24" rx="1.5" fill="#1f4d3a"></rect><circle cx="47" cy="14" r="7" fill="#c9a26b"></circle><rect x="6" y="49" width="52" height="3" fill="#1f4d3a"></rect></svg>
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: .08em; color: #6b665e">2 OBJECTIFS SUR 3</span>
+    </header>
+
+    <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 30px; line-height: 1.15">Mes objectifs</h1>
+
+    <article style="background: #ffffff; border: 1px solid #ddd7cc; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 20px">Réserve d'urgence</h2><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6b665e">JUIN 2027</span></div>
+      <div style="height: 10px; background: #f4f1eb; border-radius: 999px; overflow: hidden"><div style="width: 16%; height: 100%; background: #c9a26b"></div></div>
+      <p style="margin: 0; font-size: 14px; color: #6b665e; font-variant-numeric: tabular-nums"><strong style="color: #7d6442">245 000</strong> sur 1 500 000 FCFA · 16 %</p>
+      <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #865a0c">En retard : il faut 157 000 FCFA par mois pour tenir la date.</p>
+    </article>
+
+    <article style="background: #ffffff; border: 1px solid #ddd7cc; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 20px">Formation en comptabilité</h2><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6b665e">MARS 2027</span></div>
+      <div style="height: 10px; background: #f4f1eb; border-radius: 999px; overflow: hidden"><div style="width: 0%; height: 100%; background: #c9a26b"></div></div>
+      <p style="margin: 0; font-size: 14px; color: #6b665e; font-variant-numeric: tabular-nums"><strong style="color: #7d6442">0</strong> sur 200 000 FCFA · commence en novembre</p>
+    </article>
+
+    <form style="margin: 0; background: #ffffff; border: 1px dashed #1f4d3a; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 20px">Nouvel objectif</h2>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="gname" style="font-size: 15px; font-weight: 600">Nom</label>
+        <input id="gname" value="Achat d'un ordinateur" style="height: 48px; box-sizing: border-box; border: 1px solid #6b665e; border-radius: 10px; padding: 0 12px; font-size: 16px; background: #ffffff; color: #141414">
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="gamt" style="font-size: 15px; font-weight: 600">Montant (FCFA)</label>
+          <input id="gamt" inputmode="numeric" value="{{amountText}}" onChange="{{onAmount}}" style="height: 48px; box-sizing: border-box; border: 1px solid #6b665e; border-radius: 10px; padding: 0 12px; font-size: 16px; font-variant-numeric: tabular-nums; background: #ffffff; color: #141414; min-width: 0">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="gmonths" style="font-size: 15px; font-weight: 600">Dans (mois)</label>
+          <input id="gmonths" inputmode="numeric" value="{{monthsText}}" onChange="{{onMonths}}" style="height: 48px; box-sizing: border-box; border: 1px solid #6b665e; border-radius: 10px; padding: 0 12px; font-size: 16px; font-variant-numeric: tabular-nums; background: #ffffff; color: #141414; min-width: 0">
+        </div>
+      </div>
+      <p style="margin: 0; padding: 14px; border-radius: 10px; background: #e3ece6; font-size: 15px; line-height: 1.5">Mettez de côté <strong style="color: #1f4d3a">{{perMonthText}} FCFA par mois</strong>, soit {{shareText}} de votre revenu.</p>
+      <a href="Objectifs.dc.html" style="display: flex; align-items: center; justify-content: center; height: 52px; border-radius: 10px; background: #1f4d3a; color: #ffffff; font-weight: 600; font-size: 16px; text-decoration: none">Ajouter l'objectif</a>
+    </form>
+  </div>
+
+  <nav aria-label="Navigation principale" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid #ddd7cc; background: #ffffff; padding: 6px 8px 10px">
+    <a href="Tableau.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 48px; justify-content: center; font-size: 12px; text-decoration: none; color: #6b665e"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 20V10"></path><path d="M10 20V6"></path><path d="M16 20v-8"></path><path d="M2 20h20"></path></svg>Accueil</a>
+    <a href="Simulateur.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 48px; justify-content: center; font-size: 12px; text-decoration: none; color: #6b665e"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v9l6 4"></path></svg>Budget</a>
+    <a href="Objectifs.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 48px; justify-content: center; font-size: 12px; font-weight: 600; text-decoration: none; color: #1f4d3a"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg>Objectifs</a>
+    <a href="Apprendre.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 48px; justify-content: center; font-size: 12px; text-decoration: none; color: #6b665e"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2Z"></path><path d="M8 7h6"></path></svg>Apprendre</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1100}}'>
+var INCOME = 500000;
+function fmt(n) { return Math.round(n).toLocaleString('fr-FR'); }
+function digits(v) { var n = parseInt(String(v).replace(/\D/g, ''), 10); return isNaN(n) ? 0 : n; }
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { amount: 450000, months: 6 }; }
+  renderVals() {
+    var s = this.state, self = this;
+    var per = s.months > 0 ? Math.ceil(s.amount / s.months) : 0;
+    return {
+      amountText: fmt(s.amount),
+      monthsText: String(s.months || ''),
+      perMonthText: fmt(per),
+      shareText: (Math.round(per / INCOME * 1000) / 10).toLocaleString('fr-FR') + ' %',
+      onAmount: function (e) { self.setState({ amount: digits(e.target.value) }); },
+      onMonths: function (e) { self.setState({ months: digits(e.target.value) }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

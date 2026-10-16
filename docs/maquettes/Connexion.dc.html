@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Inscription ou connexion</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&amp;family=Instrument+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1f4d3a}a:hover{color:#163a2b}
+</style>
+</helmet>
+<form style="width: 390px; height: 844px; box-sizing: border-box; margin: 0; background: #f4f1eb; color: #141414; font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; display: flex; flex-direction: column; gap: 24px; padding: 16px 20px 28px">
+  <header style="display: flex; align-items: center; gap: 12px; height: 48px">
+    <a href="Simulateur.dc.html" aria-label="Retour au simulateur" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; border: 1px solid #ddd7cc; color: #141414"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
+    <svg width="28" height="28" viewBox="0 0 64 64" aria-hidden="true"><rect x="13" y="38" width="8" height="10" rx="1.5" fill="#1f4d3a"></rect><rect x="24" y="31" width="8" height="17" rx="1.5" fill="#1f4d3a"></rect><rect x="35" y="24" width="8" height="24" rx="1.5" fill="#1f4d3a"></rect><circle cx="47" cy="14" r="7" fill="#c9a26b"></circle><rect x="6" y="49" width="52" height="3" fill="#1f4d3a"></rect></svg>
+  </header>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 30px; line-height: 1.15; text-wrap: balance">Enregistrez votre budget, gratuitement</h1>
+    <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #6b665e">Pas de mot de passe : entrez votre email, nous vous envoyons un lien pour vous connecter. Même chose si vous avez déjà un compte.</p>
+  </div>
+
+  <p style="margin: 0; display: flex; gap: 10px; align-items: flex-start; padding: 14px; border-radius: 10px; background: #e3ece6; font-size: 15px; line-height: 1.45">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f4d3a" stroke-width="1.5" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="M20 6 9 17l-5-5"></path></svg>
+    Votre simulation (50/30/20, 500 000 FCFA) sera ajoutée à votre compte.
+  </p>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <label for="mail" style="font-weight: 600; font-size: 15px">Adresse email</label>
+    <input id="mail" type="email" autocomplete="email" placeholder="vous@exemple.com" style="height: 52px; box-sizing: border-box; border: 1px solid #6b665e; border-radius: 10px; padding: 0 14px; font-size: 17px; background: #ffffff; color: #141414">
+  </div>
+
+  <label for="ok" style="display: flex; gap: 12px; align-items: flex-start; font-size: 14px; line-height: 1.5">
+    <input id="ok" type="checkbox" style="width: 22px; height: 22px; margin: 0; accent-color: #1f4d3a; flex: none">
+    <span>J'accepte que Soon Finance conserve mes données de budget pour me les afficher. <a href="Confidentialite.dc.html">Politique de confidentialité</a></span>
+  </label>
+
+  <a href="LienEnvoye.dc.html" style="display: flex; align-items: center; justify-content: center; height: 52px; border-radius: 10px; background: #1f4d3a; color: #ffffff; font-weight: 600; font-size: 16px; text-decoration: none">Recevoir mon lien de connexion</a>
+
+  <ul style="list-style: none; margin: auto 0 0; padding: 18px 0 0; border-top: 1px solid #ddd7cc; display: flex; flex-direction: column; gap: 10px; font-size: 14px; color: #6b665e">
+    <li>Gratuit, sans carte bancaire.</li>
+    <li>Supprimez votre compte quand vous voulez, en un clic.</li>
+  </ul>
+</form>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

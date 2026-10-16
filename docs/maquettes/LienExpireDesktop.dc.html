@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Lien expiré (ordinateur)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&amp;family=Instrument+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1f4d3a}a:hover{color:#163a2b}
+</style>
+</helmet>
+<div style="background: #f4f1eb; color: #141414; font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; min-height: 900px; display: flex; flex-direction: column">
+  <header style="max-width: 1200px; width: 100%; box-sizing: border-box; margin: 0 auto; padding: 24px 32px; display: flex; align-items: center">
+    <a href="AccueilDesktop.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #141414">
+      <svg width="40" height="40" viewBox="0 0 64 64" aria-hidden="true"><rect x="13" y="38" width="8" height="10" rx="1.5" fill="#1f4d3a"></rect><rect x="24" y="31" width="8" height="17" rx="1.5" fill="#1f4d3a"></rect><rect x="35" y="24" width="8" height="24" rx="1.5" fill="#1f4d3a"></rect><circle cx="47" cy="14" r="7" fill="#c9a26b"></circle><rect x="6" y="49" width="52" height="3" fill="#1f4d3a"></rect></svg>
+      <span style="font-family: Syne, sans-serif; font-weight: 700; font-size: 22px">soon finance</span>
+    </a>
+  </header>
+  <main style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px">
+    <form style="width: 100%; max-width: 520px; box-sizing: border-box; margin: 0; background: #ffffff; border: 1px solid #ddd7cc; border-radius: 14px; padding: 44px; display: flex; flex-direction: column; gap: 20px">
+      <div style="width: 72px; height: 72px; border-radius: 999px; background: #f4f1eb; display: flex; align-items: center; justify-content: center">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#865a0c" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2 2"></path><path d="M9 2h6"></path></svg>
+      </div>
+      <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 34px; line-height: 1.15">Ce lien a expiré</h1>
+      <p style="margin: 0; font-size: 17px; line-height: 1.6; color: #6b665e">Pour votre sécurité, un lien de connexion ne fonctionne que 15 minutes et une seule fois. Votre budget est en sécurité : rien n'a été perdu.</p>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <label for="dmail2" style="font-weight: 600; font-size: 15px">Adresse email</label>
+        <input id="dmail2" type="email" autocomplete="email" value="awa.k@exemple.com" style="height: 52px; box-sizing: border-box; border: 1px solid #6b665e; border-radius: 10px; padding: 0 14px; font-size: 17px; background: #ffffff; color: #141414">
+      </div>
+      <a href="LienEnvoyeDesktop.dc.html" style="display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 10px; background: #1f4d3a; color: #ffffff; font-weight: 600; font-size: 17px; text-decoration: none">Recevoir un nouveau lien</a>
+    </form>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
