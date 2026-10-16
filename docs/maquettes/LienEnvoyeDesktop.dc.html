@@ -11,35 +11,55 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&amp;family=Instrument+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
 <style>
 body{margin:0}
-a{color:#1f4d3a}a:hover{color:#163a2b}
+[data-sf]{--bg:#ffffff;--surface:#ffffff;--sunken:#f3f5f4;--ink:#0e1110;--muted:#5e6662;--line:#e4e7e5;--line-input:#8a928e;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#07863f;--tint:#e6fcef;--gold:#c9a26b;--gold-ink:#86652c;--warning:#995a00;--danger:#c2261b;--on-danger:#ffffff;--chart-1:#07863f;--chart-2:#86652c;--chart-3:#2f6fb3;--chart-4:#c0562f;--chart-5:#7a5aa8;--chart-6:#a3477a;--logo-tile:#0e1110;--logo-hz:#f3f5f4;color-scheme:light}
+[data-sf][data-theme="dark"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}
+@media (prefers-color-scheme: dark){[data-sf][data-theme="auto"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}}
+[data-sf]{background:var(--bg);color:var(--ink);transition:background-color .3s,color .3s}
+a{color:var(--brand-ink)}a:hover{color:var(--ink)}
+input,select,textarea{color-scheme:inherit}
+input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--brand-ink);outline-offset:2px}
+.ic-brand{stroke:var(--brand-ink)}.ic-muted{stroke:var(--muted)}.ic-warn{stroke:var(--warning)}
+.lg-tile{fill:var(--logo-tile)}.lg-bar{fill:var(--brand)}.lg-sun{fill:var(--gold)}.lg-hz{fill:var(--logo-hz)}
 </style>
 </helmet>
-<div style="background: #f4f1eb; color: #141414; font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; min-height: 900px; display: flex; flex-direction: column">
+<div data-sf data-theme="{{theme}}" style="background: var(--bg); color: var(--ink); font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; min-height: 900px; display: flex; flex-direction: column">
   <header style="max-width: 1200px; width: 100%; box-sizing: border-box; margin: 0 auto; padding: 24px 32px; display: flex; align-items: center">
-    <a href="AccueilDesktop.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #141414">
-      <svg width="40" height="40" viewBox="0 0 64 64" aria-hidden="true"><rect x="13" y="38" width="8" height="10" rx="1.5" fill="#1f4d3a"></rect><rect x="24" y="31" width="8" height="17" rx="1.5" fill="#1f4d3a"></rect><rect x="35" y="24" width="8" height="24" rx="1.5" fill="#1f4d3a"></rect><circle cx="47" cy="14" r="7" fill="#c9a26b"></circle><rect x="6" y="49" width="52" height="3" fill="#1f4d3a"></rect></svg>
+    <a href="AccueilDesktop.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink)">
+      <svg width="40" height="40" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" class="lg-tile"></rect><rect x="13" y="38" width="8" height="10" rx="1.5" class="lg-bar"></rect><rect x="24" y="31" width="8" height="17" rx="1.5" class="lg-bar"></rect><rect x="35" y="24" width="8" height="24" rx="1.5" class="lg-bar"></rect><circle cx="47" cy="14" r="7" class="lg-sun"></circle><rect x="6" y="49" width="52" height="3" class="lg-hz"></rect></svg>
       <span style="font-family: Syne, sans-serif; font-weight: 700; font-size: 22px">soon finance</span>
     </a>
+    <button type="button" onClick="{{toggleTheme}}" aria-label="{{themeLabel}}" title="{{themeLabel}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: none; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; margin-left: auto"><sc-if value="{{isDark}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.9 4.9 1.4 1.4"></path><path d="m17.7 17.7 1.4 1.4"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m4.9 19.1 1.4-1.4"></path><path d="m17.7 6.3 1.4-1.4"></path></svg></sc-if><sc-if value="{{isLight}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg></sc-if></button>
   </header>
   <main style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px">
-    <section style="width: 100%; max-width: 520px; box-sizing: border-box; background: #ffffff; border: 1px solid #ddd7cc; border-radius: 14px; padding: 44px; display: flex; flex-direction: column; gap: 20px">
-      <div style="width: 72px; height: 72px; border-radius: 999px; background: #e3ece6; display: flex; align-items: center; justify-content: center">
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#1f4d3a" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
+    <section style="width: 100%; max-width: 520px; box-sizing: border-box; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 44px; display: flex; flex-direction: column; gap: 20px">
+      <div style="width: 72px; height: 72px; border-radius: 999px; background: var(--tint); display: flex; align-items: center; justify-content: center">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" class="ic-brand" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
       </div>
       <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 34px; line-height: 1.15">Vérifiez votre boîte mail</h1>
-      <p style="margin: 0; font-size: 17px; line-height: 1.6; color: #6b665e">Nous avons envoyé un lien de connexion à <strong style="color: #141414">awa.k@exemple.com</strong>. Ouvrez-le sur cet appareil : il est valable 15 minutes.</p>
-      <p style="margin: 0; padding: 14px; border-radius: 10px; background: #f4f1eb; font-size: 15px; line-height: 1.5; color: #6b665e">Rien reçu ? Regardez dans les courriers indésirables. L'email vient de « Soon Finance ».</p>
+      <p style="margin: 0; font-size: 17px; line-height: 1.6; color: var(--muted)">Nous avons envoyé un lien de connexion à <strong style="color: var(--ink)">awa.k@exemple.com</strong>. Ouvrez-le sur cet appareil : il est valable 15 minutes.</p>
+      <p style="margin: 0; padding: 14px; border-radius: 10px; background: var(--sunken); font-size: 15px; line-height: 1.5; color: var(--muted)">Rien reçu ? Regardez dans les courriers indésirables. L'email vient de « Soon Finance ».</p>
       <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
-        <button type="button" disabled style="height: 52px; padding: 0 22px; border-radius: 10px; border: 1px solid #ddd7cc; background: #ffffff; color: #6b665e; font-family: inherit; font-weight: 600; font-size: 16px">Renvoyer le lien dans 0:45</button>
+        <button type="button" disabled style="height: 52px; padding: 0 22px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); font-family: inherit; font-weight: 600; font-size: 16px">Renvoyer le lien dans 0:45</button>
         <a href="ConnexionDesktop.dc.html" style="font-weight: 600; font-size: 16px">Changer d'adresse email</a>
       </div>
     </section>
   </main>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark","auto"],"default":"light"},"$preview":{"width":1440,"height":900}}'>
+function themeVals(self) {
+  var t = (self.state && self.state.theme) || self.props.theme || 'light';
+  var set = function (v) { return function () { self.setState({ theme: v }); }; };
+  return {
+    theme: t, isDark: t === 'dark', isLight: t !== 'dark',
+    themeLabel: t === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre',
+    toggleTheme: set(t === 'dark' ? 'light' : 'dark'),
+    setAuto: set('auto'), setLight: set('light'), setDark: set('dark'),
+    isAuto: t === 'auto', notAuto: t !== 'auto', isLightOnly: t === 'light', notLightOnly: t !== 'light', isDarkOnly: t === 'dark', notDarkOnly: t !== 'dark'
+  };
+}
 class Component extends DCLogic {
-renderVals() { return {}; }
+renderVals() { return themeVals(this); }
 }
 </script>
 </body>

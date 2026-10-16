@@ -11,103 +11,122 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&amp;family=Instrument+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
 <style>
 body{margin:0}
-a{color:#1f4d3a}a:hover{color:#163a2b}
+[data-sf]{--bg:#ffffff;--surface:#ffffff;--sunken:#f3f5f4;--ink:#0e1110;--muted:#5e6662;--line:#e4e7e5;--line-input:#8a928e;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#07863f;--tint:#e6fcef;--gold:#c9a26b;--gold-ink:#86652c;--warning:#995a00;--danger:#c2261b;--on-danger:#ffffff;--chart-1:#07863f;--chart-2:#86652c;--chart-3:#2f6fb3;--chart-4:#c0562f;--chart-5:#7a5aa8;--chart-6:#a3477a;--logo-tile:#0e1110;--logo-hz:#f3f5f4;color-scheme:light}
+[data-sf][data-theme="dark"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}
+@media (prefers-color-scheme: dark){[data-sf][data-theme="auto"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}}
+[data-sf]{background:var(--bg);color:var(--ink);transition:background-color .3s,color .3s}
+a{color:var(--brand-ink)}a:hover{color:var(--ink)}
+input,select,textarea{color-scheme:inherit}
+input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--brand-ink);outline-offset:2px}
+.ic-brand{stroke:var(--brand-ink)}.ic-muted{stroke:var(--muted)}.ic-warn{stroke:var(--warning)}
+.lg-tile{fill:var(--logo-tile)}.lg-bar{fill:var(--brand)}.lg-sun{fill:var(--gold)}.lg-hz{fill:var(--logo-hz)}
 </style>
 </helmet>
-<div style="background: #f4f1eb; color: #141414; font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; min-height: 1000px">
+<div data-sf data-theme="{{theme}}" style="background: var(--bg); color: var(--ink); font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; min-height: 1000px">
   <div style="max-width: 1200px; margin: 0 auto; padding: 0 32px 72px; display: flex; flex-direction: column; gap: 32px">
     <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding-top: 24px">
-      <a href="AccueilDesktop.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #141414">
-        <svg width="40" height="40" viewBox="0 0 64 64" aria-hidden="true"><rect x="13" y="38" width="8" height="10" rx="1.5" fill="#1f4d3a"></rect><rect x="24" y="31" width="8" height="17" rx="1.5" fill="#1f4d3a"></rect><rect x="35" y="24" width="8" height="24" rx="1.5" fill="#1f4d3a"></rect><circle cx="47" cy="14" r="7" fill="#c9a26b"></circle><rect x="6" y="49" width="52" height="3" fill="#1f4d3a"></rect></svg>
+      <a href="AccueilDesktop.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink)">
+        <svg width="40" height="40" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" class="lg-tile"></rect><rect x="13" y="38" width="8" height="10" rx="1.5" class="lg-bar"></rect><rect x="24" y="31" width="8" height="17" rx="1.5" class="lg-bar"></rect><rect x="35" y="24" width="8" height="24" rx="1.5" class="lg-bar"></rect><circle cx="47" cy="14" r="7" class="lg-sun"></circle><rect x="6" y="49" width="52" height="3" class="lg-hz"></rect></svg>
         <span style="font-family: Syne, sans-serif; font-weight: 700; font-size: 22px">soon finance</span>
       </a>
       <nav aria-label="Navigation principale" style="display: flex; flex-wrap: wrap; align-items: center; gap: 28px; font-size: 16px">
-        <a href="SimulateurDesktop.dc.html" style="text-decoration: none; color: #141414">Simulateur</a>
+        <a href="SimulateurDesktop.dc.html" style="text-decoration: none; color: var(--ink)">Simulateur</a>
         <a href="ComparerDesktop.dc.html" aria-current="page" style="font-weight: 600; text-decoration: none">Les méthodes</a>
-        <a href="ApprendreDesktop.dc.html" style="text-decoration: none; color: #141414">Apprendre</a>
-        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; color: #6b665e">FR · EN</span>
-        <a href="ConnexionDesktop.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #1f4d3a; border-radius: 10px; font-weight: 600; text-decoration: none">Se connecter</a>
-      </nav>
-    </header>
+        <a href="ApprendreDesktop.dc.html" style="text-decoration: none; color: var(--ink)">Apprendre</a>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; color: var(--muted)">FR · EN</span>
+        <a href="ConnexionDesktop.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border: 1px solid var(--brand-ink); border-radius: 10px; font-weight: 600; text-decoration: none">Se connecter</a>
+      <button type="button" onClick="{{toggleTheme}}" aria-label="{{themeLabel}}" title="{{themeLabel}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: none; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer"><sc-if value="{{isDark}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.9 4.9 1.4 1.4"></path><path d="m17.7 17.7 1.4 1.4"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m4.9 19.1 1.4-1.4"></path><path d="m17.7 6.3 1.4-1.4"></path></svg></sc-if><sc-if value="{{isLight}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg></sc-if></button></nav>
+  </header>
 
     <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px">
       <div style="display: flex; flex-direction: column; gap: 8px; max-width: 640px">
         <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 44px; line-height: 1.1">Comparez avant de choisir</h1>
-        <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #6b665e">Même revenu, trois façons de le répartir. Regardez surtout ce qu'il vous reste pour vivre.</p>
+        <p style="margin: 0; font-size: 17px; line-height: 1.55; color: var(--muted)">Même revenu, trois façons de le répartir. Regardez surtout ce qu'il vous reste pour vivre.</p>
       </div>
       <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
-        <span style="display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 999px; background: #ffffff; border: 1px solid #ddd7cc; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500">REVENU 500 000 FCFA</span>
-        <span style="display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 999px; background: #ffffff; border: 1px solid #ddd7cc; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500">ESSENTIEL 300 000</span>
-        <button type="button" style="min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px dashed #6b665e; background: transparent; font-size: 14px; color: #141414">+ Ajouter une méthode</button>
+        <span style="display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500">REVENU 500 000 FCFA</span>
+        <span style="display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500">ESSENTIEL 300 000</span>
+        <button type="button" style="min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px dashed var(--line-input); background: transparent; font-size: 14px; color: var(--ink)">+ Ajouter une méthode</button>
       </div>
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: stretch">
-      <article style="background: #ffffff; border: 1px solid #ddd7cc; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 18px">
+      <article style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 18px">
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap">
           <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 26px">50/30/20</h2>
-          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #e3ece6; color: #1f4d3a; font-size: 14px; font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Couvre vos besoins</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--tint); color: var(--brand-ink); font-size: 14px; font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Couvre vos besoins</span>
         </div>
-        <div style="display: flex; height: 14px; border-radius: 999px; overflow: hidden; gap: 2px" aria-hidden="true"><div style="flex: 50; background: #1f4d3a"></div><div style="flex: 30; background: #7d6442"></div><div style="flex: 20; background: #5f8a6e"></div></div>
+        <div style="display: flex; height: 14px; border-radius: 999px; overflow: hidden; gap: 2px" aria-hidden="true"><div style="flex: 50; background: var(--brand)"></div><div style="flex: 30; background: var(--chart-2)"></div><div style="flex: 20; background: var(--chart-3)"></div></div>
         <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 15px; font-variant-numeric: tabular-nums">
           <li style="display: flex; justify-content: space-between"><span>Besoins · 50 %</span><strong>250 000</strong></li>
           <li style="display: flex; justify-content: space-between"><span>Envies · 30 %</span><strong>150 000</strong></li>
           <li style="display: flex; justify-content: space-between"><span>Épargne · 20 %</span><strong>100 000</strong></li>
         </ul>
-        <dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-top: 16px; border-top: 1px solid #ddd7cc; font-variant-numeric: tabular-nums">
-          <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 14px; color: #6b665e">Pour vivre</dt><dd style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 24px">400 000</dd></div>
-          <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 14px; color: #6b665e">Épargne / an</dt><dd style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 24px; color: #1f4d3a">1 200 000</dd></div>
+        <dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-top: 16px; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums">
+          <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 14px; color: var(--muted)">Pour vivre</dt><dd style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 24px">400 000</dd></div>
+          <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 14px; color: var(--muted)">Épargne / an</dt><dd style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 24px; color: var(--brand-ink)">1 200 000</dd></div>
         </dl>
-        <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #6b665e">Équilibrée et facile à tenir. Un bon point de départ.</p>
-        <a href="SimulateurDesktop.dc.html" style="margin-top: auto; display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 10px; background: #1f4d3a; color: #ffffff; font-weight: 600; text-decoration: none">Choisir cette méthode</a>
+        <p style="margin: 0; font-size: 15px; line-height: 1.5; color: var(--muted)">Équilibrée et facile à tenir. Un bon point de départ.</p>
+        <a href="SimulateurDesktop.dc.html" style="margin-top: auto; display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 10px; background: var(--brand); color: var(--on-brand); font-weight: 600; text-decoration: none">Choisir cette méthode</a>
       </article>
 
-      <article style="background: #ffffff; border: 1px solid #ddd7cc; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 18px">
+      <article style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 18px">
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap">
           <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 26px">70/20/10</h2>
-          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #e3ece6; color: #1f4d3a; font-size: 14px; font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Couvre vos besoins</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--tint); color: var(--brand-ink); font-size: 14px; font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Couvre vos besoins</span>
         </div>
-        <div style="display: flex; height: 14px; border-radius: 999px; overflow: hidden; gap: 2px" aria-hidden="true"><div style="flex: 70; background: #1f4d3a"></div><div style="flex: 20; background: #7d6442"></div><div style="flex: 10; background: #5f8a6e"></div></div>
+        <div style="display: flex; height: 14px; border-radius: 999px; overflow: hidden; gap: 2px" aria-hidden="true"><div style="flex: 70; background: var(--brand)"></div><div style="flex: 20; background: var(--chart-2)"></div><div style="flex: 10; background: var(--chart-3)"></div></div>
         <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 15px; font-variant-numeric: tabular-nums">
           <li style="display: flex; justify-content: space-between"><span>Dépenses · 70 %</span><strong>350 000</strong></li>
           <li style="display: flex; justify-content: space-between"><span>Épargne · 20 %</span><strong>100 000</strong></li>
           <li style="display: flex; justify-content: space-between"><span>Dons / dîme · 10 %</span><strong>50 000</strong></li>
         </ul>
-        <dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-top: 16px; border-top: 1px solid #ddd7cc; font-variant-numeric: tabular-nums">
-          <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 14px; color: #6b665e">Pour vivre</dt><dd style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 24px">350 000</dd></div>
-          <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 14px; color: #6b665e">Épargne / an</dt><dd style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 24px; color: #1f4d3a">1 200 000</dd></div>
+        <dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-top: 16px; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums">
+          <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 14px; color: var(--muted)">Pour vivre</dt><dd style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 24px">350 000</dd></div>
+          <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 14px; color: var(--muted)">Épargne / an</dt><dd style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 24px; color: var(--brand-ink)">1 200 000</dd></div>
         </dl>
-        <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #6b665e">Même épargne, avec 50 000 FCFA réservés aux dons ou à la dîme.</p>
-        <a href="SimulateurDesktop.dc.html" style="margin-top: auto; display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 10px; background: #1f4d3a; color: #ffffff; font-weight: 600; text-decoration: none">Choisir cette méthode</a>
+        <p style="margin: 0; font-size: 15px; line-height: 1.5; color: var(--muted)">Même épargne, avec 50 000 FCFA réservés aux dons ou à la dîme.</p>
+        <a href="SimulateurDesktop.dc.html" style="margin-top: auto; display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 10px; background: var(--brand); color: var(--on-brand); font-weight: 600; text-decoration: none">Choisir cette méthode</a>
       </article>
 
-      <article style="background: #ffffff; border: 1px solid #ddd7cc; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 18px">
+      <article style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 18px">
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap">
           <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 26px">Soon 10/70/20</h2>
-          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #f4f1eb; color: #865a0c; font-size: 14px; font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path></svg>Trop serré pour vous</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--sunken); color: var(--warning); font-size: 14px; font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path></svg>Trop serré pour vous</span>
         </div>
-        <div style="display: flex; height: 14px; border-radius: 999px; overflow: hidden; gap: 2px" aria-hidden="true"><div style="flex: 10; background: #1f4d3a"></div><div style="flex: 70; background: #7d6442"></div><div style="flex: 20; background: #5f8a6e"></div></div>
+        <div style="display: flex; height: 14px; border-radius: 999px; overflow: hidden; gap: 2px" aria-hidden="true"><div style="flex: 10; background: var(--brand)"></div><div style="flex: 70; background: var(--chart-2)"></div><div style="flex: 20; background: var(--chart-3)"></div></div>
         <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 15px; font-variant-numeric: tabular-nums">
           <li style="display: flex; justify-content: space-between"><span>Dîme / dons · 10 %</span><strong>50 000</strong></li>
           <li style="display: flex; justify-content: space-between"><span>Épargne et investissement · 70 %</span><strong>350 000</strong></li>
           <li style="display: flex; justify-content: space-between"><span>Dépenses personnelles · 20 %</span><strong>100 000</strong></li>
         </ul>
-        <dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-top: 16px; border-top: 1px solid #ddd7cc; font-variant-numeric: tabular-nums">
-          <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 14px; color: #6b665e">Pour vivre</dt><dd style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 24px; color: #865a0c">100 000</dd></div>
-          <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 14px; color: #6b665e">Épargne / an</dt><dd style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 24px; color: #1f4d3a">4 200 000</dd></div>
+        <dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-top: 16px; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums">
+          <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 14px; color: var(--muted)">Pour vivre</dt><dd style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 24px; color: var(--warning)">100 000</dd></div>
+          <div style="display: flex; flex-direction: column; gap: 2px"><dt style="font-size: 14px; color: var(--muted)">Épargne / an</dt><dd style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 24px; color: var(--brand-ink)">4 200 000</dd></div>
         </dl>
-        <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #6b665e">Il vous manquerait 200 000 FCFA par mois pour vos dépenses essentielles. À garder pour plus tard.</p>
-        <a href="SimulateurDesktop.dc.html" style="margin-top: auto; display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 10px; border: 1px solid #1f4d3a; color: #1f4d3a; font-weight: 600; text-decoration: none">Voir le détail</a>
+        <p style="margin: 0; font-size: 15px; line-height: 1.5; color: var(--muted)">Il vous manquerait 200 000 FCFA par mois pour vos dépenses essentielles. À garder pour plus tard.</p>
+        <a href="SimulateurDesktop.dc.html" style="margin-top: auto; display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 10px; border: 1px solid var(--brand-ink); color: var(--brand-ink); font-weight: 600; text-decoration: none">Voir le détail</a>
       </article>
     </div>
 
-    <p style="margin: 0; font-size: 13px; color: #6b665e">Contenu éducatif, pas un conseil financier personnalisé.</p>
+    <p style="margin: 0; font-size: 13px; color: var(--muted)">Contenu éducatif, pas un conseil financier personnalisé.</p>
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark","auto"],"default":"light"},"$preview":{"width":1440,"height":1000}}'>
+function themeVals(self) {
+  var t = (self.state && self.state.theme) || self.props.theme || 'light';
+  var set = function (v) { return function () { self.setState({ theme: v }); }; };
+  return {
+    theme: t, isDark: t === 'dark', isLight: t !== 'dark',
+    themeLabel: t === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre',
+    toggleTheme: set(t === 'dark' ? 'light' : 'dark'),
+    setAuto: set('auto'), setLight: set('light'), setDark: set('dark'),
+    isAuto: t === 'auto', notAuto: t !== 'auto', isLightOnly: t === 'light', notLightOnly: t !== 'light', isDarkOnly: t === 'dark', notDarkOnly: t !== 'dark'
+  };
+}
 class Component extends DCLogic {
-renderVals() { return {}; }
+renderVals() { return themeVals(this); }
 }
 </script>
 </body>

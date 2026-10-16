@@ -48,7 +48,7 @@ Séminaires et mode de groupe, fiche imprimable / export PDF, conversion entre d
 - **Devise** : l'utilisateur choisit sa devise ; tous les calculs se font dans cette devise, **sans conversion**. Formatage via `Intl.NumberFormat` (nombre de décimales selon la devise : 0 pour XOF/XAF, 2 pour EUR/USD).
 - **Langues** : français et anglais dès le lancement, même mécanique que Soon Horizons (segment `[lang]`, dictionnaires typés, pas de librairie i18n).
 - **Données sensibles** : un revenu est une donnée personnelle sensible. Collecte minimale, chacun ne voit que ses données.
-- **Identité** : charte dans `docs/brand-guidelines.md` (Horizon Vert, vouvoiement, slogan « Chaque mois, un pas de plus. »), tokens dans `assets/design-tokens.*`.
+- **Identité** : charte dans `docs/brand-guidelines.md` (vert menthe #2EF07F sur fond blanc pur, thèmes clair / sombre / auto comme Soon Horizons, vouvoiement, slogan « Chaque mois, un pas de plus. »), tokens dans `assets/design-tokens.*`.
 
 ## 4. Architecture
 

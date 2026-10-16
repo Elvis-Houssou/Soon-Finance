@@ -1,6 +1,6 @@
 # Soon Finance — Brand Guidelines v1.0
 
-> Last updated: 2026-10-16
+> Last updated: 2026-10-16 (palette menthe / blanc, thèmes clair et sombre)
 > Status: Draft — à valider
 > Famille : marque **Soon** (branche sœur : Soon Horizons, architecture)
 
@@ -8,8 +8,8 @@
 
 | Element | Value |
 |---------|-------|
-| Primary Color | #1F4D3A |
-| Secondary Color | #C9A26B |
+| Primary Color | #2EF07F |
+| Secondary Color | #07863F |
 | Primary Font | Instrument Sans |
 | Display Font | Syne |
 | Voice | Rassurant, Pédagogue, Encourageant, Honnête |
@@ -50,70 +50,76 @@ Soon Finance est le coach budget gratuit pour les débutants en finances personn
 | Branche | Signe | Couleur dominante |
 |---------|-------|-------------------|
 | Soon Horizons | Soleil posé **sur** l'horizon | Nuit / or |
-| Soon Finance | Soleil qui **monte au-dessus** de l'horizon, porté par trois barres croissantes | Vert forêt / or |
+| Soon Finance | Soleil qui **monte au-dessus** de l’horizon, porté par trois barres croissantes | Vert menthe / blanc |
 
-Éléments partagés : ligne d'horizon, or Soon #C9A26B, crème #F4F1EB, Syne + Instrument Sans + IBM Plex Mono, mot « soon » en minuscules.
+Éléments partagés : ligne d'horizon, or Soon #C9A26B, Syne + Instrument Sans + IBM Plex Mono, mot « soon » en minuscules.
 
 ---
 
 ## 1. Color Palette
 
+Deux thèmes, comme Soon Horizons : **clair** (fond blanc pur) et **sombre**, plus **Auto** qui suit l’appareil. Bouton soleil / lune dans l’en-tête ; choix Auto / Clair / Sombre dans Paramètres et le pied de page.
+
 ### Primary Colors
 
 | Name | Hex | RGB | Usage |
 |------|-----|-----|-------|
-| Forest | #1F4D3A | rgb(31,77,58) | CTAs, titres, liens, marque |
-| Forest Dark | #163A2B | rgb(22,58,43) | Survol, emphase |
-| Forest Tint | #E3ECE6 | rgb(227,236,230) | Fonds de cartes actives, sélection |
+| Mint | #2EF07F | rgb(46,240,127) | Fonds : boutons principaux, bandeaux clés, pilule active, barres du logo. Toujours avec texte #0B1410 (12.4:1). Jamais en texte sur fond clair (1.5:1) |
+| Green Ink | #07863F | rgb(7,134,63) | Vert en texte sur fond clair : liens, montants épargnés, état positif (4.7:1). En sombre, la menthe sert directement de texte |
+| Mint Tint | #E6FCEF | rgb(230,252,239) | Suggestions, carte sélectionnée (texte `ink` dessus) |
 
 ### Secondary Colors
 
 | Name | Hex | RGB | Usage |
 |------|-----|-----|-------|
-| Soon Gold | #C9A26B | rgb(201,162,107) | Soleil du logo, décor, graphiques, jamais pour du texte sur fond clair |
-| Gold Ink | #7D6442 | rgb(125,100,66) | Texte doré sur fond clair (4.94:1) |
+| Soon Gold | #C9A26B | rgb(201,162,107) | Soleil du logo, jauges d’objectif. Décoratif uniquement |
+| Gold Ink | #86652C | rgb(134,101,44) | Texte doré sur fond clair (5.4:1) |
 
 ### Neutral Palette
 
 | Name | Hex | RGB | Usage |
 |------|-----|-----|-------|
-| Background | #F4F1EB | rgb(244,241,235) | Fond de page (crème Soon) |
-| Surface | #FFFFFF | rgb(255,255,255) | Cartes, champs de saisie |
-| Text Primary | #141414 | rgb(20,20,20) | Texte courant |
-| Text Secondary | #6B665E | rgb(107,102,94) | Légendes, aides |
-| Border | #DDD7CC | rgb(221,215,204) | Séparateurs, bordures |
+| Background | #FFFFFF | rgb(255,255,255) | Fond de page, blanc pur |
+| Surface | #FFFFFF | rgb(255,255,255) | Cartes et champs, détachés par la bordure |
+| Sunken | #F3F5F4 | rgb(243,245,244) | Pistes de jauges, encadrés d’aide |
+| Text Primary | #0E1110 | rgb(14,17,16) | Texte et titres (19:1) |
+| Text Secondary | #5E6662 | rgb(94,102,98) | Légendes, aides (5.9:1) |
+| Border | #E4E7E5 | rgb(228,231,229) | Bordures de cartes, séparateurs |
+| Input Border | #8A928E | rgb(138,146,142) | Bordures de champs (3.2:1) |
 
 ### Semantic Colors
 
 | State | Hex | Usage |
 |-------|-----|-------|
-| Success | #1F4D3A | Objectif atteint, mois tenu (la couleur de marque porte le positif) |
-| Warning | #865A0C | Total ≠ 100 %, méthode exigeante, enveloppe proche de la limite |
-| Error | #B3261E | Erreurs, dépassement, suppression |
-| Info | #2F5D8A | Informations, liens pédagogiques |
+| Success | #07863F | Objectif atteint, mois tenu |
+| Warning | #995A00 | Total ≠ 100 %, méthode exigeante, objectif en retard |
+| Error | #C2261B | Erreurs, dépassement, suppression |
+| Info | #2F6FB3 | Renvois pédagogiques |
 
 ### Dark Mode
 
 | Name | Hex | Usage |
 |------|-----|-------|
-| Background | #0D1411 | Fond |
-| Surface | #15201B | Cartes |
-| Text Primary | #EDEAE4 | Texte (15.54:1) |
-| Text Secondary | #9AA39D | Légendes (7.20:1) |
-| Primary | #7FBF9B | CTAs, liens (8.73:1), texte des boutons #0D1411 |
-| Gold | #C9A26B | Décor et texte doré (7.88:1) |
-| Warning | #E0B060 | (9.37:1) |
-| Error | #FF8A80 | (8.18:1) |
+| Background | #0B0D0C | Fond |
+| Surface | #141816 | Cartes |
+| Sunken | #1B201D | Zones en retrait |
+| Text Primary | #EEF2EF | Texte (17:1) |
+| Text Secondary | #9BA59F | Légendes (7.1:1) |
+| Border | #262C29 | Bordures |
+| Mint | #2EF07F | Fonds et texte vert (11.9:1 sur surface) |
+| Mint Tint | #12251A | Suggestions, sélection |
+| Gold Ink | #D9B27A | Texte doré |
+| Warning | #F0B34A | |
+| Error | #FF8A80 | Texte sur bouton : #0B0D0C |
 
 ### Couleurs des enveloppes (graphiques)
 
-Ordre fixe, une couleur par enveloppe dans l'ordre de la méthode. Clair : #1F4D3A forest, #7D6442 or encre, #5F8A6E sauge, #B5532E terracotta, #4A6D8C ardoise, #7A5C7E prune. Sombre : #7FBF9B, #C9A26B, #8FB39A, #D9744E, #7FA3C4, #B08DB4. Toujours doubler la couleur d'un libellé (jamais la couleur seule).
+Ordre fixe, une couleur par enveloppe dans l’ordre de la méthode. Clair : #07863F, #86652C, #2F6FB3, #C0562F, #7A5AA8, #A3477A. Sombre : #2EF07F, #D9B27A, #6FA8E8, #F08A5D, #B49AE6, #E58AB8. Toujours doubler la couleur d’un libellé.
 
 ### Accessibility
 
-- Texte #141414 sur crème : 16.34:1 (AAA)
-- Forest sur crème : 8.54:1 (AAA) ; blanc sur Forest : 9.63:1 (AAA)
-- Soon Gold sur crème : 2.10:1, donc **décoratif uniquement** ; utiliser Gold Ink pour du texte
+- Tous les textes ≥ 4.5:1 dans les deux thèmes ; bordures de champs et marques ≥ 3:1
+- La menthe n’est jamais du texte sur fond clair : elle porte du texte noir
 - Tous les éléments interactifs respectent WCAG 2.1 AA
 
 ---
@@ -149,17 +155,14 @@ Ordre fixe, une couleur par enveloppe dans l'ordre de la méthode. Clair : #1F4D
 ## 3. Logo Usage
 
 ### Concept
-Une ligne d'horizon (partagée avec Soon Horizons). Au-dessus, trois barres croissantes en Forest. Au-dessus de la plus haute barre, un soleil plein en Soon Gold qui monte. Mot-symbole « soon finance » en minuscules, Syne.
+Une tuile presque noire (#0E1110 en clair, #1B201D en sombre) portant trois barres menthe croissantes, la ligne d’horizon Soon et un soleil or qui monte. Mot-symbole « soon finance » en minuscules, Syne 700, à droite de la tuile. La tuile garde le signe lisible sur fond blanc comme sur fond sombre.
 
 ### Variants
 
 | Variant | File | Use Case |
 |---------|------|----------|
-| Full Horizontal | logo-full-horizontal.svg | En-tête, documents |
-| Stacked | logo-stacked.svg | Espaces carrés, réseaux sociaux |
-| Icon Only | logo-icon.svg | Favicon, application |
-| Monochrome | logo-mono.svg | Impression une couleur |
-
+| Icon (clair) | assets/soon-finance-icon.svg | En-tête en thème clair, favicon, icône d’application |
+| Icon (sombre) | assets/soon-finance-icon-dark.svg | En-tête en thème sombre |
 ### Clear Space
 Minimum = hauteur du soleil du logo.
 
@@ -247,13 +250,13 @@ Minimum = hauteur du soleil du logo.
 
 | Type | Background | Text | Border Radius |
 |------|------------|------|---------------|
-| Primary | #1F4D3A | #FFFFFF | 10px |
-| Secondary | Transparent, bordure #1F4D3A | #1F4D3A | 10px |
-| Tertiary | Transparent | #6B665E | 10px |
+| Primary | #2EF07F | #0B1410 | 10px |
+| Secondary | Transparent, bordure #07863F | #07863F | 10px |
+| Tertiary | Transparent | #5E6662 | 10px |
 
 ### Cards
-- Fond #FFFFFF sur crème, bordure 1px #DDD7CC, rayon 14px, pas d'ombre lourde
-- Carte sélectionnée : fond #E3ECE6, bordure #1F4D3A
+- Fond #FFFFFF, bordure 1px #E4E7E5, rayon 14px, pas d’ombre lourde
+- Carte sélectionnée : fond #E6FCEF, bordure #07863F
 
 ### Montants
 - Toujours accompagnés de la devise de l'utilisateur, formatés selon sa langue (`500 000 FCFA`, `€1,500`)

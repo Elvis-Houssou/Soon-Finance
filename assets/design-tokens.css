@@ -3,26 +3,26 @@
 
 /* === PRIMITIVES === */
 :root {
-  --primitive-color-primary-50: #E9EDEB;
-  --primitive-color-primary-100: #D2DBD8;
-  --primitive-color-primary-200: #A5B8B0;
-  --primitive-color-primary-300: #799489;
-  --primitive-color-primary-400: #4C7161;
-  --primitive-color-primary-500: #1F4D3A;
-  --primitive-color-primary-600: #163A2B;
-  --primitive-color-primary-700: #163629;
-  --primitive-color-primary-800: #112A20;
-  --primitive-color-primary-900: #0C1F17;
-  --primitive-color-secondary-50: #FAF6F0;
-  --primitive-color-secondary-100: #F4ECE1;
-  --primitive-color-secondary-200: #E9DAC4;
-  --primitive-color-secondary-300: #DFC7A6;
-  --primitive-color-secondary-400: #D4B589;
-  --primitive-color-secondary-500: #C9A26B;
-  --primitive-color-secondary-600: #AB8A5B;
-  --primitive-color-secondary-700: #8D714B;
-  --primitive-color-secondary-800: #6F593B;
-  --primitive-color-secondary-900: #50412B;
+  --primitive-color-primary-50: #EAFEF2;
+  --primitive-color-primary-100: #D5FCE5;
+  --primitive-color-primary-200: #ABF9CC;
+  --primitive-color-primary-300: #82F6B2;
+  --primitive-color-primary-400: #58F399;
+  --primitive-color-primary-500: #2EF07F;
+  --primitive-color-primary-600: #27CC6C;
+  --primitive-color-primary-700: #20A859;
+  --primitive-color-primary-800: #198446;
+  --primitive-color-primary-900: #126033;
+  --primitive-color-secondary-50: #E6F3EC;
+  --primitive-color-secondary-100: #CDE7D9;
+  --primitive-color-secondary-200: #9CCFB2;
+  --primitive-color-secondary-300: #6AB68C;
+  --primitive-color-secondary-400: #399E65;
+  --primitive-color-secondary-500: #07863F;
+  --primitive-color-secondary-600: #067236;
+  --primitive-color-secondary-700: #055E2C;
+  --primitive-color-secondary-800: #044A23;
+  --primitive-color-secondary-900: #033619;
 }
 
 /* === SEMANTIC === */

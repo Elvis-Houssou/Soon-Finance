@@ -11,34 +11,43 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&amp;family=Instrument+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
 <style>
 body{margin:0}
-a{color:#1f4d3a}a:hover{color:#163a2b}
+[data-sf]{--bg:#ffffff;--surface:#ffffff;--sunken:#f3f5f4;--ink:#0e1110;--muted:#5e6662;--line:#e4e7e5;--line-input:#8a928e;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#07863f;--tint:#e6fcef;--gold:#c9a26b;--gold-ink:#86652c;--warning:#995a00;--danger:#c2261b;--on-danger:#ffffff;--chart-1:#07863f;--chart-2:#86652c;--chart-3:#2f6fb3;--chart-4:#c0562f;--chart-5:#7a5aa8;--chart-6:#a3477a;--logo-tile:#0e1110;--logo-hz:#f3f5f4;color-scheme:light}
+[data-sf][data-theme="dark"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}
+@media (prefers-color-scheme: dark){[data-sf][data-theme="auto"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}}
+[data-sf]{background:var(--bg);color:var(--ink);transition:background-color .3s,color .3s}
+a{color:var(--brand-ink)}a:hover{color:var(--ink)}
+input,select,textarea{color-scheme:inherit}
+input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--brand-ink);outline-offset:2px}
+.ic-brand{stroke:var(--brand-ink)}.ic-muted{stroke:var(--muted)}.ic-warn{stroke:var(--warning)}
+.lg-tile{fill:var(--logo-tile)}.lg-bar{fill:var(--brand)}.lg-sun{fill:var(--gold)}.lg-hz{fill:var(--logo-hz)}
 </style>
 </helmet>
-<div style="background: #f4f1eb; color: #141414; font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; min-height: 1100px; display: flex; flex-wrap: wrap">
-  <aside style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; background: #ffffff; border-right: 1px solid #ddd7cc; padding: 28px 20px; display: flex; flex-direction: column; gap: 32px">
-    <a href="AccueilDesktop.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #141414">
-      <svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true"><rect x="13" y="38" width="8" height="10" rx="1.5" fill="#1f4d3a"></rect><rect x="24" y="31" width="8" height="17" rx="1.5" fill="#1f4d3a"></rect><rect x="35" y="24" width="8" height="24" rx="1.5" fill="#1f4d3a"></rect><circle cx="47" cy="14" r="7" fill="#c9a26b"></circle><rect x="6" y="49" width="52" height="3" fill="#1f4d3a"></rect></svg>
+<div data-sf data-theme="{{theme}}" style="background: var(--bg); color: var(--ink); font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; min-height: 1100px; display: flex; flex-wrap: wrap">
+  <aside style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; background: var(--surface); border-right: 1px solid var(--line); padding: 28px 20px; display: flex; flex-direction: column; gap: 32px">
+    <a href="AccueilDesktop.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink)">
+      <svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" class="lg-tile"></rect><rect x="13" y="38" width="8" height="10" rx="1.5" class="lg-bar"></rect><rect x="24" y="31" width="8" height="17" rx="1.5" class="lg-bar"></rect><rect x="35" y="24" width="8" height="24" rx="1.5" class="lg-bar"></rect><circle cx="47" cy="14" r="7" class="lg-sun"></circle><rect x="6" y="49" width="52" height="3" class="lg-hz"></rect></svg>
       <span style="font-family: Syne, sans-serif; font-weight: 700; font-size: 20px">soon finance</span>
     </a>
     <nav aria-label="Navigation du compte" style="display: flex; flex-direction: column; gap: 4px; font-size: 16px">
-      <a href="TableauDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: #141414; text-decoration: none">Tableau de bord</a>
-      <a href="SimulateurDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: #141414; text-decoration: none">Mon budget</a>
-      <a href="ObjectifsDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: #141414; text-decoration: none">Objectifs</a>
-      <a href="HistoriqueDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: #141414; text-decoration: none">Historique</a>
-      <a href="ApprendreDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: #141414; text-decoration: none">Apprendre</a>
-      <a href="ParametresDesktop.dc.html" aria-current="page" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; background: #e3ece6; font-weight: 600; text-decoration: none">Paramètres</a>
+      <a href="TableauDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--ink); text-decoration: none">Tableau de bord</a>
+      <a href="SimulateurDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--ink); text-decoration: none">Mon budget</a>
+      <a href="ObjectifsDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--ink); text-decoration: none">Objectifs</a>
+      <a href="HistoriqueDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--ink); text-decoration: none">Historique</a>
+      <a href="ApprendreDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--ink); text-decoration: none">Apprendre</a>
+      <a href="ParametresDesktop.dc.html" aria-current="page" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; background: var(--tint); font-weight: 600; text-decoration: none">Paramètres</a>
     </nav>
+    <button type="button" onClick="{{toggleTheme}}" aria-label="{{themeLabel}}" title="{{themeLabel}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: none; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer"><sc-if value="{{isDark}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.9 4.9 1.4 1.4"></path><path d="m17.7 17.7 1.4 1.4"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m4.9 19.1 1.4-1.4"></path><path d="m17.7 6.3 1.4-1.4"></path></svg></sc-if><sc-if value="{{isLight}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg></sc-if></button>
     <a href="AccueilDesktop.dc.html" style="margin-top: auto; font-weight: 600; font-size: 15px">Se déconnecter</a>
   </aside>
 
   <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px 40px 48px; display: flex; flex-direction: column; gap: 24px; max-width: 880px">
     <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 34px; line-height: 1.15">Paramètres</h1>
 
-    <section aria-label="Profil" style="background: #ffffff; border: 1px solid #ddd7cc; border-radius: 14px; padding: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px">
+    <section aria-label="Profil" style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px">
       <h2 style="grid-column: 1 / -1; margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 22px">Profil</h2>
       <div style="display: flex; flex-direction: column; gap: 6px">
-        <label for="dpfirst" style="font-size: 15px; font-weight: 600">Prénom <span style="font-weight: 400; color: #6b665e">(facultatif)</span></label>
-        <input id="dpfirst" value="Awa" style="height: 48px; box-sizing: border-box; border: 1px solid #6b665e; border-radius: 10px; padding: 0 12px; font-size: 16px; background: #ffffff; color: #141414">
+        <label for="dpfirst" style="font-size: 15px; font-weight: 600">Prénom <span style="font-weight: 400; color: var(--muted)">(facultatif)</span></label>
+        <input id="dpfirst" value="Awa" style="height: 48px; box-sizing: border-box; border: 1px solid var(--line-input); border-radius: 10px; padding: 0 12px; font-size: 16px; background: var(--surface); color: var(--ink)">
       </div>
       <div style="display: flex; flex-direction: column; gap: 6px">
         <span style="font-size: 15px; font-weight: 600">Email</span>
@@ -46,43 +55,48 @@ a{color:#1f4d3a}a:hover{color:#163a2b}
       </div>
     </section>
 
-    <section aria-label="Préférences" style="background: #ffffff; border: 1px solid #ddd7cc; border-radius: 14px; padding: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px">
+    <section aria-label="Préférences" style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px">
       <h2 style="grid-column: 1 / -1; margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 22px">Préférences</h2>
       <div style="display: flex; flex-direction: column; gap: 6px">
         <label for="dpcur" style="font-size: 15px; font-weight: 600">Devise</label>
-        <select id="dpcur" style="height: 48px; box-sizing: border-box; border: 1px solid #6b665e; border-radius: 10px; padding: 0 12px; font-size: 16px; background: #ffffff; color: #141414">
+        <select id="dpcur" style="height: 48px; box-sizing: border-box; border: 1px solid var(--line-input); border-radius: 10px; padding: 0 12px; font-size: 16px; background: var(--surface); color: var(--ink)">
           <option>Franc CFA (XOF)</option>
           <option>Franc CFA (XAF)</option>
           <option>Euro (EUR)</option>
           <option>Dollar américain (USD)</option>
         </select>
-        <span style="font-size: 13px; line-height: 1.45; color: #6b665e">Change seulement l'affichage. Vos montants ne sont pas convertis.</span>
+        <span style="font-size: 13px; line-height: 1.45; color: var(--muted)">Change seulement l'affichage. Vos montants ne sont pas convertis.</span>
       </div>
       <div style="display: flex; flex-direction: column; gap: 6px">
         <span style="font-size: 15px; font-weight: 600">Langue</span>
         <div style="display: flex; gap: 8px">
-          <button type="button" aria-pressed="true" style="min-height: 48px; padding: 0 20px; border: 1px solid #1f4d3a; border-radius: 999px; background: #1f4d3a; color: #ffffff; font-family: inherit; font-size: 15px">Français</button>
-          <button type="button" aria-pressed="false" style="min-height: 48px; padding: 0 20px; border: 1px solid #ddd7cc; border-radius: 999px; background: #ffffff; color: #141414; font-family: inherit; font-size: 15px">English</button>
+          <button type="button" aria-pressed="true" style="min-height: 48px; padding: 0 20px; border: 1px solid var(--brand-ink); border-radius: 999px; background: var(--brand); color: var(--on-brand); font-family: inherit; font-size: 15px">Français</button>
+          <button type="button" aria-pressed="false" style="min-height: 48px; padding: 0 20px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font-family: inherit; font-size: 15px">English</button>
         </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font-size: 15px; font-weight: 600">Apparence</span>
+        <div role="radiogroup" aria-label="Apparence" style="display: inline-flex; align-self: flex-start; gap: 2px; padding: 4px; border: 1px solid var(--line); border-radius: 999px"><sc-if value="{{isAuto}}" hint-placeholder-val="{{false}}"><button type="button" role="radio" aria-checked="true" onClick="{{setAuto}}" style="min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--ink); color: var(--bg); font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: .06em; cursor: pointer">AUTO</button></sc-if><sc-if value="{{notAuto}}" hint-placeholder-val="{{true}}"><button type="button" role="radio" aria-checked="false" onClick="{{setAuto}}" style="min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: .06em; cursor: pointer">AUTO</button></sc-if><sc-if value="{{isLightOnly}}" hint-placeholder-val="{{false}}"><button type="button" role="radio" aria-checked="true" onClick="{{setLight}}" style="min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--ink); color: var(--bg); font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: .06em; cursor: pointer">CLAIR</button></sc-if><sc-if value="{{notLightOnly}}" hint-placeholder-val="{{true}}"><button type="button" role="radio" aria-checked="false" onClick="{{setLight}}" style="min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: .06em; cursor: pointer">CLAIR</button></sc-if><sc-if value="{{isDarkOnly}}" hint-placeholder-val="{{false}}"><button type="button" role="radio" aria-checked="true" onClick="{{setDark}}" style="min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--ink); color: var(--bg); font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: .06em; cursor: pointer">SOMBRE</button></sc-if><sc-if value="{{notDarkOnly}}" hint-placeholder-val="{{true}}"><button type="button" role="radio" aria-checked="false" onClick="{{setDark}}" style="min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: .06em; cursor: pointer">SOMBRE</button></sc-if></div>
+        <span style="font-size: 13px; color: var(--muted)">Auto suit le réglage de votre appareil.</span>
       </div>
     </section>
 
-    <section aria-label="Mes données" style="background: #ffffff; border: 1px solid #ddd7cc; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 16px">
+    <section aria-label="Mes données" style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 16px">
       <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 22px">Mes données</h2>
-      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #6b665e">Vos budgets, objectifs et bilans vous appartiennent. <a href="ConfidentialiteDesktop.dc.html">Ce que nous conservons</a></p>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: var(--muted)">Vos budgets, objectifs et bilans vous appartiennent. <a href="ConfidentialiteDesktop.dc.html">Ce que nous conservons</a></p>
       <div style="display: flex; flex-wrap: wrap; gap: 12px">
-        <button type="button" style="height: 48px; padding: 0 20px; border: 1px solid #1f4d3a; border-radius: 10px; background: #ffffff; color: #1f4d3a; font-family: inherit; font-weight: 600; font-size: 15px">Télécharger mes données</button>
+        <button type="button" style="height: 48px; padding: 0 20px; border: 1px solid var(--brand-ink); border-radius: 10px; background: var(--surface); color: var(--brand-ink); font-family: inherit; font-weight: 600; font-size: 15px">Télécharger mes données</button>
         <sc-if value="{{closed}}" hint-placeholder-val="{{true}}">
-          <button type="button" onClick="{{ask}}" style="height: 48px; padding: 0 20px; border: 1px solid #b3261e; border-radius: 10px; background: #ffffff; color: #b3261e; font-family: inherit; font-weight: 600; font-size: 15px">Supprimer mon compte</button>
+          <button type="button" onClick="{{ask}}" style="height: 48px; padding: 0 20px; border: 1px solid var(--danger); border-radius: 10px; background: var(--surface); color: var(--danger); font-family: inherit; font-weight: 600; font-size: 15px">Supprimer mon compte</button>
         </sc-if>
       </div>
       <sc-if value="{{open}}" hint-placeholder-val="{{false}}">
-        <div role="alert" style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 10px; border: 1px solid #b3261e; background: #ffffff">
-          <strong style="font-size: 16px; color: #b3261e">Supprimer définitivement votre compte ?</strong>
+        <div role="alert" style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 10px; border: 1px solid var(--danger); background: var(--surface)">
+          <strong style="font-size: 16px; color: var(--danger)">Supprimer définitivement votre compte ?</strong>
           <span style="font-size: 15px; line-height: 1.5">3 mois de budgets, 2 objectifs et vos bilans seront effacés. Cette action est irréversible. Pensez à télécharger vos données avant.</span>
           <div style="display: flex; gap: 10px; flex-wrap: wrap">
-            <button type="button" style="min-height: 44px; padding: 0 20px; border: 0; border-radius: 10px; background: #b3261e; color: #ffffff; font-family: inherit; font-weight: 600; font-size: 15px">Oui, supprimer</button>
-            <button type="button" onClick="{{cancel}}" style="min-height: 44px; padding: 0 20px; border: 1px solid #ddd7cc; border-radius: 10px; background: #ffffff; color: #141414; font-family: inherit; font-weight: 600; font-size: 15px">Annuler</button>
+            <button type="button" style="min-height: 44px; padding: 0 20px; border: 0; border-radius: 10px; background: var(--danger); color: var(--on-danger); font-family: inherit; font-weight: 600; font-size: 15px">Oui, supprimer</button>
+            <button type="button" onClick="{{cancel}}" style="min-height: 44px; padding: 0 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font-family: inherit; font-weight: 600; font-size: 15px">Annuler</button>
           </div>
         </div>
       </sc-if>
@@ -90,17 +104,28 @@ a{color:#1f4d3a}a:hover{color:#163a2b}
   </main>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark","auto"],"default":"light"},"$preview":{"width":1440,"height":1100}}'>
+function themeVals(self) {
+  var t = (self.state && self.state.theme) || self.props.theme || 'light';
+  var set = function (v) { return function () { self.setState({ theme: v }); }; };
+  return {
+    theme: t, isDark: t === 'dark', isLight: t !== 'dark',
+    themeLabel: t === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre',
+    toggleTheme: set(t === 'dark' ? 'light' : 'dark'),
+    setAuto: set('auto'), setLight: set('light'), setDark: set('dark'),
+    isAuto: t === 'auto', notAuto: t !== 'auto', isLightOnly: t === 'light', notLightOnly: t !== 'light', isDarkOnly: t === 'dark', notDarkOnly: t !== 'dark'
+  };
+}
 class Component extends DCLogic {
   constructor(p) { super(p); this.state = { confirm: false }; }
   renderVals() {
     var self = this;
-    return {
+    return Object.assign(themeVals(this), {
       open: this.state.confirm,
       closed: !this.state.confirm,
       ask: function () { self.setState({ confirm: true }); },
       cancel: function () { self.setState({ confirm: false }); }
-    };
+    });
   }
 }
 </script>
