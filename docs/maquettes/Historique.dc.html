@@ -11,55 +11,69 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&amp;family=Instrument+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
 <style>
 body{margin:0}
-[data-sf]{--bg:#ffffff;--surface:#ffffff;--sunken:#f3f5f4;--ink:#0e1110;--muted:#5e6662;--line:#e4e7e5;--line-input:#8a928e;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#07863f;--tint:#e6fcef;--gold:#c9a26b;--gold-ink:#86652c;--warning:#995a00;--danger:#c2261b;--on-danger:#ffffff;--chart-1:#07863f;--chart-2:#86652c;--chart-3:#2f6fb3;--chart-4:#c0562f;--chart-5:#7a5aa8;--chart-6:#a3477a;--logo-tile:#0e1110;--logo-hz:#f3f5f4;color-scheme:light}
+[data-sf]{--bg:#ffffff;--surface:#ffffff;--sunken:#f3f5f4;--ink:#0e1110;--muted:#5e6662;--line:#e4e7e5;--line-input:#8a928e;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#067a39;--tint:#e6fcef;--gold:#c9a26b;--gold-ink:#86652c;--warning:#995a00;--danger:#c2261b;--on-danger:#ffffff;--chart-1:#067a39;--chart-2:#86652c;--chart-3:#2f6fb3;--chart-4:#c0562f;--chart-5:#7a5aa8;--chart-6:#a3477a;--logo-tile:#0e1110;--logo-hz:#f3f5f4;color-scheme:light}
 [data-sf][data-theme="dark"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}
 @media (prefers-color-scheme: dark){[data-sf][data-theme="auto"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}}
 [data-sf]{background:var(--bg);color:var(--ink);transition:background-color .3s,color .3s}
 a{color:var(--brand-ink)}a:hover{color:var(--ink)}
 input,select,textarea{color-scheme:inherit}
 input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--brand-ink);outline-offset:2px}
-.ic-brand{stroke:var(--brand-ink)}.ic-muted{stroke:var(--muted)}.ic-warn{stroke:var(--warning)}
+.ic-brand{stroke:var(--brand-ink)}.ic-muted{stroke:var(--muted)}.ic-warn{stroke:var(--warning)}.ic-ink{stroke:var(--ink)}
 .lg-tile{fill:var(--logo-tile)}.lg-bar{fill:var(--brand)}.lg-sun{fill:var(--gold)}.lg-hz{fill:var(--logo-hz)}
 </style>
 </helmet>
-<div data-sf data-theme="{{theme}}" style="width: 390px; min-height: 1000px; box-sizing: border-box; background: var(--bg); color: var(--ink); font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; display: flex; flex-direction: column; gap: 20px; padding: 16px 20px 28px">
-  <header style="display: flex; align-items: center; gap: 12px; height: 48px">
-    <a href="Tableau.dc.html" aria-label="Retour au tableau de bord" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></a>
-    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: .08em; color: var(--muted)">3 MOIS SUIVIS</span>
-    <button type="button" onClick="{{toggleTheme}}" aria-label="{{themeLabel}}" title="{{themeLabel}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: none; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; margin-left: auto"><sc-if value="{{isDark}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.9 4.9 1.4 1.4"></path><path d="m17.7 17.7 1.4 1.4"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m4.9 19.1 1.4-1.4"></path><path d="m17.7 6.3 1.4-1.4"></path></svg></sc-if><sc-if value="{{isLight}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg></sc-if></button>
-  </header>
-
-  <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 30px; line-height: 1.15">Historique</h1>
-
-  <section aria-label="Taux d'épargne par mois" style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
-    <h2 style="margin: 0; font-size: 16px; font-weight: 600">Taux d'épargne</h2>
-    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: end; height: 140px">
-      <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; height: 100%"><span style="font-size: 13px; font-variant-numeric: tabular-nums">12 %</span><div style="width: 100%; height: 58%; background: var(--line-input); border-radius: 6px 6px 0 0"></div></div>
-      <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; height: 100%"><span style="font-size: 13px; font-variant-numeric: tabular-nums">17 %</span><div style="width: 100%; height: 82%; background: var(--line-input); border-radius: 6px 6px 0 0"></div></div>
-      <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; height: 100%"><span style="font-size: 13px; font-weight: 600; color: var(--brand-ink); font-variant-numeric: tabular-nums">18,6 %</span><div style="width: 100%; height: 90%; background: var(--brand-ink); border-radius: 6px 6px 0 0"></div></div>
+<div data-sf data-theme="{{theme}}" style="width: 390px; min-height: 1060px; box-sizing: border-box; background: var(--bg); color: var(--ink); font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="display: flex; flex-direction: column; gap: 20px; padding: 16px 20px 28px; flex: 1">
+    <header style="display: flex; align-items: center; justify-content: space-between; height: 48px">
+      <svg width="28" height="28" viewBox="0 0 64 64" role="img" aria-label="Soon Finance"><rect width="64" height="64" rx="14" class="lg-tile"></rect><rect x="13" y="38" width="8" height="10" rx="1.5" class="lg-bar"></rect><rect x="24" y="31" width="8" height="17" rx="1.5" class="lg-bar"></rect><rect x="35" y="24" width="8" height="24" rx="1.5" class="lg-bar"></rect><circle cx="47" cy="14" r="7" class="lg-sun"></circle><rect x="6" y="49" width="52" height="3" class="lg-hz"></rect></svg>
+      <button type="button" onClick="{{toggleTheme}}" aria-label="{{themeLabel}}" title="{{themeLabel}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: none; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer"><sc-if value="{{isDark}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.9 4.9 1.4 1.4"></path><path d="m17.7 17.7 1.4 1.4"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m4.9 19.1 1.4-1.4"></path><path d="m17.7 6.3 1.4-1.4"></path></svg></sc-if><sc-if value="{{isLight}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg></sc-if></button>
+    </header>
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 30px; line-height: 1.15">Historique</h1>
+      <p style="margin: 0; font-size: 15px; color: var(--muted)">{{countText}}</p>
     </div>
-    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px"><span>AOÛT</span><span>SEPT.</span><span>OCT.</span></div>
-  </section>
-
-  <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
-    <li><a href="Cloture.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none">
-      <span style="display: flex; justify-content: space-between; align-items: center"><strong style="font-size: 17px">Octobre 2026</strong><span style="padding: 2px 10px; border-radius: 999px; background: var(--tint); color: var(--brand-ink); font-size: 13px; font-weight: 600">Clôturé</span></span>
-      <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums">50/30/20 · épargne 93 000 / 100 000 · Envies dépassées</span>
-    </a></li>
-    <li><a href="Cloture.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none">
-      <span style="display: flex; justify-content: space-between; align-items: center"><strong style="font-size: 17px">Septembre 2026</strong><span style="padding: 2px 10px; border-radius: 999px; background: var(--tint); color: var(--brand-ink); font-size: 13px; font-weight: 600">Clôturé</span></span>
-      <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums">50/30/20 · épargne 85 000 / 100 000 · Envies dépassées</span>
-    </a></li>
-    <li><a href="Cloture.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none">
-      <span style="display: flex; justify-content: space-between; align-items: center"><strong style="font-size: 17px">Août 2026</strong><span style="padding: 2px 10px; border-radius: 999px; background: var(--tint); color: var(--brand-ink); font-size: 13px; font-weight: 600">Clôturé</span></span>
-      <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums">80/20 · épargne 60 000 / 100 000 · premier mois</span>
-    </a></li>
-  </ul>
-
-  <p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted)">Touchez un mois pour revoir le détail et votre bilan.</p>
+    <sc-if value="{{isEmpty}}" hint-placeholder-val="{{false}}">
+      <section aria-label="Aucun mois clôturé" style="display: flex; flex-direction: column; gap: 12px; padding: 24px; border-radius: 14px; border: 1px dashed var(--line-input)">
+        <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 20px">Votre premier bilan apparaîtra ici</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.5; color: var(--muted)">Fin octobre, notez ce que vous avez réellement dépensé et épargné. Chaque mois clôturé s'ajoute ici, et vous verrez votre taux d'épargne évoluer.</p>
+        <a href="Tableau.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--brand-ink); font-weight: 600; font-size: 15px; text-decoration: none">Voir le budget d'octobre</a>
+      </section>
+    </sc-if>
+    <sc-if value="{{hasMonths}}" hint-placeholder-val="{{true}}">
+    <section aria-label="Taux d'épargne par mois" style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-size: 16px; font-weight: 600">Taux d'épargne</h2>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: end; height: 150px">
+        <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; height: 100%"><span style="font-size: 13px; font-variant-numeric: tabular-nums;">12 %</span><div style="width: 100%; height: 58%; border-radius: 6px 6px 0 0; background: var(--chart-1)"></div></div>
+        <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; height: 100%"><span style="font-size: 13px; font-variant-numeric: tabular-nums;">17 %</span><div style="width: 100%; height: 82%; border-radius: 6px 6px 0 0; background: var(--chart-1)"></div></div>
+        <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; height: 100%"><span style="font-size: 13px; font-variant-numeric: tabular-nums; color: var(--muted)">en cours</span><div style="width: 100%; height: 100%; border-radius: 6px 6px 0 0; border: 1.5px dashed var(--line-input); border-bottom: 0; box-sizing: border-box"></div></div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px"><span>AOÛT</span><span>SEPT.</span><span>OCT.</span></div>
+    </section>
+    <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+      <li><a href="Tableau.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none">
+        <span style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><strong style="font-size: 17px">Octobre 2026</strong><span style="padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; border: 1px solid var(--line-input); color: var(--muted)">En cours</span></span>
+        <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums">50/30/20 · épargne 93 000 sur 100 000 prévus au 16 octobre</span>
+      </a></li>
+      <li><a href="Cloture.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none">
+        <span style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><strong style="font-size: 17px">Septembre 2026</strong><span style="padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; background: var(--tint); color: var(--ink)">Clôturé · 17 %</span></span>
+        <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums">50/30/20 · épargne 85 000 sur 100 000 · envies au-dessus du prévu</span>
+      </a></li>
+      <li><a href="Cloture.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none">
+        <span style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><strong style="font-size: 17px">Août 2026</strong><span style="padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; background: var(--tint); color: var(--ink)">Clôturé · 12 %</span></span>
+        <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums">80/20 · épargne 60 000 sur 100 000 · premier mois</span>
+      </a></li>
+    </ul>
+    </sc-if>
+  </div>
+  <nav aria-label="Navigation principale" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); background: var(--surface); padding: 6px 8px 10px">
+    <a href="Tableau.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 48px; justify-content: center; font-size: 12px; text-decoration: none; color: var(--muted)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 20V10"></path><path d="M10 20V6"></path><path d="M16 20v-8"></path><path d="M2 20h20"></path></svg>Tableau</a>
+    <a href="Historique.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 48px; justify-content: center; font-size: 12px; font-weight: 600; text-decoration: none; color: var(--brand-ink)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M3 9h18"></path><path d="M8 2v4"></path><path d="M16 2v4"></path></svg>Historique</a>
+    <a href="Objectifs.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 48px; justify-content: center; font-size: 12px; text-decoration: none; color: var(--muted)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg>Objectifs</a>
+    <a href="Apprendre.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 48px; justify-content: center; font-size: 12px; text-decoration: none; color: var(--muted)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2Z"></path><path d="M8 7h6"></path></svg>Apprendre</a>
+  </nav>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark","auto"],"default":"light"},"$preview":{"width":390,"height":1000}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark","auto"],"default":"light"},"etat":{"editor":"enum","options":["rempli","vide"],"default":"rempli"},"$preview":{"width":390,"height":1060}}'>
 function themeVals(self) {
   var t = (self.state && self.state.theme) || self.props.theme || 'light';
   var set = function (v) { return function () { self.setState({ theme: v }); }; };
@@ -72,7 +86,10 @@ function themeVals(self) {
   };
 }
 class Component extends DCLogic {
-renderVals() { return themeVals(this); }
+  renderVals() {
+    var empty = this.props.etat === 'vide';
+    return Object.assign(themeVals(this), { isEmpty: empty, hasMonths: !empty, countText: empty ? 'Aucun mois clôturé pour l’instant' : '2 mois clôturés, octobre en cours' });
+  }
 }
 </script>
 </body>

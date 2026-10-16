@@ -11,72 +11,73 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&amp;family=Instrument+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
 <style>
 body{margin:0}
-[data-sf]{--bg:#ffffff;--surface:#ffffff;--sunken:#f3f5f4;--ink:#0e1110;--muted:#5e6662;--line:#e4e7e5;--line-input:#8a928e;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#07863f;--tint:#e6fcef;--gold:#c9a26b;--gold-ink:#86652c;--warning:#995a00;--danger:#c2261b;--on-danger:#ffffff;--chart-1:#07863f;--chart-2:#86652c;--chart-3:#2f6fb3;--chart-4:#c0562f;--chart-5:#7a5aa8;--chart-6:#a3477a;--logo-tile:#0e1110;--logo-hz:#f3f5f4;color-scheme:light}
+[data-sf]{--bg:#ffffff;--surface:#ffffff;--sunken:#f3f5f4;--ink:#0e1110;--muted:#5e6662;--line:#e4e7e5;--line-input:#8a928e;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#067a39;--tint:#e6fcef;--gold:#c9a26b;--gold-ink:#86652c;--warning:#995a00;--danger:#c2261b;--on-danger:#ffffff;--chart-1:#067a39;--chart-2:#86652c;--chart-3:#2f6fb3;--chart-4:#c0562f;--chart-5:#7a5aa8;--chart-6:#a3477a;--logo-tile:#0e1110;--logo-hz:#f3f5f4;color-scheme:light}
 [data-sf][data-theme="dark"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}
 @media (prefers-color-scheme: dark){[data-sf][data-theme="auto"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}}
 [data-sf]{background:var(--bg);color:var(--ink);transition:background-color .3s,color .3s}
 a{color:var(--brand-ink)}a:hover{color:var(--ink)}
 input,select,textarea{color-scheme:inherit}
 input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--brand-ink);outline-offset:2px}
-.ic-brand{stroke:var(--brand-ink)}.ic-muted{stroke:var(--muted)}.ic-warn{stroke:var(--warning)}
+.ic-brand{stroke:var(--brand-ink)}.ic-muted{stroke:var(--muted)}.ic-warn{stroke:var(--warning)}.ic-ink{stroke:var(--ink)}
 .lg-tile{fill:var(--logo-tile)}.lg-bar{fill:var(--brand)}.lg-sun{fill:var(--gold)}.lg-hz{fill:var(--logo-hz)}
 </style>
 </helmet>
 <div data-sf data-theme="{{theme}}" style="background: var(--bg); color: var(--ink); font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; min-height: 1000px; display: flex; flex-wrap: wrap">
   <aside style="flex: 1 1 240px; max-width: 280px; box-sizing: border-box; background: var(--surface); border-right: 1px solid var(--line); padding: 28px 20px; display: flex; flex-direction: column; gap: 32px">
-    <a href="AccueilDesktop.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink)">
-      <svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" class="lg-tile"></rect><rect x="13" y="38" width="8" height="10" rx="1.5" class="lg-bar"></rect><rect x="24" y="31" width="8" height="17" rx="1.5" class="lg-bar"></rect><rect x="35" y="24" width="8" height="24" rx="1.5" class="lg-bar"></rect><circle cx="47" cy="14" r="7" class="lg-sun"></circle><rect x="6" y="49" width="52" height="3" class="lg-hz"></rect></svg>
-      <span style="font-family: Syne, sans-serif; font-weight: 700; font-size: 20px">soon finance</span>
-    </a>
+    <a href="AccueilDesktop.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink)"><svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" class="lg-tile"></rect><rect x="13" y="38" width="8" height="10" rx="1.5" class="lg-bar"></rect><rect x="24" y="31" width="8" height="17" rx="1.5" class="lg-bar"></rect><rect x="35" y="24" width="8" height="24" rx="1.5" class="lg-bar"></rect><circle cx="47" cy="14" r="7" class="lg-sun"></circle><rect x="6" y="49" width="52" height="3" class="lg-hz"></rect></svg><span style="font-family: Syne, sans-serif; font-weight: 700; font-size: 20px">soon finance</span></a>
     <nav aria-label="Navigation du compte" style="display: flex; flex-direction: column; gap: 4px; font-size: 16px">
       <a href="TableauDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--ink); text-decoration: none">Tableau de bord</a>
-      <a href="SimulateurDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--ink); text-decoration: none">Mon budget</a>
       <a href="ObjectifsDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--ink); text-decoration: none">Objectifs</a>
-      <a href="HistoriqueDesktop.dc.html" aria-current="page" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; background: var(--tint); font-weight: 600; text-decoration: none">Historique</a>
+      <a href="HistoriqueDesktop.dc.html" aria-current="page" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; background: var(--tint); font-weight: 600; color: var(--ink); text-decoration: none">Historique</a>
+      <a href="SimulateurDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--ink); text-decoration: none">Changer de méthode</a>
       <a href="ApprendreDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--ink); text-decoration: none">Apprendre</a>
       <a href="ParametresDesktop.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--ink); text-decoration: none">Paramètres</a>
     </nav>
     <button type="button" onClick="{{toggleTheme}}" aria-label="{{themeLabel}}" title="{{themeLabel}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: none; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer"><sc-if value="{{isDark}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.9 4.9 1.4 1.4"></path><path d="m17.7 17.7 1.4 1.4"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m4.9 19.1 1.4-1.4"></path><path d="m17.7 6.3 1.4-1.4"></path></svg></sc-if><sc-if value="{{isLight}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg></sc-if></button>
   </aside>
-
-  <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px 40px 48px; display: flex; flex-direction: column; gap: 28px; max-width: 1160px">
-    <div style="display: flex; flex-direction: column; gap: 6px">
-      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: .08em; color: var(--muted)">3 MOIS SUIVIS</span>
+  <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px 40px 48px; display: flex; flex-direction: column; gap: 24px; max-width: 1160px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
       <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 34px; line-height: 1.15">Historique</h1>
+      <p style="margin: 0; font-size: 16px; color: var(--muted)">{{countText}}</p>
     </div>
-
-    <section aria-label="Taux d'épargne par mois" style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 16px">
-      <h2 style="margin: 0; font-size: 17px; font-weight: 600">Taux d'épargne</h2>
-      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 120px)); gap: 40px; align-items: end; height: 180px">
-        <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; height: 100%"><span style="font-size: 14px; font-variant-numeric: tabular-nums">12 %</span><div style="width: 100%; height: 58%; background: var(--line-input); border-radius: 6px 6px 0 0"></div></div>
-        <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; height: 100%"><span style="font-size: 14px; font-variant-numeric: tabular-nums">17 %</span><div style="width: 100%; height: 82%; background: var(--line-input); border-radius: 6px 6px 0 0"></div></div>
-        <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; height: 100%"><span style="font-size: 14px; font-weight: 600; color: var(--brand-ink); font-variant-numeric: tabular-nums">18,6 %</span><div style="width: 100%; height: 90%; background: var(--brand-ink); border-radius: 6px 6px 0 0"></div></div>
+    <sc-if value="{{isEmpty}}" hint-placeholder-val="{{false}}">
+      <section aria-label="Aucun mois clôturé" style="display: flex; flex-direction: column; gap: 12px; padding: 24px; border-radius: 14px; border: 1px dashed var(--line-input)">
+        <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 20px">Votre premier bilan apparaîtra ici</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.5; color: var(--muted)">Fin octobre, notez ce que vous avez réellement dépensé et épargné. Chaque mois clôturé s'ajoute ici, et vous verrez votre taux d'épargne évoluer.</p>
+        <a href="TableauDesktop.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--brand-ink); font-weight: 600; font-size: 15px; text-decoration: none">Voir le budget d'octobre</a>
+      </section>
+    </sc-if>
+    <sc-if value="{{hasMonths}}" hint-placeholder-val="{{true}}">
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+      <div style="flex: 1 1 360px; min-width: 0"><section aria-label="Taux d'épargne par mois" style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-size: 16px; font-weight: 600">Taux d'épargne</h2>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 96px)); gap: 16px; align-items: end; height: 150px">
+        <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; height: 100%"><span style="font-size: 13px; font-variant-numeric: tabular-nums;">12 %</span><div style="width: 100%; height: 58%; border-radius: 6px 6px 0 0; background: var(--chart-1)"></div></div>
+        <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; height: 100%"><span style="font-size: 13px; font-variant-numeric: tabular-nums;">17 %</span><div style="width: 100%; height: 82%; border-radius: 6px 6px 0 0; background: var(--chart-1)"></div></div>
+        <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; height: 100%"><span style="font-size: 13px; font-variant-numeric: tabular-nums; color: var(--muted)">en cours</span><div style="width: 100%; height: 100%; border-radius: 6px 6px 0 0; border: 1.5px dashed var(--line-input); border-bottom: 0; box-sizing: border-box"></div></div>
       </div>
-      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 120px)); gap: 40px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px"><span>AOÛT</span><span>SEPT.</span><span>OCT.</span></div>
-    </section>
-
-    <section aria-label="Mois" style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 8px 28px; overflow-x: auto">
-      <table style="width: 100%; border-collapse: collapse; font-size: 16px; font-variant-numeric: tabular-nums">
-        <thead>
-          <tr style="text-align: left; color: var(--muted); font-size: 14px">
-            <th scope="col" style="padding: 14px 0; font-weight: 500">Mois</th>
-            <th scope="col" style="padding: 14px 0; font-weight: 500">Méthode</th>
-            <th scope="col" style="padding: 14px 0; font-weight: 500; text-align: right">Épargne réelle / prévue</th>
-            <th scope="col" style="padding: 14px 0; font-weight: 500; text-align: right">Taux</th>
-            <th scope="col" style="padding: 14px 0 14px 24px; font-weight: 500">Note</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="border-top: 1px solid var(--line)"><th scope="row" style="padding: 16px 0; text-align: left"><a href="ClotureDesktop.dc.html">Octobre 2026</a></th><td>50/30/20</td><td style="text-align: right">93 000 / 100 000</td><td style="text-align: right; color: var(--brand-ink); font-weight: 600">18,6 %</td><td style="padding-left: 24px; color: var(--danger)">Envies dépassées</td></tr>
-          <tr style="border-top: 1px solid var(--line)"><th scope="row" style="padding: 16px 0; text-align: left"><a href="ClotureDesktop.dc.html">Septembre 2026</a></th><td>50/30/20</td><td style="text-align: right">85 000 / 100 000</td><td style="text-align: right">17 %</td><td style="padding-left: 24px; color: var(--danger)">Envies dépassées</td></tr>
-          <tr style="border-top: 1px solid var(--line)"><th scope="row" style="padding: 16px 0; text-align: left"><a href="ClotureDesktop.dc.html">Août 2026</a></th><td>80/20</td><td style="text-align: right">60 000 / 100 000</td><td style="text-align: right">12 %</td><td style="padding-left: 24px; color: var(--muted)">Premier mois</td></tr>
-        </tbody>
-      </table>
-    </section>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 96px)); gap: 16px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px"><span>AOÛT</span><span>SEPT.</span><span>OCT.</span></div>
+    </section></div>
+      <div style="flex: 999 1 420px; min-width: 0"><ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+      <li><a href="TableauDesktop.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none">
+        <span style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><strong style="font-size: 17px">Octobre 2026</strong><span style="padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; border: 1px solid var(--line-input); color: var(--muted)">En cours</span></span>
+        <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums">50/30/20 · épargne 93 000 sur 100 000 prévus au 16 octobre</span>
+      </a></li>
+      <li><a href="ClotureDesktop.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none">
+        <span style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><strong style="font-size: 17px">Septembre 2026</strong><span style="padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; background: var(--tint); color: var(--ink)">Clôturé · 17 %</span></span>
+        <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums">50/30/20 · épargne 85 000 sur 100 000 · envies au-dessus du prévu</span>
+      </a></li>
+      <li><a href="ClotureDesktop.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none">
+        <span style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><strong style="font-size: 17px">Août 2026</strong><span style="padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; background: var(--tint); color: var(--ink)">Clôturé · 12 %</span></span>
+        <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums">80/20 · épargne 60 000 sur 100 000 · premier mois</span>
+      </a></li>
+    </ul></div>
+    </div>
+    </sc-if>
   </main>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark","auto"],"default":"light"},"$preview":{"width":1440,"height":1000}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark","auto"],"default":"light"},"etat":{"editor":"enum","options":["rempli","vide"],"default":"rempli"},"$preview":{"width":1440,"height":1000}}'>
 function themeVals(self) {
   var t = (self.state && self.state.theme) || self.props.theme || 'light';
   var set = function (v) { return function () { self.setState({ theme: v }); }; };
@@ -89,7 +90,10 @@ function themeVals(self) {
   };
 }
 class Component extends DCLogic {
-renderVals() { return themeVals(this); }
+  renderVals() {
+    var empty = this.props.etat === 'vide';
+    return Object.assign(themeVals(this), { isEmpty: empty, hasMonths: !empty, countText: empty ? 'Aucun mois clôturé pour l’instant' : '2 mois clôturés, octobre en cours' });
+  }
 }
 </script>
 </body>

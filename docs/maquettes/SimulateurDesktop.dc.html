@@ -11,14 +11,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&amp;family=Instrument+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
 <style>
 body{margin:0}
-[data-sf]{--bg:#ffffff;--surface:#ffffff;--sunken:#f3f5f4;--ink:#0e1110;--muted:#5e6662;--line:#e4e7e5;--line-input:#8a928e;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#07863f;--tint:#e6fcef;--gold:#c9a26b;--gold-ink:#86652c;--warning:#995a00;--danger:#c2261b;--on-danger:#ffffff;--chart-1:#07863f;--chart-2:#86652c;--chart-3:#2f6fb3;--chart-4:#c0562f;--chart-5:#7a5aa8;--chart-6:#a3477a;--logo-tile:#0e1110;--logo-hz:#f3f5f4;color-scheme:light}
+[data-sf]{--bg:#ffffff;--surface:#ffffff;--sunken:#f3f5f4;--ink:#0e1110;--muted:#5e6662;--line:#e4e7e5;--line-input:#8a928e;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#067a39;--tint:#e6fcef;--gold:#c9a26b;--gold-ink:#86652c;--warning:#995a00;--danger:#c2261b;--on-danger:#ffffff;--chart-1:#067a39;--chart-2:#86652c;--chart-3:#2f6fb3;--chart-4:#c0562f;--chart-5:#7a5aa8;--chart-6:#a3477a;--logo-tile:#0e1110;--logo-hz:#f3f5f4;color-scheme:light}
 [data-sf][data-theme="dark"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}
 @media (prefers-color-scheme: dark){[data-sf][data-theme="auto"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}}
 [data-sf]{background:var(--bg);color:var(--ink);transition:background-color .3s,color .3s}
 a{color:var(--brand-ink)}a:hover{color:var(--ink)}
 input,select,textarea{color-scheme:inherit}
 input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--brand-ink);outline-offset:2px}
-.ic-brand{stroke:var(--brand-ink)}.ic-muted{stroke:var(--muted)}.ic-warn{stroke:var(--warning)}
+.ic-brand{stroke:var(--brand-ink)}.ic-muted{stroke:var(--muted)}.ic-warn{stroke:var(--warning)}.ic-ink{stroke:var(--ink)}
 .lg-tile{fill:var(--logo-tile)}.lg-bar{fill:var(--brand)}.lg-sun{fill:var(--gold)}.lg-hz{fill:var(--logo-hz)}
 </style>
 </helmet>
@@ -35,34 +35,36 @@ input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible,te
         <a href="ApprendreDesktop.dc.html" style="text-decoration: none; color: var(--ink)">Apprendre</a>
         <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; color: var(--muted)">FR · EN</span>
         <a href="ConnexionDesktop.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border: 1px solid var(--brand-ink); border-radius: 10px; font-weight: 600; text-decoration: none">Se connecter</a>
-      <button type="button" onClick="{{toggleTheme}}" aria-label="{{themeLabel}}" title="{{themeLabel}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: none; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer"><sc-if value="{{isDark}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.9 4.9 1.4 1.4"></path><path d="m17.7 17.7 1.4 1.4"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m4.9 19.1 1.4-1.4"></path><path d="m17.7 6.3 1.4-1.4"></path></svg></sc-if><sc-if value="{{isLight}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg></sc-if></button></nav>
-  </header>
+        <button type="button" onClick="{{toggleTheme}}" aria-label="{{themeLabel}}" title="{{themeLabel}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: none; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer"><sc-if value="{{isDark}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.9 4.9 1.4 1.4"></path><path d="m17.7 17.7 1.4 1.4"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m4.9 19.1 1.4-1.4"></path><path d="m17.7 6.3 1.4-1.4"></path></svg></sc-if><sc-if value="{{isLight}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg></sc-if></button>
+      </nav>
+    </header>
 
     <div style="display: flex; flex-direction: column; gap: 8px">
       <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 44px; line-height: 1.1">Répartir mon revenu</h1>
-      <p style="margin: 0; font-size: 17px; color: var(--muted)">Changez le montant ou la méthode : tout se recalcule immédiatement.</p>
+      <p style="margin: 0; font-size: 17px; color: var(--muted)">Changez le montant ou la méthode : tout se recalcule immédiatement. Rien n'est enregistré tant que vous ne créez pas de compte.</p>
     </div>
 
     <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
       <div style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
-        <section aria-label="Votre situation" style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+        <section aria-label="Votre situation" style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
           <label for="dincome" style="font-weight: 600; font-size: 16px">Revenu mensuel net</label>
           <div style="display: flex; gap: 8px">
-            <input id="dincome" inputmode="numeric" value="{{incomeText}}" onChange="{{onIncome}}" style="flex: 1; min-width: 0; height: 56px; box-sizing: border-box; border: 1px solid var(--line-input); border-radius: 10px; padding: 0 16px; font-family: Syne, sans-serif; font-weight: 600; font-size: 26px; font-variant-numeric: tabular-nums; color: var(--ink); background: var(--surface)">
-            <button type="button" aria-label="Devise : franc CFA" style="height: 56px; padding: 0 16px; border: 1px solid var(--line-input); border-radius: 10px; background: var(--surface); font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 14px; color: var(--ink)">FCFA ▾</button>
+            <input id="dincome" inputmode="numeric" autocomplete="off" value="{{incomeText}}" onInput="{{onIncome}}" onChange="{{onIncome}}" style="flex: 1; min-width: 0; height: 56px; box-sizing: border-box; border: 1px solid var(--line-input); border-radius: 10px; padding: 0 16px; font-family: Syne, sans-serif; font-weight: 600; font-size: 26px; font-variant-numeric: tabular-nums; color: var(--ink); background: var(--surface)">
+            <button type="button" aria-label="Devise : franc CFA. Changer de devise" style="display: inline-flex; align-items: center; gap: 6px; height: 56px; padding: 0 14px; border: 1px solid var(--line-input); border-radius: 10px; background: var(--surface); font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 14px; color: var(--ink)">FCFA<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
           </div>
-          <label for="dess" style="font-size: 15px; color: var(--muted)">Dépenses essentielles par mois (facultatif)</label>
-          <input id="dess" inputmode="numeric" value="{{essText}}" onChange="{{onEss}}" style="height: 48px; box-sizing: border-box; border: 1px solid var(--line-input); border-radius: 10px; padding: 0 16px; font-size: 17px; font-variant-numeric: tabular-nums; color: var(--ink); background: var(--surface)">
+          <label for="dess" style="margin-top: 6px; font-size: 15px; font-weight: 600">Dépenses essentielles par mois <span style="font-weight: 400; color: var(--muted)">(facultatif)</span></label>
+          <input id="dess" inputmode="numeric" autocomplete="off" placeholder="ex. 300 000" value="{{essText}}" onInput="{{onEss}}" onChange="{{onEss}}" style="height: 48px; box-sizing: border-box; border: 1px solid var(--line-input); border-radius: 10px; padding: 0 16px; font-size: 17px; font-variant-numeric: tabular-nums; color: var(--ink); background: var(--surface)">
+          <span style="font-size: 14px; line-height: 1.45; color: var(--muted)">Loyer, nourriture, transport, factures : ce que vous ne pouvez pas éviter.</span>
         </section>
         <section aria-label="Méthodes" style="display: flex; flex-direction: column; gap: 10px">
-          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: .08em; color: var(--muted)">CHOISISSEZ UNE MÉTHODE</span>
-          <div style="display: flex; flex-direction: column; gap: 8px">
+          <h2 style="margin: 0; font-size: 17px; font-weight: 600">Choisissez une méthode</h2>
+          <div role="radiogroup" aria-label="Méthode de répartition" style="display: flex; flex-direction: column; gap: 8px">
             <sc-for list="{{methods}}" as="m" hint-placeholder-count="6">
               <sc-if value="{{m.on}}" hint-placeholder-val="{{false}}">
-                <button type="button" aria-pressed="true" onClick="{{m.pick}}" style="display: flex; justify-content: space-between; align-items: center; min-height: 52px; padding: 0 18px; border: 1px solid var(--brand-ink); border-radius: 10px; background: var(--tint); color: var(--ink); font-family: inherit; font-size: 16px; font-weight: 600; text-align: left">{{m.name}}<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--brand-ink)">{{m.label}}</span></button>
+                <button type="button" role="radio" aria-checked="true" onClick="{{m.pick}}" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 52px; padding: 0 18px; border: 1px solid var(--brand); border-radius: 10px; background: var(--brand); color: var(--on-brand); font-family: inherit; font-size: 16px; font-weight: 600; text-align: left; cursor: pointer">{{m.label}}<span style="font-weight: 400; font-size: 15px; color: var(--on-brand-muted)">{{m.hint}}</span></button>
               </sc-if>
               <sc-if value="{{m.off}}" hint-placeholder-val="{{true}}">
-                <button type="button" aria-pressed="false" onClick="{{m.pick}}" style="display: flex; justify-content: space-between; align-items: center; min-height: 52px; padding: 0 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font-family: inherit; font-size: 16px; text-align: left">{{m.name}}<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted)">{{m.label}}</span></button>
+                <button type="button" role="radio" aria-checked="false" onClick="{{m.pick}}" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 52px; padding: 0 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font-family: inherit; font-size: 16px; font-weight: 600; text-align: left; cursor: pointer">{{m.label}}<span style="font-weight: 400; font-size: 15px; color: var(--muted)">{{m.hint}}</span></button>
               </sc-if>
             </sc-for>
           </div>
@@ -71,56 +73,83 @@ input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible,te
       </div>
 
       <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
-        <section aria-label="Répartition" style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 32px; display: flex; flex-direction: column; gap: 20px">
-          <div style="display: flex; flex-direction: column; gap: 6px">
-            <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 30px">{{current.name}}</h2>
-            <p style="margin: 0; font-size: 16px; line-height: 1.55; color: var(--muted)">{{current.desc}}</p>
-          </div>
-          <sc-if value="{{current.warn}}" hint-placeholder-val="{{false}}">
-            <p role="note" style="margin: 0; padding: 14px 16px; border-radius: 10px; background: var(--sunken); font-size: 15px; line-height: 1.5; color: var(--warning)"><strong>Attention :</strong> ce modèle convient si vos dépenses essentielles sont déjà couvertes.</p>
-          </sc-if>
-          <div style="display: flex; height: 20px; border-radius: 999px; overflow: hidden; gap: 3px" aria-hidden="true">
-            <sc-for list="{{envs}}" as="e" hint-placeholder-count="3">
-              <div style="{{e.seg}}"></div>
-            </sc-for>
-          </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px">
-            <sc-for list="{{envs}}" as="e" hint-placeholder-count="3">
-              <div style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 10px; background: var(--sunken)">
-                <span style="display: flex; align-items: center; gap: 8px; font-size: 15px"><span style="{{e.dot}}" aria-hidden="true"></span>{{e.label}}</span>
-                <strong style="font-family: Syne, sans-serif; font-weight: 600; font-size: 24px; font-variant-numeric: tabular-nums">{{e.amountText}}</strong>
-                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted)">{{e.pctText}}</span>
+        <sc-if value="{{noIncome}}" hint-placeholder-val="{{false}}">
+          <p role="status" style="margin: 0; padding: 32px; border-radius: 14px; border: 1px dashed var(--line-input); font-size: 17px; line-height: 1.5; color: var(--muted)">Entrez votre revenu mensuel pour voir la répartition.</p>
+        </sc-if>
+        <sc-if value="{{hasIncome}}" hint-placeholder-val="{{true}}">
+          <section aria-label="Répartition" aria-live="polite" style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 32px; display: flex; flex-direction: column; gap: 20px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 30px">{{current.name}}</h2>
+              <p style="margin: 0; font-size: 16px; line-height: 1.55; color: var(--muted)">{{current.desc}}</p>
+              <a href="FicheMethodeDesktop.dc.html" style="font-size: 15px; font-weight: 600">Comprendre cette méthode</a>
+            </div>
+            <sc-if value="{{current.warn}}" hint-placeholder-val="{{false}}">
+              <p role="note" style="margin: 0; display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 10px; background: var(--sunken); font-size: 15px; line-height: 1.5; color: var(--warning)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="ic-warn" stroke-width="1.5" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path></svg><span>Ce modèle convient si vos dépenses essentielles sont déjà couvertes.</span></p>
+            </sc-if>
+            <div style="display: flex; height: 20px; border-radius: 999px; overflow: hidden; gap: 3px" aria-hidden="true">
+              <sc-for list="{{envs}}" as="e" hint-placeholder-count="3">
+                <div style="{{e.seg}}"></div>
+              </sc-for>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px">
+              <sc-for list="{{envs}}" as="e" hint-placeholder-count="3">
+                <div style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 10px; background: var(--sunken)">
+                  <span style="display: flex; align-items: center; gap: 8px; font-size: 15px"><span style="{{e.dot}}" aria-hidden="true"></span>{{e.label}}</span>
+                  <strong style="font-family: Syne, sans-serif; font-weight: 600; font-size: 24px; font-variant-numeric: tabular-nums">{{e.amountText}}</strong>
+                  <sc-if value="{{e.editable}}" hint-placeholder-val="{{false}}">
+                    <span style="display: inline-flex; align-items: center; gap: 4px"><input inputmode="numeric" aria-label="{{e.pctLabel}}" value="{{e.pct}}" onInput="{{e.onPct}}" onChange="{{e.onPct}}" style="width: 60px; height: 44px; box-sizing: border-box; border: 1px solid var(--line-input); border-radius: 10px; text-align: right; padding: 0 8px; font-size: 15px; font-variant-numeric: tabular-nums; background: var(--surface); color: var(--ink)"><span style="font-size: 14px; color: var(--muted)">%</span></span>
+                  </sc-if>
+                  <sc-if value="{{e.fixed}}" hint-placeholder-val="{{true}}">
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted)">{{e.pctText}}</span>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{totalOff}}" hint-placeholder-val="{{false}}">
+              <p role="alert" style="margin: 0; display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 10px; background: var(--sunken); font-size: 15px; line-height: 1.5; color: var(--warning)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="ic-warn" stroke-width="1.5" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path></svg><span>{{totalMessage}}</span></p>
+            </sc-if>
+            <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 14px; font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums">
+              <span>Total</span><span>{{totalText}} FCFA · {{totalPctText}}</span>
+            </div>
+          </section>
+
+          <section aria-label="Suggestions" style="display: flex; flex-direction: column; gap: 12px">
+            <h2 style="margin: 0; font-size: 17px; font-weight: 600">Pour votre situation</h2>
+            <sc-if value="{{tipsDown}}" hint-placeholder-val="{{false}}">
+              <p role="status" style="margin: 0; padding: 20px; border-radius: 14px; background: var(--sunken); font-size: 16px; line-height: 1.5; color: var(--muted)">Les conseils sont momentanément indisponibles. Vos montants restent calculés ; réessayez dans un instant.</p>
+            </sc-if>
+            <sc-if value="{{tipsUp}}" hint-placeholder-val="{{true}}">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px">
+                <sc-for list="{{tips}}" as="t" hint-placeholder-count="2">
+                  <article style="display: flex; gap: 12px; padding: 20px; border-radius: 14px; background: var(--tint)">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="ic-brand" stroke-width="1.5" aria-hidden="true" style="flex: none"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7V16h8v-1.3A7 7 0 0 0 12 2Z"></path></svg>
+                    <p style="margin: 0; font-size: 16px; line-height: 1.5">{{t.text}}</p>
+                  </article>
+                </sc-for>
               </div>
-            </sc-for>
-          </div>
-          <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 14px; font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums">
-            <span>Total</span><span>{{totalText}} FCFA · 100 %</span>
-          </div>
-        </section>
+            </sc-if>
+          </section>
 
-        <section aria-label="Suggestions" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px">
-          <sc-for list="{{tips}}" as="t" hint-placeholder-count="2">
-            <article style="display: flex; gap: 12px; padding: 20px; border-radius: 14px; background: var(--tint)">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="ic-brand" stroke-width="1.5" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
-              <p style="margin: 0; font-size: 16px; line-height: 1.5">{{t.text}}</p>
-            </article>
-          </sc-for>
-          <a href="ConnexionDesktop.dc.html" style="display: flex; flex-direction: column; gap: 8px; padding: 20px; border: 1px dashed var(--brand-ink); border-radius: 14px; text-decoration: none; color: var(--ink)">
-            <strong style="font-size: 16px; color: var(--brand-ink)">+4 autres conseils pour votre situation</strong>
-            <span style="font-size: 15px; line-height: 1.5; color: var(--muted)">Créez votre compte gratuit pour les voir et suivre vos progrès chaque mois.</span>
-          </a>
-        </section>
-
-        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
-          <p style="margin: 0; font-size: 13px; color: var(--muted)">Contenu éducatif, pas un conseil financier personnalisé.</p>
-          <a href="ConnexionDesktop.dc.html" style="display: inline-flex; align-items: center; height: 56px; padding: 0 28px; border-radius: 10px; background: var(--brand); color: var(--on-brand); font-weight: 600; font-size: 17px; text-decoration: none">Enregistrer ce budget gratuitement</a>
-        </div>
+          <section aria-label="Créer un compte" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 24px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface)">
+            <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+              <strong style="font-size: 17px">+4 autres conseils pour votre situation</strong>
+              <span style="font-size: 15px; line-height: 1.5; color: var(--muted)">Créez votre compte gratuit pour les voir, enregistrer ce budget et suivre vos progrès chaque mois.</span>
+            </div>
+            <sc-if value="{{canSave}}" hint-placeholder-val="{{true}}">
+              <a href="ConnexionDesktop.dc.html" style="display: inline-flex; align-items: center; height: 56px; padding: 0 28px; border-radius: 10px; background: var(--brand); color: var(--on-brand); font-weight: 600; font-size: 17px; text-decoration: none">Enregistrer ce budget gratuitement</a>
+            </sc-if>
+            <sc-if value="{{cannotSave}}" hint-placeholder-val="{{false}}">
+              <button type="button" disabled style="height: 56px; padding: 0 24px; border-radius: 10px; border: 1px solid var(--line); background: var(--sunken); color: var(--muted); font-family: inherit; font-weight: 600; font-size: 16px">Ajustez le total à 100 % pour enregistrer</button>
+            </sc-if>
+          </section>
+        </sc-if>
+        <p style="margin: 0; font-size: 13px; color: var(--muted)">Contenu éducatif, pas un conseil financier personnalisé.</p>
       </div>
     </div>
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark","auto"],"default":"light"},"$preview":{"width":1440,"height":1120}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark","auto"],"default":"light"},"conseilsIndisponibles":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":1120}}'>
 function themeVals(self) {
   var t = (self.state && self.state.theme) || self.props.theme || 'light';
   var set = function (v) { return function () { self.setState({ theme: v }); }; };
@@ -132,50 +161,65 @@ function themeVals(self) {
     isAuto: t === 'auto', notAuto: t !== 'auto', isLightOnly: t === 'light', notLightOnly: t !== 'light', isDarkOnly: t === 'dark', notDarkOnly: t !== 'dark'
   };
 }
+// Each envelope keeps one colour everywhere: needs blue, wants gold, savings green, giving plum, learning violet.
+var C = { need: 'var(--chart-3)', want: 'var(--chart-2)', save: 'var(--chart-1)', save2: 'var(--chart-4)', give: 'var(--chart-6)', learn: 'var(--chart-5)' };
 var METHODS = [
-  { id: '50-30-20', label: '50/30/20', name: 'Méthode 50/30/20', desc: 'Une moitié pour les besoins, un tiers pour les envies, le reste pour épargner.', envs: [['Besoins', 50, 'live'], ['Envies', 30, 'live'], ['Épargne', 20, 'save']] },
-  { id: '70-20-10', label: '70/20/10', name: 'Méthode 70/20/10', desc: 'Dépenses courantes, épargne, et une part pour les dons ou la dîme.', envs: [['Dépenses', 70, 'live'], ['Épargne', 20, 'save'], ['Dons / dîme', 10, 'give']] },
-  { id: '80-20', label: '80/20', name: 'Méthode 80/20', desc: 'La plus simple : mettez 20 % de côté, vivez avec le reste.', envs: [['Dépenses', 80, 'live'], ['Épargne', 20, 'save']] },
-  { id: 'six-jars', label: '6 COMPTES', name: 'Méthode des 6 comptes', desc: 'Six enveloppes, chacune avec un rôle précis.', envs: [['Nécessités', 55, 'live'], ['Liberté financière', 10, 'save'], ['Épargne long terme', 10, 'save'], ['Éducation', 10, 'live'], ['Loisirs', 10, 'live'], ['Dons', 5, 'give']] },
-  { id: 'soon', label: '10/70/20', name: 'Modèle Soon 10/70/20', desc: 'Inspiré de FIRE : une épargne très élevée pour viser l’indépendance financière.', warn: true, envs: [['Dîme / dons', 10, 'give'], ['Épargne et investissement', 70, 'save'], ['Dépenses personnelles', 20, 'live']] },
-  { id: 'custom', label: 'LIBRE', name: 'Répartition personnalisée', desc: 'Vos catégories, vos pourcentages. Le total doit faire 100 %.', envs: [['Besoins', 60, 'live'], ['Épargne', 25, 'save'], ['Plaisirs', 15, 'live']] }
+  { id: '50-30-20', label: '50/30/20', hint: 'Équilibrée', name: 'Méthode 50/30/20', desc: 'La moitié pour les besoins, un peu moins d’un tiers pour les envies, le reste pour épargner.', envs: [['Besoins', 50, 'need'], ['Envies', 30, 'want'], ['Épargne', 20, 'save']] },
+  { id: '70-20-10', label: '70/20/10', hint: 'Avec les dons', name: 'Méthode 70/20/10', desc: 'Dépenses courantes, épargne, et une part pour les dons ou la dîme.', envs: [['Dépenses', 70, 'need'], ['Épargne', 20, 'save'], ['Dons / dîme', 10, 'give']] },
+  { id: '80-20', label: '80/20', hint: 'La plus simple', name: 'Méthode 80/20', desc: 'Mettez 20 % de côté, vivez avec le reste.', envs: [['Dépenses', 80, 'need'], ['Épargne', 20, 'save']] },
+  { id: 'six-jars', label: '6 comptes', hint: 'Six enveloppes', name: 'Méthode des 6 comptes', desc: 'Six enveloppes, chacune avec un rôle précis.', envs: [['Nécessités', 55, 'need'], ['Investir', 10, 'save'], ['Épargne long terme', 10, 'save2'], ['Éducation', 10, 'learn'], ['Loisirs', 10, 'want'], ['Dons', 5, 'give']] },
+  { id: 'soon', label: 'Soon 10/70/20', hint: 'Très ambitieuse', name: 'Modèle Soon 10/70/20', desc: 'Une épargne très élevée, pour avancer vite vers l’indépendance financière.', warn: true, envs: [['Dîme / dons', 10, 'give'], ['Épargne et investissement', 70, 'save'], ['Dépenses personnelles', 20, 'need']] },
+  { id: 'custom', label: 'Personnalisée', hint: 'À votre façon', name: 'Répartition personnalisée', desc: 'Vos catégories, vos pourcentages. Le total doit faire 100 %.', custom: true, envs: [['Besoins', 60, 'need'], ['Épargne', 25, 'save'], ['Plaisirs', 15, 'want']] }
 ];
-var COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)', 'var(--chart-6)'];
 function fmt(n) { return Math.round(n).toLocaleString('fr-FR'); }
 function digits(v) { var n = parseInt(String(v).replace(/\D/g, ''), 10); return isNaN(n) ? 0 : n; }
-// Amounts always sum to the income: the rounding gap goes to the largest envelope.
-function split(income, envs) {
-  var amounts = envs.map(function (e) { return Math.round(income * e[1] / 100); });
-  var gap = income - amounts.reduce(function (a, b) { return a + b; }, 0);
-  var big = 0; envs.forEach(function (e, i) { if (e[1] > envs[big][1]) big = i; });
-  amounts[big] += gap;
+// Amounts always sum to the allocated share of income: the rounding gap goes to the largest envelope.
+function split(income, pcts) {
+  var total = pcts.reduce(function (a, b) { return a + b; }, 0);
+  var amounts = pcts.map(function (p) { return Math.round(income * p / 100); });
+  var target = Math.round(income * total / 100);
+  var big = pcts.indexOf(Math.max.apply(null, pcts));
+  amounts[big] += target - amounts.reduce(function (a, b) { return a + b; }, 0);
   return amounts;
 }
 class Component extends DCLogic {
-  constructor(p) { super(p); this.state = { income: 500000, ess: 300000, method: '50-30-20' }; }
+  constructor(p) { super(p); this.state = { income: 500000, ess: 300000, method: '50-30-20', custom: [60, 25, 15] }; }
   renderVals() {
     var s = this.state, self = this;
     var m = METHODS.filter(function (x) { return x.id === s.method; })[0];
-    var amounts = split(s.income, m.envs);
+    var pcts = m.custom ? s.custom : m.envs.map(function (e) { return e[1]; });
+    var totalPct = pcts.reduce(function (a, b) { return a + b; }, 0);
+    var amounts = split(s.income, pcts);
     var live = 0, save = 0;
-    m.envs.forEach(function (e, i) { if (e[2] === 'live') live += amounts[i]; if (e[2] === 'save') save += amounts[i]; });
+    m.envs.forEach(function (e, i) { if (e[2] === 'need' || e[2] === 'want' || e[2] === 'learn') live += amounts[i]; if (e[2] === 'save' || e[2] === 'save2') save += amounts[i]; });
     var tips = [];
     if (s.ess > 0 && live < s.ess) tips.push({ text: 'Cette méthode vous laisse ' + fmt(live) + ' FCFA pour vivre, moins que vos dépenses essentielles (' + fmt(s.ess) + ' FCFA). Essayez 50/30/20 ou une répartition personnalisée.' });
-    if (s.ess > 0) tips.push({ text: 'Construisez d’abord votre réserve d’urgence : 3 à 6 mois de dépenses essentielles, soit ' + fmt(s.ess * 3) + ' à ' + fmt(s.ess * 6) + ' FCFA.' });
     if (s.income > 0 && save / s.income < 0.1) tips.push({ text: 'Commencez par mettre 10 % de côté : c’est l’habitude qui compte.' });
-    if (tips.length === 0) tips.push({ text: 'Cette méthode vous fait épargner ' + fmt(save) + ' FCFA par mois, soit ' + fmt(save * 12) + ' FCFA en un an.' });
+    if (s.ess > 0) tips.push({ text: 'Visez une réserve d’urgence de 3 à 6 mois de dépenses essentielles, soit ' + fmt(s.ess * 3) + ' à ' + fmt(s.ess * 6) + ' FCFA.' });
+    if (tips.length < 2) tips.push({ text: 'Avec cette méthode, vous mettez de côté ' + fmt(save) + ' FCFA par mois, soit ' + fmt(save * 12) + ' FCFA en un an.' });
+    var off = m.custom && totalPct !== 100;
     return Object.assign(themeVals(this), {
-      incomeText: fmt(s.income),
+      incomeText: s.income ? fmt(s.income) : '',
       essText: s.ess ? fmt(s.ess) : '',
       onIncome: function (ev) { self.setState({ income: digits(ev.target.value) }); },
       onEss: function (ev) { self.setState({ ess: digits(ev.target.value) }); },
-      methods: METHODS.map(function (x) { return { name: x.name, label: x.label, on: x.id === s.method, off: x.id !== s.method, pick: function () { self.setState({ method: x.id }); } }; }),
+      hasIncome: s.income > 0, noIncome: !(s.income > 0),
+      methods: METHODS.map(function (x) { return { label: x.label, hint: x.hint, on: x.id === s.method, off: x.id !== s.method, pick: function () { self.setState({ method: x.id }); } }; }),
       current: { name: m.name, desc: m.desc, warn: !!m.warn },
       envs: m.envs.map(function (e, i) {
-        var c = COLORS[i % COLORS.length];
-        return { label: e[0], pctText: e[1] + ' %', amountText: fmt(amounts[i]), seg: 'flex: ' + e[1] + '; background: ' + c, dot: 'width: 12px; height: 12px; border-radius: 4px; flex: none; background: ' + c };
+        var c = C[e[2]];
+        return {
+          label: e[0], pct: String(pcts[i]), pctText: pcts[i] + ' %', pctLabel: 'Pourcentage pour ' + e[0], amountText: fmt(amounts[i]),
+          editable: !!m.custom, fixed: !m.custom,
+          onPct: function (ev) { var next = s.custom.slice(); next[i] = Math.min(100, digits(ev.target.value)); self.setState({ custom: next }); },
+          seg: 'flex: ' + Math.max(pcts[i], 0.001) + '; background: ' + c,
+          dot: 'width: 12px; height: 12px; border-radius: 4px; flex: none; background: ' + c
+        };
       }),
-      totalText: fmt(amounts.reduce(function (a, b) { return a + b; }, 0)),
+      totalOff: off, canSave: !off, cannotSave: off,
+      totalMessage: totalPct < 100 ? 'Total : ' + totalPct + ' %. Il reste ' + (100 - totalPct) + ' % à répartir.' : 'Total : ' + totalPct + ' %. Retirez ' + (totalPct - 100) + ' % pour revenir à 100 %.',
+      totalText: fmt(amounts.reduce(function (a, b) { return a + b; }, 0)), totalPctText: totalPct + ' %',
+      tipsDown: !!this.props.conseilsIndisponibles, tipsUp: !this.props.conseilsIndisponibles,
       tips: tips.slice(0, 2)
     });
   }

@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&amp;family=Instrument+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
 <style>
 body{margin:0}
-[data-sf]{--bg:#ffffff;--surface:#ffffff;--sunken:#f3f5f4;--ink:#0e1110;--muted:#5e6662;--line:#e4e7e5;--line-input:#8a928e;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#07863f;--tint:#e6fcef;--gold:#c9a26b;--gold-ink:#86652c;--warning:#995a00;--danger:#c2261b;--on-danger:#ffffff;--chart-1:#07863f;--chart-2:#86652c;--chart-3:#2f6fb3;--chart-4:#c0562f;--chart-5:#7a5aa8;--chart-6:#a3477a;--logo-tile:#0e1110;--logo-hz:#f3f5f4;color-scheme:light}
+[data-sf]{--bg:#ffffff;--surface:#ffffff;--sunken:#f3f5f4;--ink:#0e1110;--muted:#5e6662;--line:#e4e7e5;--line-input:#8a928e;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#067a39;--tint:#e6fcef;--gold:#c9a26b;--gold-ink:#86652c;--warning:#995a00;--danger:#c2261b;--on-danger:#ffffff;--chart-1:#067a39;--chart-2:#86652c;--chart-3:#2f6fb3;--chart-4:#c0562f;--chart-5:#7a5aa8;--chart-6:#a3477a;--logo-tile:#0e1110;--logo-hz:#f3f5f4;color-scheme:light}
 [data-sf][data-theme="dark"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}
 @media (prefers-color-scheme: dark){[data-sf][data-theme="auto"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}}
 [data-sf]{background:var(--bg);color:var(--ink);transition:background-color .3s,color .3s}
@@ -41,13 +41,14 @@ input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible,te
     <li>L'email vient de « Soon Finance ».</li>
   </ul>
 
+  <sc-if value="{{isLimit}}" hint-placeholder-val="{{false}}"><div role="alert" style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 14px; border: 1px solid var(--warning); background: var(--surface)"><strong style="font-size: 15px; color: var(--warning)">Trop de demandes de lien</strong><span style="font-size: 14px; line-height: 1.5">Pour protéger votre compte, attendez 10 minutes avant d’en demander un nouveau. Le dernier lien reçu reste valable 15 minutes.</span></div></sc-if><sc-if value="{{isFail}}" hint-placeholder-val="{{false}}"><div role="alert" style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 14px; border: 1px solid var(--warning); background: var(--surface)"><strong style="font-size: 15px; color: var(--warning)">L’email n’a pas pu partir</strong><span style="font-size: 14px; line-height: 1.5">Vérifiez l’adresse saisie, puis réessayez. Si cela continue, réessayez dans quelques minutes.</span><button type="button" style="align-self: flex-start; min-height: 44px; padding: 0 16px; border-radius: 10px; border: 0; background: var(--brand); color: var(--on-brand); font-family: inherit; font-weight: 600; font-size: 15px; cursor: pointer">Réessayer l’envoi</button></div></sc-if>
   <div style="display: flex; flex-direction: column; gap: 12px; margin-top: auto">
     <button type="button" disabled style="height: 52px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); font-family: inherit; font-weight: 600; font-size: 16px">Renvoyer le lien dans 0:45</button>
     <a href="Connexion.dc.html" style="text-align: center; font-weight: 600; font-size: 15px; padding: 12px 0">Changer d'adresse email</a>
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark","auto"],"default":"light"},"$preview":{"width":390,"height":844}}'>
+<script type="text/x-dc" data-dc-script data-props='{"etat":{"editor":"enum","options":["envoye","limite","echec"],"default":"envoye"},"theme":{"editor":"enum","options":["light","dark","auto"],"default":"light"},"$preview":{"width":390,"height":844}}'>
 function themeVals(self) {
   var t = (self.state && self.state.theme) || self.props.theme || 'light';
   var set = function (v) { return function () { self.setState({ theme: v }); }; };
@@ -60,7 +61,7 @@ function themeVals(self) {
   };
 }
 class Component extends DCLogic {
-renderVals() { return themeVals(this); }
+renderVals() { var e = this.props.etat || 'envoye'; return Object.assign(themeVals(this), { isLimit: e === 'limite', isFail: e === 'echec' }); }
 }
 </script>
 </body>

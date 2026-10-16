@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&amp;family=Instrument+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
 <style>
 body{margin:0}
-[data-sf]{--bg:#ffffff;--surface:#ffffff;--sunken:#f3f5f4;--ink:#0e1110;--muted:#5e6662;--line:#e4e7e5;--line-input:#8a928e;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#07863f;--tint:#e6fcef;--gold:#c9a26b;--gold-ink:#86652c;--warning:#995a00;--danger:#c2261b;--on-danger:#ffffff;--chart-1:#07863f;--chart-2:#86652c;--chart-3:#2f6fb3;--chart-4:#c0562f;--chart-5:#7a5aa8;--chart-6:#a3477a;--logo-tile:#0e1110;--logo-hz:#f3f5f4;color-scheme:light}
+[data-sf]{--bg:#ffffff;--surface:#ffffff;--sunken:#f3f5f4;--ink:#0e1110;--muted:#5e6662;--line:#e4e7e5;--line-input:#8a928e;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#067a39;--tint:#e6fcef;--gold:#c9a26b;--gold-ink:#86652c;--warning:#995a00;--danger:#c2261b;--on-danger:#ffffff;--chart-1:#067a39;--chart-2:#86652c;--chart-3:#2f6fb3;--chart-4:#c0562f;--chart-5:#7a5aa8;--chart-6:#a3477a;--logo-tile:#0e1110;--logo-hz:#f3f5f4;color-scheme:light}
 [data-sf][data-theme="dark"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}
 @media (prefers-color-scheme: dark){[data-sf][data-theme="auto"]{--bg:#0b0d0c;--surface:#141816;--sunken:#1b201d;--ink:#eef2ef;--muted:#9ba59f;--line:#262c29;--line-input:#5f6863;--brand:#2ef07f;--on-brand:#0b1410;--on-brand-muted:#1e4a30;--brand-ink:#2ef07f;--tint:#12251a;--gold:#c9a26b;--gold-ink:#d9b27a;--warning:#f0b34a;--danger:#ff8a80;--on-danger:#0b0d0c;--chart-1:#2ef07f;--chart-2:#d9b27a;--chart-3:#6fa8e8;--chart-4:#f08a5d;--chart-5:#b49ae6;--chart-6:#e58ab8;--logo-tile:#1b201d;--logo-hz:#eef2ef;color-scheme:dark}}
 [data-sf]{background:var(--bg);color:var(--ink);transition:background-color .3s,color .3s}
@@ -42,11 +42,11 @@ input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible,te
     <div style="display: flex; flex-wrap: wrap; gap: 56px; align-items: flex-start">
       <article style="flex: 999 1 560px; min-width: 0; max-width: 720px; display: flex; flex-direction: column; gap: 28px">
         <div style="display: flex; flex-direction: column; gap: 12px">
-          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; letter-spacing: .08em; color: var(--gold-ink)">MÉTHODE · 5 MIN DE LECTURE</span>
           <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 700; font-size: 72px; line-height: 1; letter-spacing: -0.02em">50/30/20</h1>
+          <p style="margin: 0; font-size: 15px; color: var(--muted)">Méthode · 5 min de lecture</p>
           <p style="margin: 0; font-size: 21px; line-height: 1.55">Une moitié pour vos besoins, un peu moins d'un tiers pour vos envies, le reste pour épargner.</p>
         </div>
-        <div style="display: flex; height: 22px; border-radius: 999px; overflow: hidden; gap: 3px" aria-hidden="true"><div style="flex: 50; background: var(--brand)"></div><div style="flex: 30; background: var(--chart-2)"></div><div style="flex: 20; background: var(--chart-3)"></div></div>
+        <div style="display: flex; height: 22px; border-radius: 999px; overflow: hidden; gap: 3px" aria-hidden="true"><div style="flex: 50; background: var(--chart-3)"></div><div style="flex: 30; background: var(--chart-2)"></div><div style="flex: 20; background: var(--chart-1)"></div></div>
         <section style="display: flex; flex-direction: column; gap: 14px">
           <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 28px">Comment ça marche</h2>
           <p style="margin: 0; font-size: 18px; line-height: 1.7"><strong>Besoins (50 %)</strong> : ce que vous ne pouvez pas éviter. Loyer, nourriture, transport, factures, frais de scolarité.</p>
@@ -68,9 +68,9 @@ input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible,te
       <aside aria-label="Exemple chiffré" style="flex: 1 1 320px; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 16px">
         <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: .08em; color: var(--muted)">EXEMPLE AVEC 500 000 FCFA</span>
         <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; font-size: 17px; font-variant-numeric: tabular-nums">
-          <li style="display: flex; align-items: center; gap: 10px"><span style="width: 12px; height: 12px; border-radius: 4px; background: var(--brand)"></span><span style="flex: 1">Besoins</span><strong>250 000</strong></li>
+          <li style="display: flex; align-items: center; gap: 10px"><span style="width: 12px; height: 12px; border-radius: 4px; background: var(--chart-3)"></span><span style="flex: 1">Besoins</span><strong>250 000</strong></li>
           <li style="display: flex; align-items: center; gap: 10px"><span style="width: 12px; height: 12px; border-radius: 4px; background: var(--chart-2)"></span><span style="flex: 1">Envies</span><strong>150 000</strong></li>
-          <li style="display: flex; align-items: center; gap: 10px"><span style="width: 12px; height: 12px; border-radius: 4px; background: var(--chart-3)"></span><span style="flex: 1">Épargne</span><strong style="color: var(--brand-ink)">100 000</strong></li>
+          <li style="display: flex; align-items: center; gap: 10px"><span style="width: 12px; height: 12px; border-radius: 4px; background: var(--chart-1)"></span><span style="flex: 1">Épargne</span><strong style="color: var(--brand-ink)">100 000</strong></li>
         </ul>
         <p style="margin: 0; padding-top: 14px; border-top: 1px solid var(--line); font-size: 15px; color: var(--muted)">Soit 1 200 000 FCFA mis de côté en un an.</p>
         <a href="SimulateurDesktop.dc.html" style="display: flex; align-items: center; justify-content: center; height: 52px; border-radius: 10px; background: var(--brand); color: var(--on-brand); font-weight: 600; font-size: 16px; text-decoration: none">Essayer avec mon revenu</a>

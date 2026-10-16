@@ -9,7 +9,7 @@
 | Element | Value |
 |---------|-------|
 | Primary Color | #2EF07F |
-| Secondary Color | #07863F |
+| Secondary Color | #067A39 |
 | Primary Font | Instrument Sans |
 | Display Font | Syne |
 | Voice | Rassurant, Pédagogue, Encourageant, Honnête |
@@ -65,7 +65,7 @@ Deux thèmes, comme Soon Horizons : **clair** (fond blanc pur) et **sombre**, pl
 | Name | Hex | RGB | Usage |
 |------|-----|-----|-------|
 | Mint | #2EF07F | rgb(46,240,127) | Fonds : boutons principaux, bandeaux clés, pilule active, barres du logo. Toujours avec texte #0B1410 (12.4:1). Jamais en texte sur fond clair (1.5:1) |
-| Green Ink | #07863F | rgb(7,134,63) | Vert en texte sur fond clair : liens, montants épargnés, état positif (4.7:1). En sombre, la menthe sert directement de texte |
+| Green Ink | #067A39 | rgb(6,122,57) | Vert en texte sur fond clair : liens, montants épargnés, état positif (5.4:1 sur blanc, 5.1:1 sur menthe pâle). En sombre, la menthe sert directement de texte |
 | Mint Tint | #E6FCEF | rgb(230,252,239) | Suggestions, carte sélectionnée (texte `ink` dessus) |
 
 ### Secondary Colors
@@ -91,7 +91,7 @@ Deux thèmes, comme Soon Horizons : **clair** (fond blanc pur) et **sombre**, pl
 
 | State | Hex | Usage |
 |-------|-----|-------|
-| Success | #07863F | Objectif atteint, mois tenu |
+| Success | #067A39 | Objectif atteint, mois tenu |
 | Warning | #995A00 | Total ≠ 100 %, méthode exigeante, objectif en retard |
 | Error | #C2261B | Erreurs, dépassement, suppression |
 | Info | #2F6FB3 | Renvois pédagogiques |
@@ -114,7 +114,7 @@ Deux thèmes, comme Soon Horizons : **clair** (fond blanc pur) et **sombre**, pl
 
 ### Couleurs des enveloppes (graphiques)
 
-Ordre fixe, une couleur par enveloppe dans l’ordre de la méthode. Clair : #07863F, #86652C, #2F6FB3, #C0562F, #7A5AA8, #A3477A. Sombre : #2EF07F, #D9B27A, #6FA8E8, #F08A5D, #B49AE6, #E58AB8. Toujours doubler la couleur d’un libellé.
+Ordre fixe, une couleur par enveloppe dans l’ordre de la méthode. Clair : #067A39, #86652C, #2F6FB3, #C0562F, #7A5AA8, #A3477A. Sombre : #2EF07F, #D9B27A, #6FA8E8, #F08A5D, #B49AE6, #E58AB8. Toujours doubler la couleur d’un libellé.
 
 ### Accessibility
 
@@ -251,12 +251,12 @@ Minimum = hauteur du soleil du logo.
 | Type | Background | Text | Border Radius |
 |------|------------|------|---------------|
 | Primary | #2EF07F | #0B1410 | 10px |
-| Secondary | Transparent, bordure #07863F | #07863F | 10px |
+| Secondary | Transparent, bordure #067A39 | #067A39 | 10px |
 | Tertiary | Transparent | #5E6662 | 10px |
 
 ### Cards
 - Fond #FFFFFF, bordure 1px #E4E7E5, rayon 14px, pas d’ombre lourde
-- Carte sélectionnée : fond #E6FCEF, bordure #07863F
+- Carte sélectionnée : fond #E6FCEF, bordure #067A39
 
 ### Montants
 - Toujours accompagnés de la devise de l'utilisateur, formatés selon sa langue (`500 000 FCFA`, `€1,500`)
