@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Simulateur Soon Finance</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&amp;family=Instrument+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1f4d3a}a:hover{color:#163a2b}
+input:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #1f4d3a;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1180px; box-sizing: border-box; background: #f4f1eb; color: #141414; font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; display: flex; flex-direction: column; gap: 20px; padding: 16px 20px 32px">
+  <header style="display: flex; align-items: center; justify-content: space-between; height: 48px">
+    <a href="Main.dc.html" aria-label="Retour à l'accueil" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #141414">
+      <svg width="28" height="28" viewBox="0 0 64 64" aria-hidden="true"><rect x="13" y="38" width="8" height="10" rx="1.5" fill="#1f4d3a"></rect><rect x="24" y="31" width="8" height="17" rx="1.5" fill="#1f4d3a"></rect><rect x="35" y="24" width="8" height="24" rx="1.5" fill="#1f4d3a"></rect><circle cx="47" cy="14" r="7" fill="#c9a26b"></circle><rect x="6" y="49" width="52" height="3" fill="#1f4d3a"></rect></svg>
+      <span style="font-family: Syne, sans-serif; font-weight: 700; font-size: 17px">soon finance</span>
+    </a>
+    <a href="Comparer.dc.html" style="font-weight: 600; font-size: 15px; text-decoration: none">Comparer</a>
+  </header>
+
+  <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 28px; line-height: 1.15">Répartir mon revenu</h1>
+
+  <section aria-label="Votre situation" style="display: flex; flex-direction: column; gap: 12px">
+    <label for="income" style="font-weight: 600; font-size: 15px">Revenu mensuel net</label>
+    <div style="display: flex; gap: 8px">
+      <input id="income" inputmode="numeric" value="{{incomeText}}" onChange="{{onIncome}}" style="flex: 1; min-width: 0; height: 52px; box-sizing: border-box; border: 1px solid #6b665e; border-radius: 10px; padding: 0 14px; font-family: Syne, sans-serif; font-weight: 600; font-size: 22px; font-variant-numeric: tabular-nums; color: #141414; background: #ffffff">
+      <button type="button" aria-label="Devise : franc CFA" style="height: 52px; padding: 0 14px; border: 1px solid #6b665e; border-radius: 10px; background: #ffffff; font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 14px; color: #141414">FCFA ▾</button>
+    </div>
+    <label for="ess" style="font-size: 14px; color: #6b665e">Dépenses essentielles par mois <span style="font-style: italic">(facultatif : logement, nourriture, transport)</span></label>
+    <input id="ess" inputmode="numeric" value="{{essText}}" onChange="{{onEss}}" style="height: 44px; box-sizing: border-box; border: 1px solid #6b665e; border-radius: 10px; padding: 0 14px; font-size: 16px; font-variant-numeric: tabular-nums; color: #141414; background: #ffffff">
+  </section>
+
+  <section aria-label="Méthodes" style="display: flex; flex-direction: column; gap: 10px">
+    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: .08em; color: #6b665e">CHOISISSEZ UNE MÉTHODE</span>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px">
+      <sc-for list="{{methods}}" as="m" hint-placeholder-count="6">
+        <sc-if value="{{m.on}}" hint-placeholder-val="{{false}}">
+          <button type="button" aria-pressed="true" onClick="{{m.pick}}" style="min-height: 44px; padding: 0 16px; border: 1px solid #1f4d3a; border-radius: 999px; background: #1f4d3a; color: #ffffff; font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 13px">{{m.label}}</button>
+        </sc-if>
+        <sc-if value="{{m.off}}" hint-placeholder-val="{{true}}">
+          <button type="button" aria-pressed="false" onClick="{{m.pick}}" style="min-height: 44px; padding: 0 16px; border: 1px solid #ddd7cc; border-radius: 999px; background: #ffffff; color: #141414; font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 13px">{{m.label}}</button>
+        </sc-if>
+      </sc-for>
+    </div>
+  </section>
+
+  <section aria-label="Répartition" style="background: #ffffff; border: 1px solid #ddd7cc; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 600; font-size: 22px">{{current.name}}</h2>
+      <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #6b665e">{{current.desc}}</p>
+    </div>
+    <sc-if value="{{current.warn}}" hint-placeholder-val="{{false}}">
+      <p role="note" style="margin: 0; display: flex; gap: 8px; padding: 12px; border-radius: 10px; background: #f4f1eb; font-size: 14px; line-height: 1.45; color: #865a0c"><strong>Attention :</strong> ce modèle convient si vos dépenses essentielles sont déjà couvertes.</p>
+    </sc-if>
+    <div style="display: flex; height: 14px; border-radius: 999px; overflow: hidden; gap: 2px" aria-hidden="true">
+      <sc-for list="{{envs}}" as="e" hint-placeholder-count="3">
+        <div style="{{e.seg}}"></div>
+      </sc-for>
+    </div>
+    <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px">
+      <sc-for list="{{envs}}" as="e" hint-placeholder-count="3">
+        <li style="display: flex; align-items: center; gap: 12px">
+          <span style="{{e.dot}}" aria-hidden="true"></span>
+          <span style="flex: 1; min-width: 0; font-size: 15px">{{e.label}}</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6b665e">{{e.pctText}}</span>
+          <strong style="min-width: 96px; text-align: right; font-size: 16px; font-variant-numeric: tabular-nums">{{e.amountText}}</strong>
+        </li>
+      </sc-for>
+    </ul>
+    <div style="display: flex; justify-content: space-between; border-top: 1px solid #ddd7cc; padding-top: 12px; font-size: 14px; color: #6b665e; font-variant-numeric: tabular-nums">
+      <span>Total</span><span>{{totalText}} FCFA · 100 %</span>
+    </div>
+  </section>
+
+  <section aria-label="Suggestions" style="display: flex; flex-direction: column; gap: 10px">
+    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: .08em; color: #6b665e">POUR VOTRE SITUATION</span>
+    <sc-for list="{{tips}}" as="t" hint-placeholder-count="2">
+      <article style="display: flex; gap: 12px; padding: 16px; border-radius: 14px; background: #e3ece6">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1f4d3a" stroke-width="1.5" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
+        <p style="margin: 0; font-size: 15px; line-height: 1.5">{{t.text}}</p>
+      </article>
+    </sc-for>
+    <a href="Tableau.dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border: 1px dashed #1f4d3a; border-radius: 14px; text-decoration: none; color: #141414">
+      <strong style="font-size: 15px; color: #1f4d3a">+4 autres conseils pour votre situation</strong>
+      <span style="font-size: 14px; line-height: 1.45; color: #6b665e">Créez votre compte gratuit pour les voir, enregistrer ce budget et suivre vos progrès chaque mois.</span>
+    </a>
+  </section>
+
+  <a href="Tableau.dc.html" style="display: flex; align-items: center; justify-content: center; height: 52px; border-radius: 10px; background: #1f4d3a; color: #ffffff; font-weight: 600; font-size: 16px; text-decoration: none">Enregistrer ce budget gratuitement</a>
+  <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #6b665e">Contenu éducatif, pas un conseil financier personnalisé.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1180}}'>
+var METHODS = [
+  { id: '50-30-20', label: '50/30/20', name: 'Méthode 50/30/20', desc: 'Une moitié pour les besoins, un tiers pour les envies, le reste pour épargner.', envs: [['Besoins', 50, 'live'], ['Envies', 30, 'live'], ['Épargne', 20, 'save']] },
+  { id: '70-20-10', label: '70/20/10', name: 'Méthode 70/20/10', desc: 'Dépenses courantes, épargne, et une part pour les dons ou la dîme.', envs: [['Dépenses', 70, 'live'], ['Épargne', 20, 'save'], ['Dons / dîme', 10, 'give']] },
+  { id: '80-20', label: '80/20', name: 'Méthode 80/20', desc: 'La plus simple : mettez 20 % de côté, vivez avec le reste.', envs: [['Dépenses', 80, 'live'], ['Épargne', 20, 'save']] },
+  { id: 'six-jars', label: '6 comptes', name: 'Méthode des 6 comptes', desc: 'Six enveloppes, chacune avec un rôle précis.', envs: [['Nécessités', 55, 'live'], ['Liberté financière', 10, 'save'], ['Épargne long terme', 10, 'save'], ['Éducation', 10, 'live'], ['Loisirs', 10, 'live'], ['Dons', 5, 'give']] },
+  { id: 'soon', label: 'Soon 10/70/20', name: 'Modèle Soon 10/70/20', desc: 'Inspiré de FIRE : une épargne très élevée pour viser l’indépendance financière.', warn: true, envs: [['Dîme / dons', 10, 'give'], ['Épargne et investissement', 70, 'save'], ['Dépenses personnelles', 20, 'live']] },
+  { id: 'custom', label: 'Personnalisée', name: 'Répartition personnalisée', desc: 'Vos catégories, vos pourcentages. Le total doit faire 100 %.', envs: [['Besoins', 60, 'live'], ['Épargne', 25, 'save'], ['Plaisirs', 15, 'live']] }
+];
+var COLORS = ['#1f4d3a', '#7d6442', '#5f8a6e', '#b5532e', '#4a6d8c', '#7a5c7e'];
+function fmt(n) { return Math.round(n).toLocaleString('fr-FR'); }
+function digits(v) { var n = parseInt(String(v).replace(/\D/g, ''), 10); return isNaN(n) ? 0 : n; }
+// Amounts always sum to the income: the rounding gap goes to the largest envelope.
+function split(income, envs) {
+  var amounts = envs.map(function (e) { return Math.round(income * e[1] / 100); });
+  var gap = income - amounts.reduce(function (a, b) { return a + b; }, 0);
+  var big = 0; envs.forEach(function (e, i) { if (e[1] > envs[big][1]) big = i; });
+  amounts[big] += gap;
+  return amounts;
+}
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { income: 500000, ess: 300000, method: '50-30-20' }; }
+  renderVals() {
+    var s = this.state, self = this;
+    var m = METHODS.filter(function (x) { return x.id === s.method; })[0];
+    var amounts = split(s.income, m.envs);
+    var live = 0, save = 0;
+    m.envs.forEach(function (e, i) { if (e[2] === 'live') live += amounts[i]; if (e[2] === 'save') save += amounts[i]; });
+    var tips = [];
+    if (s.ess > 0 && live < s.ess) tips.push({ text: 'Cette méthode vous laisse ' + fmt(live) + ' FCFA pour vivre, moins que vos dépenses essentielles (' + fmt(s.ess) + ' FCFA). Essayez 50/30/20 ou une répartition personnalisée.' });
+    if (s.ess > 0) tips.push({ text: 'Construisez d’abord votre réserve d’urgence : 3 à 6 mois de dépenses essentielles, soit ' + fmt(s.ess * 3) + ' à ' + fmt(s.ess * 6) + ' FCFA.' });
+    if (s.income > 0 && save / s.income < 0.1) tips.push({ text: 'Commencez par mettre 10 % de côté : c’est l’habitude qui compte.' });
+    if (tips.length === 0) tips.push({ text: 'Cette méthode vous fait épargner ' + fmt(save) + ' FCFA par mois, soit ' + fmt(save * 12) + ' FCFA en un an.' });
+    return {
+      incomeText: fmt(s.income),
+      essText: s.ess ? fmt(s.ess) : '',
+      onIncome: function (ev) { self.setState({ income: digits(ev.target.value) }); },
+      onEss: function (ev) { self.setState({ ess: digits(ev.target.value) }); },
+      methods: METHODS.map(function (x) { return { label: x.label, on: x.id === s.method, off: x.id !== s.method, pick: function () { self.setState({ method: x.id }); } }; }),
+      current: { name: m.name, desc: m.desc, warn: !!m.warn },
+      envs: m.envs.map(function (e, i) {
+        var c = COLORS[i % COLORS.length];
+        return { label: e[0], pctText: e[1] + ' %', amountText: fmt(amounts[i]), seg: 'flex: ' + e[1] + '; background: ' + c, dot: 'width: 12px; height: 12px; border-radius: 4px; flex: none; background: ' + c };
+      }),
+      totalText: fmt(amounts.reduce(function (a, b) { return a + b; }, 0)),
+      tips: tips.slice(0, 2)
+    };
+  }
+}
+</script>
+</body>
+</html>
