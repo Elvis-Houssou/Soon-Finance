@@ -107,7 +107,7 @@ Soon Finance est le coach budget gratuit pour les débutants en finances personn
 
 ### Couleurs des enveloppes (graphiques)
 
-Ordre fixe, une couleur par enveloppe dans l'ordre de la méthode : #1F4D3A forest, #C9A26B gold, #8FB39A sage, #B5532E terracotta, #4A6D8C slate, #7A5C7E plum. Toujours doubler la couleur d'un libellé (jamais la couleur seule).
+Ordre fixe, une couleur par enveloppe dans l'ordre de la méthode. Clair : #1F4D3A forest, #7D6442 or encre, #5F8A6E sauge, #B5532E terracotta, #4A6D8C ardoise, #7A5C7E prune. Sombre : #7FBF9B, #C9A26B, #8FB39A, #D9744E, #7FA3C4, #B08DB4. Toujours doubler la couleur d'un libellé (jamais la couleur seule).
 
 ### Accessibility
 
@@ -258,3 +258,7 @@ Minimum = hauteur du soleil du logo.
 ### Montants
 - Toujours accompagnés de la devise de l'utilisateur, formatés selon sa langue (`500 000 FCFA`, `€1,500`)
 - Chiffres tabulaires
+
+## Design System (Claude Design)
+
+https://claude.ai/artifact/58CA7H8ifSQnvNd4XFbkNq — tokens, typographie, logo. Fichiers du logo : `assets/soon-finance-*.svg`.
