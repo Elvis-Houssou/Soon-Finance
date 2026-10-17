@@ -29,12 +29,14 @@ export function Compare({ locale, t }: { locale: Locale; t: Strings }) {
   const [sim, setSim] = useState<Simulation | null>(null);
   const [ids, setIds] = useState<string[]>(DEFAULTS);
   const [incomeText, setIncomeText] = useState("");
+  const [askIncome, setAskIncome] = useState(false); // captured once: the field must survive the first keystroke
 
   // The draft lives in localStorage, so it can only be read after mount.
   useEffect(() => {
     const s = loadDraft();
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSim(s);
+    setAskIncome(s.income === 0);
     setIds(parseIds(new URLSearchParams(window.location.search).get("m")));
     setIncomeText(s.income ? formatAmount(s.income, s.currency, locale) : "");
   }, [locale]);
@@ -63,7 +65,7 @@ export function Compare({ locale, t }: { locale: Locale; t: Strings }) {
 
   return (
     <div className="flex flex-col gap-6">
-      {sim.income === 0 && (
+      {askIncome && (
         <div className="flex max-w-md flex-col gap-2">
           <label htmlFor="c-income" className="font-semibold">{c.income}</label>
           <input

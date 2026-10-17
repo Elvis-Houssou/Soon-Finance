@@ -56,3 +56,19 @@ test("english and 360px", async ({ page }) => {
   expect(await page.locator("main").innerText()).not.toMatch(/Pour vivre|Choisir|Retirer/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
 });
+
+test("essentials of zero count as unknown", async ({ page }) => {
+  await seed(page, 500000, 0);
+  await page.goto("/fr/comparer");
+  await expect(page.getByText(/Indiquez vos dépenses essentielles/)).toBeVisible();
+  await expect(page.getByText("Couvre vos besoins")).toHaveCount(0);
+  await expect(page.getByText("Trop serré pour vous")).toHaveCount(0);
+});
+
+test("income field survives typing", async ({ page }) => {
+  await page.goto("/fr/comparer");
+  const income = page.getByLabel("Revenu mensuel net");
+  await income.pressSequentially("500000");
+  await expect(income).toBeFocused();
+  await expect(page.getByRole("article", { name: /50\/30\/20/ })).toContainText(nf(400000));
+});
