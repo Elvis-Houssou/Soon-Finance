@@ -23,6 +23,13 @@ def test_split_sum_equals_income(case):
     assert sum(split(case["income"], case["pcts"])) == case["income"]
 
 
+@pytest.mark.parametrize(
+    "case", CASES, ids=[f"{c['income']}-{c['pcts']}" for c in CASES]
+)
+def test_split_amounts_non_negative(case):
+    assert all(part >= 0 for part in split(case["income"], case["pcts"]))
+
+
 def test_split_rejects_total_not_100():
     with pytest.raises(ValueError):
         split(1000, [50, 30, 10])
@@ -31,6 +38,27 @@ def test_split_rejects_total_not_100():
 def test_split_rejects_income_above_max():
     with pytest.raises(ValueError):
         split(MAX_INCOME_MINOR + 1, [50, 30, 20])
+
+
+def test_split_rejects_pct_out_of_range():
+    with pytest.raises(ValueError):
+        split(1000, [-10, 110])
+
+
+def test_split_rejects_negative_income():
+    with pytest.raises(ValueError):
+        split(-1, [50, 50])
+
+
+def test_split_rejects_non_int_inputs():
+    with pytest.raises(ValueError):
+        split(True, [50, 50])
+    with pytest.raises(ValueError):
+        split(1000.0, [50, 50])
+    with pytest.raises(ValueError):
+        split(1000, [True, 99])
+    with pytest.raises(ValueError):
+        split(1000, [50.0, 50])
 
 
 def test_currencies_digits():
