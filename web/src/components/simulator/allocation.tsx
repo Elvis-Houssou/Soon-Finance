@@ -4,7 +4,8 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import { formatMoney } from "@/lib/money";
 import { allocate, totals, type MethodData, type Simulation } from "@/lib/simulation";
-import { envelopeLabel, KIND_BG, type SimStrings } from "./shared";
+import { AllocationBar } from "./allocation-bar";
+import { envelopeLabel, KIND_BG, rowLabel, type SimStrings } from "./shared";
 
 const LEARN = process.env.NEXT_PUBLIC_LEARN_ENABLED === "true";
 
@@ -30,14 +31,10 @@ export function Allocation({
       {method.demanding && (
         <p role="note" className="rounded-[10px] bg-sunken px-4 py-3.5 text-[15px] text-warning">{t.simulator.warning}</p>
       )}
-      <div aria-hidden="true" className="flex h-5 gap-[3px] overflow-hidden rounded-full">
-        {rows.filter((r) => r.pct > 0).map((r) => (
-          <div key={r.key} className={KIND_BG[r.kind]} style={{ flex: r.pct }} />
-        ))}
-      </div>
+      <AllocationBar rows={rows} />
       <ul className="flex flex-col gap-3">
         {rows.map((r) => {
-          const label = r.label !== undefined ? r.label ? envelopeLabel(t, r.label) : t.kinds[r.kind] : envelopeLabel(t, r.key);
+          const label = rowLabel(t, r);
           const head = (chevron: boolean) => (
             <>
               <span className="flex min-w-0 items-center gap-2">

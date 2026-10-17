@@ -1,5 +1,5 @@
 import type { Dictionary } from "@/i18n/dictionaries/fr";
-import type { Kind } from "@/lib/simulation";
+import type { Allocation, Kind } from "@/lib/simulation";
 
 export type SimStrings = Pick<Dictionary, "simulator" | "methods" | "envelopes" | "kinds" | "suggestions">;
 
@@ -17,3 +17,7 @@ export const envelopeLabel = (t: SimStrings, key: string) =>
 
 export const FIELD =
   "min-h-11 w-full min-w-0 rounded-[10px] border border-line-input bg-surface px-3 text-ink tabular-nums";
+
+/** Label of an allocation row: custom name, its kind when blank, else the envelope name. */
+export const rowLabel = (t: SimStrings, r: Allocation) =>
+  r.label !== undefined ? (r.label ? envelopeLabel(t, r.label) : t.kinds[r.kind]) : envelopeLabel(t, r.key);
