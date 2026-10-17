@@ -31,7 +31,7 @@ def test_migrations_upgrade_and_downgrade(tmp_path):
     command.upgrade(config, "head")
     engine = create_engine(url)
     with engine.connect() as connection:
-        assert connection.exec_driver_sql("select version_num from alembic_version").scalar() == "0001"
+        assert connection.exec_driver_sql("select version_num from alembic_version").scalar() == "0002"
 
     command.downgrade(config, "base")
     with engine.connect() as connection:
