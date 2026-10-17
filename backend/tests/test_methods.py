@@ -4,11 +4,11 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from soonfinance.export_methods import render_methods_json
-from soonfinance.main import app
-from soonfinance.methods import DEFAULT_METHOD_ID, METHODS, get_method
+from app.scripts.export_methods import render_methods_json
+from app.main import app
+from app.domain.methods import DEFAULT_METHOD_ID, METHODS, get_method
 
-COMMITTED_JSON = Path(__file__).resolve().parents[2] / "web" / "src" / "content" / "methods.json"
+COMMITTED_JSON = Path(__file__).resolve().parents[2] / "frontend" / "src" / "content" / "methods.json"
 
 
 @pytest.mark.parametrize("method", METHODS, ids=lambda m: m.id)

@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from soonfinance.money import CURRENCIES, MAX_INCOME_MINOR, split
+from app.domain.money import CURRENCIES, MAX_INCOME_MINOR, split
 
 CASES_PATH = Path(__file__).resolve().parents[2] / "shared" / "split-cases.json"
 CASES = json.loads(CASES_PATH.read_text(encoding="utf-8"))

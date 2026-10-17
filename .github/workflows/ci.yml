@@ -2,11 +2,11 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  api:
+  backend:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: api
+        working-directory: backend
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
@@ -16,13 +16,13 @@ jobs:
       # inclut le test de parité methods.json exporté = committé
       - run: uv run pytest -q
 
-  web:
+  frontend:
     runs-on: ubuntu-latest
     env:
-      UV: uv # Playwright démarre l'API via uv (voir playwright.config.ts)
+      UV: uv # Playwright démarre le backend via uv (voir playwright.config.ts)
     defaults:
       run:
-        working-directory: web
+        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: web/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
       - run: npm ci
       - run: npm run lint
       - run: npx vitest run

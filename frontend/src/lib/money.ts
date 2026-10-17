@@ -8,7 +8,7 @@ export const MAX_INCOME_MINOR = 1_000_000_000_000;
 
 const TAGS: Record<Locale, string> = { fr: "fr-FR", en: "en-GB" };
 
-/** Mirrors api/src/soonfinance/money.py; a total != 100 is only for custom-method display. */
+/** Mirrors backend/app/domain/money.py; a total != 100 is only for custom-method display. */
 export function split(incomeMinor: number, pcts: number[]): number[] {
   if (!Number.isInteger(incomeMinor) || !pcts.every((p) => Number.isInteger(p) && p >= 0 && p <= 100))
     throw new RangeError("integer income and 0-100 integer pcts required");

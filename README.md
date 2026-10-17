@@ -1,44 +1,64 @@
 # Soon Finance
 
-## API (`api/`)
+Plateforme gratuite (FR / EN) qui aide à répartir son revenu, épargner et comprendre l'investissement.
 
-Prérequis : Python 3.12 et [uv](https://docs.astral.sh/uv/).
-
-```bash
-cd api
-python -m uv run uvicorn soonfinance.main:app --reload
+```
+backend/    API FastAPI (Python) : méthodes, conseils, base de données (SQLAlchemy + Alembic, Neon en production)
+frontend/   Site Next.js : accueil, simulateur, comparaison (FR / EN, thèmes clair / sombre / auto)
+shared/     Cas de test partagés par le backend et le frontend (calcul de la répartition)
+docs/       Cahier des charges, charte, maquettes, plans
 ```
 
-Tests :
+## Backend (`backend/`)
+
+Prérequis : Python 3.12 et [uv](https://docs.astral.sh/uv/) (sur cette machine : `python -m uv` à la place de `uv`).
 
 ```bash
-cd api
-python -m uv run pytest -q
+cd backend
+uv sync
+uv run alembic upgrade head                      # crée/met à jour la base (SQLite locale par défaut)
+uv run uvicorn app.main:app --reload             # http://127.0.0.1:8000, documentation sur /docs
+uv run pytest -q
 ```
 
-## Web (`web/`)
+Structure :
 
-Prérequis : Node 20+. L'API doit tourner sur `http://127.0.0.1:8000` (ou `API_ORIGIN`) : `/api/*` lui est réécrit.
+```
+app/main.py            application FastAPI
+app/api/router.py      routes sous /api (routes/health.py, methods.py, suggestions.py)
+app/core/config.py     réglages (variable DATABASE_URL)
+app/domain/            logique métier : répartition (money), méthodes, règles de conseils
+app/schemas/           modèles d'entrée et de sortie de l'API (Pydantic)
+app/db/                SQLAlchemy : Base des tables, session
+app/scripts/           export des méthodes vers frontend/src/content/methods.json
+alembic/               migrations de la base
+```
+
+Base de données : copier `.env.example` en `.env`. Sans `DATABASE_URL`, une base SQLite locale (`soonfinance.db`) est utilisée ; en production, mettre l'URL Neon (`postgresql://…?sslmode=require`).
+Nouvelle migration : `uv run alembic revision --autogenerate -m "description"`.
+
+Après toute modification des méthodes : `uv run python -m app.scripts.export_methods ../frontend/src/content/methods.json` (un test vérifie que le fichier est à jour).
+
+## Frontend (`frontend/`)
+
+Prérequis : Node 22. Le backend doit tourner sur `http://127.0.0.1:8000` (ou `API_ORIGIN`) : le site relaie `/api/*` vers lui.
 
 ```bash
-cd web
+cd frontend
 npm install
 npm run dev     # http://localhost:3000
 npm test        # Vitest
-npm run build
 npm run lint
+npm run build
 ```
 
-## Tests
+Tests de bout en bout : `npx playwright install chromium && npx playwright test` (Playwright démarre lui-même le backend et le site ; `UV=uv` si `uv` est dans le PATH, sinon `python -m uv` est utilisé).
 
-- API : `cd api && python -m uv run pytest -q`
-- Web unitaires : `cd web && npx vitest run`
-- Web bout en bout : `cd web && npx playwright install chromium && npx playwright test` (Playwright démarre l'API et le site lui-même ; `UV=uv` si `uv` est dans le PATH, sinon `python -m uv` est utilisé).
-
-La CI GitHub (`.github/workflows/ci.yml`) lance tout cela à chaque push et pull request.
+La CI GitHub (`.github/workflows/ci.yml`) lance tous ces tests à chaque push et pull request.
 
 ## Déploiement
 
-1. **API sur Render** : créer un service depuis le Blueprint `api/render.yaml` ou un Web Service Python avec la racine `api`, build `pip install uv && uv sync --frozen --no-dev`, start `uv run --no-sync uvicorn soonfinance.main:app --host 0.0.0.0 --port $PORT`, health check `/api/health`. Noter l'URL obtenue.
-2. **Site sur Vercel** : importer le dépôt, dossier racine `web/`, variable d'environnement `API_ORIGIN` = URL Render (sans slash final). Copier `web/.env.example` pour le développement.
-3. **Vérifier** : `https://<api>/api/health` doit renvoyer `{"status":"ok"}`, puis que le simulateur en ligne affiche des conseils.
+1. **Base sur Neon** : créer un projet (région Europe, Francfort) et copier l'URL de connexion.
+2. **Backend sur Render** : créer un Blueprint en indiquant le fichier `backend/render.yaml` (Render cherche `render.yaml` à la racine par défaut), puis saisir `DATABASE_URL` (URL Neon). Le build applique les migrations Alembic. Noter l'URL du service.
+3. **Frontend sur Vercel** : importer le dépôt, dossier racine `frontend/`, variable `API_ORIGIN` = URL Render (sans slash final). Copier `frontend/.env.example` pour le développement.
+4. **Vérifier** : `https://<backend>/api/health` renvoie `{"status":"ok"}`, puis le simulateur en ligne affiche des conseils.

@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from soonfinance.main import app
+from app.main import app
 
 
 def test_health_returns_ok():

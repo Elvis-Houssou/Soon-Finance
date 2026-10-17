@@ -1,7 +1,8 @@
 from fastapi.testclient import TestClient
 
-from soonfinance.main import app
-from soonfinance.suggestions import SimulationIn, suggest
+from app.main import app
+from app.domain.suggestions import suggest
+from app.schemas.simulation import SimulationIn
 
 client = TestClient(app)
 

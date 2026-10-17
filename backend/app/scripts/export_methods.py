@@ -2,7 +2,7 @@ import json
 import sys
 from pathlib import Path
 
-from soonfinance.methods import catalogue
+from app.domain.methods import catalogue
 
 
 def render_methods_json() -> str:
