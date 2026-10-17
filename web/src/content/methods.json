@@ -1,0 +1,205 @@
+{
+  "default": "50-30-20",
+  "methods": [
+    {
+      "custom": false,
+      "demanding": false,
+      "envelopes": [
+        {
+          "children": [],
+          "key": "needs",
+          "kind": "need",
+          "pct": 50
+        },
+        {
+          "children": [],
+          "key": "wants",
+          "kind": "want",
+          "pct": 30
+        },
+        {
+          "children": [],
+          "key": "savings",
+          "kind": "save",
+          "pct": 20
+        }
+      ],
+      "id": "50-30-20"
+    },
+    {
+      "custom": false,
+      "demanding": false,
+      "envelopes": [
+        {
+          "children": [],
+          "key": "spending",
+          "kind": "need",
+          "pct": 70
+        },
+        {
+          "children": [],
+          "key": "savings",
+          "kind": "save",
+          "pct": 20
+        },
+        {
+          "children": [],
+          "key": "giving",
+          "kind": "give",
+          "pct": 10
+        }
+      ],
+      "id": "70-20-10"
+    },
+    {
+      "custom": false,
+      "demanding": false,
+      "envelopes": [
+        {
+          "children": [],
+          "key": "spending",
+          "kind": "need",
+          "pct": 80
+        },
+        {
+          "children": [],
+          "key": "savings",
+          "kind": "save",
+          "pct": 20
+        }
+      ],
+      "id": "80-20"
+    },
+    {
+      "custom": false,
+      "demanding": false,
+      "envelopes": [
+        {
+          "children": [],
+          "key": "necessities",
+          "kind": "need",
+          "pct": 55
+        },
+        {
+          "children": [],
+          "key": "invest",
+          "kind": "save",
+          "pct": 10
+        },
+        {
+          "children": [],
+          "key": "long-term",
+          "kind": "save2",
+          "pct": 10
+        },
+        {
+          "children": [],
+          "key": "education",
+          "kind": "learn",
+          "pct": 10
+        },
+        {
+          "children": [],
+          "key": "play",
+          "kind": "want",
+          "pct": 10
+        },
+        {
+          "children": [],
+          "key": "giving",
+          "kind": "give",
+          "pct": 5
+        }
+      ],
+      "id": "six-jars"
+    },
+    {
+      "custom": false,
+      "demanding": true,
+      "envelopes": [
+        {
+          "children": [],
+          "key": "giving",
+          "kind": "give",
+          "pct": 10
+        },
+        {
+          "children": [
+            {
+              "key": "investments",
+              "pct": 50
+            },
+            {
+              "key": "emergency-fund",
+              "pct": 20
+            },
+            {
+              "key": "long-term-projects",
+              "pct": 20
+            },
+            {
+              "key": "financial-education",
+              "pct": 10
+            }
+          ],
+          "key": "save-invest",
+          "kind": "save",
+          "pct": 70
+        },
+        {
+          "children": [
+            {
+              "key": "leisure",
+              "pct": 30
+            },
+            {
+              "key": "books",
+              "pct": 25
+            },
+            {
+              "key": "gifts",
+              "pct": 20
+            },
+            {
+              "key": "wellbeing",
+              "pct": 15
+            },
+            {
+              "key": "flex",
+              "pct": 10
+            }
+          ],
+          "key": "personal",
+          "kind": "need",
+          "pct": 20
+        }
+      ],
+      "id": "soon-10-70-20"
+    },
+    {
+      "custom": true,
+      "demanding": false,
+      "envelopes": [
+        {
+          "children": [],
+          "key": "needs",
+          "kind": "need",
+          "pct": 60
+        },
+        {
+          "children": [],
+          "key": "savings",
+          "kind": "save",
+          "pct": 25
+        },
+        {
+          "children": [],
+          "key": "pleasures",
+          "kind": "want",
+          "pct": 15
+        }
+      ],
+      "id": "custom"
+    }
+  ]
+}
