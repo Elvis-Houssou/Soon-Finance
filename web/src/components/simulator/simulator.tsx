@@ -58,9 +58,19 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
   const names = new Intl.DisplayNames(locale, { type: "currency" });
   const canSave = !method.custom || totals(sim).pct === 100;
 
+  // No conversion: the displayed major amount is kept, rounded half-up to the new decimals.
   const onCurrency = (currency: string) => {
-    const amount = (text: string) => parseAmount(text, currency);
-    update({ currency, income: amount(texts.income) ?? 0, essentials: amount(texts.essentials), savings: amount(texts.savings) });
+    const from = CURRENCIES[sim.currency], to = CURRENCIES[currency];
+    const move = (v: number) =>
+      Math.min(MAX_INCOME_MINOR, to >= from ? v * 10 ** (to - from) : Math.floor((v + 10 ** (from - to) / 2) / 10 ** (from - to)));
+    const next = {
+      ...sim, currency, income: move(sim.income),
+      essentials: sim.essentials === null ? null : move(sim.essentials),
+      savings: sim.savings === null ? null : move(sim.savings),
+    };
+    setSim(next);
+    saveDraft(next);
+    setTexts({ income: toText(next.income, next, locale), essentials: toText(next.essentials, next, locale), savings: toText(next.savings, next, locale) });
   };
   const onText = (key: keyof Texts, text: string) => {
     setTexts({ ...texts, [key]: text });
@@ -73,7 +83,7 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
         {label} <span className="font-normal text-muted">{s.optional}</span>
       </label>
       <input
-        id={`f-${key}`} inputMode="numeric" autoComplete="off" className={FIELD}
+        id={`f-${key}`} maxLength={20} inputMode="numeric" autoComplete="off" className={FIELD}
         value={texts[key]} onChange={(e) => onText(key, e.target.value)}
         {...(extra ? { "aria-describedby": `f-${key}-help` } : {})}
       />
@@ -82,18 +92,14 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
   );
 
   return (
-    <div className="container-site flex flex-col gap-8 py-8 lg:py-12">
-      <div className="flex flex-col gap-2">
-        <h1 className="font-display text-3xl font-semibold sm:text-5xl">{s.heading}</h1>
-        <p className="text-lg text-muted">{s.lead}</p>
-      </div>
+    <>
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
         <div className="flex min-w-0 flex-col gap-6 lg:w-[420px] lg:shrink-0">
           <section aria-label={s.situation} className="flex flex-col gap-3 rounded-[14px] border border-line bg-surface p-5 sm:p-6">
             <label htmlFor="f-income" className="font-semibold">{s.income}</label>
             <div className="flex gap-2">
               <input
-                id="f-income" inputMode="numeric" autoComplete="off"
+                id="f-income" maxLength={20} inputMode="numeric" autoComplete="off"
                 className={`${FIELD} min-h-14 flex-1 font-display text-2xl font-semibold`}
                 value={texts.income} onChange={(e) => onText("income", e.target.value)}
               />
@@ -142,6 +148,6 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
           <p className="text-[13px] text-muted">{s.disclaimer}</p>
         </div>
       </div>
-    </div>
+    </>
   );
 }

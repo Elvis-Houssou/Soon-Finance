@@ -18,6 +18,7 @@ export function useSuggestions(sim: Simulation): State {
     let limit: ReturnType<typeof setTimeout> | undefined;
     const done = (s: State) => { if (!stale) setState({ ...s, body }); };
     const debounce = setTimeout(async () => {
+      setState({ status: "loading", items: [], body });
       limit = setTimeout(() => ctrl.abort(), 5000);
       try {
         const res = await fetch("/api/suggestions", {
@@ -39,5 +40,6 @@ export function useSuggestions(sim: Simulation): State {
   }, [body]);
 
   if (body === "null") return { status: "idle", items: [] };
-  return state.body === body ? state : { status: "loading", items: [] };
+  // Until the debounce fires, show nothing (no stale items, no loading flash per keystroke).
+  return state.body === body ? state : { status: "idle", items: [] };
 }

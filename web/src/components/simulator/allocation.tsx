@@ -17,7 +17,7 @@ export function Allocation({
   const sum = rows.reduce((a, r) => a + r.amount, 0);
 
   return (
-    <section aria-label={t.simulator.allocation} aria-live="polite" className="flex flex-col gap-5 rounded-[14px] border border-line bg-surface p-5 sm:p-8">
+    <section aria-label={t.simulator.allocation} className="flex flex-col gap-5 rounded-[14px] border border-line bg-surface p-5 sm:p-8">
       <div className="flex flex-col gap-1.5">
         <h2 className="font-display text-2xl font-semibold sm:text-3xl">{name.name}</h2>
         <p className="text-muted">{name.description}</p>
@@ -37,10 +37,15 @@ export function Allocation({
       </div>
       <ul className="flex flex-col gap-3">
         {rows.map((r) => {
-          const label = r.label !== undefined ? r.label || t.kinds[r.kind] : envelopeLabel(t, r.key);
-          const head = (
+          const label = r.label !== undefined ? r.label ? envelopeLabel(t, r.label) : t.kinds[r.kind] : envelopeLabel(t, r.key);
+          const head = (chevron: boolean) => (
             <>
               <span className="flex min-w-0 items-center gap-2">
+                {chevron && (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true" className="shrink-0 text-muted motion-safe:transition-transform group-open:rotate-180">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                )}
                 <span aria-hidden="true" className={`size-3 shrink-0 rounded-[4px] ${KIND_BG[r.kind]}`} />
                 <span className="min-w-0 break-words">{label}</span>
                 <span className="font-mono text-xs text-muted">{r.pct} %</span>
@@ -52,8 +57,8 @@ export function Allocation({
           return (
             <li key={r.key} className="rounded-[10px] bg-sunken px-4 py-2">
               {r.children.length ? (
-                <details>
-                  <summary className={`${cls} cursor-pointer`}>{head}</summary>
+                <details className="group">
+                  <summary className={`${cls} cursor-pointer list-none [&::-webkit-details-marker]:hidden`}>{head(true)}</summary>
                   <ul className="flex flex-col gap-1 pb-2 pl-5 text-[15px]">
                     {r.children.map((c) => (
                       <li key={c.key} className="flex flex-wrap justify-between gap-x-3">
@@ -64,13 +69,13 @@ export function Allocation({
                   </ul>
                 </details>
               ) : (
-                <div className={cls}>{head}</div>
+                <div className={cls}>{head(false)}</div>
               )}
             </li>
           );
         })}
       </ul>
-      <div className="flex justify-between gap-3 border-t border-line pt-3.5 text-[15px] text-muted tabular-nums">
+      <div aria-live="polite" className="flex justify-between gap-3 border-t border-line pt-3.5 text-[15px] text-muted tabular-nums">
         <span>{t.simulator.total}</span>
         <span>{money(sum)} · {totals(sim).pct} %</span>
       </div>
