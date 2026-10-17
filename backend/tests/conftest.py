@@ -1,22 +1,37 @@
+import os
 import secrets
 import uuid
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-import pytest
+# R1: never touch the real Neon DB / Resend key from backend/.env. Must run before app imports.
+os.environ.update(DATABASE_URL="sqlite:///:memory:", RESEND_API_KEY="", ENV="development")
+
+import pytest  # noqa: E402
 from alembic import command
 from alembic.config import Config
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.core.config import Settings, get_settings
-from app.db.models import SessionToken, User
-from app.db.session import enable_sqlite_foreign_keys, get_session
-from app.main import app
-from app.services.auth import hash_token
+from app.core.config import Settings, get_settings  # noqa: E402
+from app.db.models import SessionToken, User  # noqa: E402
+from app.db.session import enable_sqlite_foreign_keys, get_engine, get_session  # noqa: E402
+from app.main import app  # noqa: E402
+from app.services.auth import SESSION_COOKIE, hash_token  # noqa: E402
+
+Settings.model_config["env_file"] = None  # backend/.env is never loaded in tests
 
 BACKEND = Path(__file__).resolve().parents[1]
+
+
+@pytest.fixture(autouse=True)
+def _isolated_settings():
+    get_settings.cache_clear()
+    get_engine.cache_clear()
+    yield
+    get_settings.cache_clear()
+    get_engine.cache_clear()
 
 
 @pytest.fixture
@@ -53,14 +68,18 @@ def client(engine, db_url):
     app.dependency_overrides.clear()
 
 
-def login(client: TestClient, email: str) -> TestClient:
-    raw = secrets.token_urlsafe(32)
-    now = datetime.now(UTC)
-    with client.session_factory() as session:
-        user = User(id=str(uuid.uuid4()), email=email, consent_at=now, created_at=now)
-        session.add(user)
-        session.flush()
-        session.add(SessionToken(id_hash=hash_token(raw), user_id=user.id, expires_at=now + timedelta(days=30), created_at=now))
-        session.commit()
-    client.cookies.set("sf_session", raw)
-    return client
+@pytest.fixture
+def login(client):
+    def _login(email: str) -> TestClient:
+        raw = secrets.token_urlsafe(32)
+        now = datetime.now(UTC)
+        with client.session_factory() as session:
+            user = User(id=str(uuid.uuid4()), email=email, consent_at=now, created_at=now)
+            session.add(user)
+            session.flush()
+            session.add(SessionToken(id_hash=hash_token(raw), user_id=user.id, expires_at=now + timedelta(days=30), created_at=now))
+            session.commit()
+        client.cookies.set(SESSION_COOKIE, raw)
+        return client
+
+    return _login

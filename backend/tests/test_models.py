@@ -1,15 +1,19 @@
 import uuid
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 
 import pytest
+from alembic import command
+from alembic.autogenerate import compare_metadata
+from alembic.config import Config
+from alembic.migration import MigrationContext
 from sqlalchemy import func, inspect, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from alembic import command
-from alembic.config import Config
+from app.core.config import get_settings
+from app.db.base import Base
 from app.db.models import Goal, Month, Profile, SessionToken, User
-from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
 NOW = datetime.now(UTC)
@@ -73,3 +77,34 @@ def test_downgrade_to_0001_drops_tables(engine, db_url):
     config.set_main_option("sqlalchemy.url", db_url)
     command.downgrade(config, "0001")
     assert not TABLES & set(inspect(engine).get_table_names())
+
+
+def test_tests_never_read_real_env():
+    settings = get_settings()
+    assert settings.database_url.startswith("sqlite")
+    assert not getattr(settings, "resend_api_key", "")
+
+
+def test_datetimes_round_trip_as_utc(engine):
+    with Session(engine) as session:
+        user = new_user(session)
+        session.add(SessionToken(id_hash="t", user_id=user.id, expires_at=datetime.now(UTC), created_at=NOW))
+        session.commit()
+        session.expire_all()
+        assert session.get(SessionToken, "t").expires_at.tzinfo is UTC
+
+
+def test_amounts_hold_values_beyond_32_bits(engine):
+    with Session(engine) as session:
+        user = new_user(session)
+        month = new_month(user)
+        month.income = 10**12
+        session.add(month)
+        session.commit()
+        assert session.get(Month, month.id).income == 10**12
+
+
+def test_models_match_migrations(engine):
+    with engine.connect() as connection:
+        diff = compare_metadata(MigrationContext.configure(connection), Base.metadata)
+    assert diff == []
