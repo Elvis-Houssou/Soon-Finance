@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { describe, expect, it } from "vitest";
-import { pickLocale } from "./proxy";
+import { config, pickLocale, proxy } from "./proxy";
 
 const req = (headers: Record<string, string>) => new NextRequest("http://localhost/", { headers });
 
@@ -13,5 +13,23 @@ describe("pickLocale", () => {
   });
   it("le cookie sf-lang l'emporte", () => {
     expect(pickLocale(req({ cookie: "sf-lang=en", "accept-language": "fr" }))).toBe("en");
+  });
+});
+
+describe("proxy", () => {
+  const at = (path: string) => new NextRequest(`http://localhost${path}`);
+
+  it("redirige un chemin sans langue", () => {
+    const res = proxy(at("/simulateur"));
+    expect(res?.headers.get("location")).toMatch(/\/fr\/simulateur$/);
+  });
+  it("laisse passer /api et les chemins déjà préfixés", () => {
+    expect(proxy(at("/api/health"))).toBeUndefined();
+    expect(proxy(at("/fr/simulateur"))).toBeUndefined();
+  });
+  it("matcher : cible /simulateur, pas /api, /_next ni les fichiers", () => {
+    const re = new RegExp("^" + config.matcher[0] + "$");
+    expect(re.test("/simulateur")).toBe(true);
+    for (const p of ["/api/health", "/api", "/_next/x", "/icon.svg"]) expect(re.test(p)).toBe(false);
   });
 });

@@ -21,6 +21,7 @@ export function pickLocale(request: NextRequest): Locale {
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  if (pathname === "/api" || pathname.startsWith("/api/")) return;
   const hasPrefix = locales.some((locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`));
   if (hasPrefix) return;
 
@@ -31,5 +32,5 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   // Tout sauf les fichiers internes de Next, l'API (réécrite vers FastAPI) et les fichiers statiques.
-  matcher: ["/((?!_next|api|.*\..*).*)"],
+  matcher: ["/((?!_next|api(?:/|$)|.*\\..*).*)"],
 };

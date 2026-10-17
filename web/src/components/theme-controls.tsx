@@ -106,15 +106,14 @@ export function ThemePreferencePicker({ labels }: { labels: PreferenceLabels }) 
   ];
 
   return (
-    <div role="radiogroup" aria-label={labels.label} className="inline-flex rounded-full border border-line p-0.5">
+    <div role="group" aria-label={labels.label} className="inline-flex rounded-full border border-line p-0.5">
       {options.map((option) => {
         const checked = preference === option.value;
         return (
           <button
             key={option.value}
             type="button"
-            role="radio"
-            aria-checked={checked}
+            aria-pressed={checked}
             onClick={() => setPreference(option.value)}
             className={`min-h-11 cursor-pointer rounded-full px-4 font-mono text-xs font-medium transition-colors ${
               checked ? "bg-ink text-bg" : "text-muted hover:text-ink"
