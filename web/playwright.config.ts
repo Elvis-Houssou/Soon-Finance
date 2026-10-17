@@ -8,7 +8,7 @@ export default defineConfig({
   use: { baseURL: "http://127.0.0.1:3100" },
   webServer: [
     {
-      command: `${UV} run --project ../api uvicorn soonfinance.main:app --port 8000`,
+      command: `${UV} run --frozen --project ../api uvicorn soonfinance.main:app --port 8000`,
       url: "http://127.0.0.1:8000/api/health",
       reuseExistingServer: true,
       timeout: 120_000,

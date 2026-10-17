@@ -88,3 +88,8 @@ def test_api_rejects_bad_types_and_method():
     assert post(income=1.5).status_code == 422
     assert post(method="nope").status_code == 422
     assert post(extra=1).status_code == 422
+
+
+def test_api_rejects_essentials_and_savings_over_cap():
+    assert post(essentials=1_000_000_000_001).status_code == 422
+    assert post(savings=1_000_000_000_001).status_code == 422

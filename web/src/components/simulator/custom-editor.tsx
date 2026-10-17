@@ -51,7 +51,7 @@ export function CustomEditor({ custom, onChange, t }: { custom: Custom; onChange
         {s.add}
       </button>
       {total !== 100 && (
-        <p role="alert" className="rounded-[10px] bg-sunken px-4 py-3.5 text-[15px] text-warning">
+        <p role="status" aria-live="polite" className="rounded-[10px] bg-sunken px-4 py-3.5 text-[15px] text-warning">
           {fill(total < 100 ? s.under : s.over, { total, rest: Math.abs(100 - total) })}
         </p>
       )}

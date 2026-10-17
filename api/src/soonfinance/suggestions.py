@@ -20,9 +20,9 @@ class SimulationIn(BaseModel):
     currency: str
     method: str
     envelopes: list[CustomEnvelopeIn] | None = None
-    essentials: Annotated[StrictInt, Field(ge=0)] | None = None
+    essentials: Annotated[StrictInt, Field(ge=0, le=MAX_INCOME_MINOR)] | None = None
     has_debt: StrictBool | None = None
-    savings: Annotated[StrictInt, Field(ge=0)] | None = None
+    savings: Annotated[StrictInt, Field(ge=0, le=MAX_INCOME_MINOR)] | None = None
 
     @model_validator(mode="after")
     def _check(self) -> Self:

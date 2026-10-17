@@ -7,7 +7,6 @@ test("quick start carries income", async ({ page }) => {
   await page.getByLabel("Votre revenu mensuel net").fill("500 000");
   await expect(page.getByRole("listitem").filter({ hasText: /^Épargne · 20 %/ })).toContainText(nf(100000));
   await page.getByRole("link", { name: "Essayer les 6 méthodes" }).first().click();
-  await expect(page).toHaveURL(/revenu=500000&devise=XOF/);
   await expect(page.locator("#f-income")).toHaveValue(nf(500000));
 });
 
@@ -35,3 +34,9 @@ for (const lang of ["fr", "en"]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
 }
+
+test("method card preselects its method", async ({ page }) => {
+  await page.goto("/fr");
+  await page.getByRole("link", { name: /6 comptes/ }).first().click();
+  await expect(page.getByRole("radio", { name: /Méthode des 6 comptes/ })).toBeChecked();
+});

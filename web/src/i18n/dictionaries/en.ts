@@ -107,7 +107,7 @@ const en: Dictionary = {
     pickMethod: "Choose a method",
     methodGroup: "Split method",
     understand: "Understand this method",
-    warning: "This model suits you if your essential spending is already covered.",
+    warning: "This model fits if your essential expenses are already covered.",
     noIncome: "Enter your monthly income to see the split.",
     allocation: "Split",
     total: "Total",

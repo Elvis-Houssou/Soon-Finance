@@ -39,6 +39,6 @@ La CI GitHub (`.github/workflows/ci.yml`) lance tout cela à chaque push et pull
 
 ## Déploiement
 
-1. **API sur Render** : créer un service depuis `api/render.yaml` (Blueprint) ou un Web Service Python avec la racine `api`, build `pip install uv && uv sync --frozen`, start `uv run uvicorn soonfinance.main:app --host 0.0.0.0 --port $PORT`, health check `/api/health`. Noter l'URL obtenue.
+1. **API sur Render** : créer un service depuis le Blueprint `api/render.yaml` ou un Web Service Python avec la racine `api`, build `pip install uv && uv sync --frozen --no-dev`, start `uv run --no-sync uvicorn soonfinance.main:app --host 0.0.0.0 --port $PORT`, health check `/api/health`. Noter l'URL obtenue.
 2. **Site sur Vercel** : importer le dépôt, dossier racine `web/`, variable d'environnement `API_ORIGIN` = URL Render (sans slash final). Copier `web/.env.example` pour le développement.
 3. **Vérifier** : `https://<api>/api/health` doit renvoyer `{"status":"ok"}`, puis que le simulateur en ligne affiche des conseils.

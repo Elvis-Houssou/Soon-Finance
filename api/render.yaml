@@ -3,8 +3,8 @@ services:
     name: soonfinance-api
     runtime: python
     rootDir: api
-    buildCommand: pip install uv && uv sync --frozen
-    startCommand: uv run uvicorn soonfinance.main:app --host 0.0.0.0 --port $PORT
+    buildCommand: pip install uv && uv sync --frozen --no-dev
+    startCommand: uv run --no-sync uvicorn soonfinance.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
     envVars:
       - key: PYTHON_VERSION

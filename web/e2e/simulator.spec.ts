@@ -20,7 +20,7 @@ test("custom total 95 disables save", async ({ page }) => {
   await page.getByLabel("Revenu mensuel net").fill("500000");
   await page.getByRole("radio", { name: /Répartition personnalisée/ }).click();
   await page.getByLabel("Pourcentage, enveloppe 2").fill("20");
-  await expect(page.locator("main").getByRole("alert")).toContainText("Il reste 5 % à répartir.");
+  await expect(page.locator("main").getByRole("status")).toContainText("Il reste 5 % à répartir.");
   await expect(page.getByRole("button", { name: /Ajustez le total/ })).toBeDisabled();
 });
 
@@ -87,4 +87,24 @@ test("currency switch keeps the displayed amount", async ({ page }) => {
   await expect(page.locator("[aria-live=polite]")).toContainText(nf(1001, "fr-FR"));
   await page.getByLabel("Devise").selectOption("EUR");
   await expect(income).toHaveValue(new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 2 }).format(1001));
+});
+
+test("prefill rescales the draft, saves it and clears the query", async ({ page }) => {
+  await page.addInitScript(() => {
+    if (!localStorage.getItem("sf-simulation"))
+      localStorage.setItem("sf-simulation", JSON.stringify({ v: 1, income: 500000, currency: "XOF", method: "50-30-20", custom: [{ name: "a", kind: "need", pct: 100 }], essentials: 200000, hasDebt: null, savings: null }));
+  });
+  await page.goto("/fr/simulateur?revenu=150000&devise=EUR");
+  await expect(page.getByLabel(/Dépenses essentielles/)).toHaveValue(new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 2 }).format(200000));
+  expect(new URL(page.url()).search).toBe("");
+  const d = JSON.parse(await page.evaluate(() => localStorage.getItem("sf-simulation")!));
+  expect([d.currency, d.income, d.essentials]).toEqual(["EUR", 150000, 20000000]);
+});
+
+test("decimal currency accepts cents", async ({ page }) => {
+  await page.goto("/fr/simulateur");
+  await page.locator("select").first().selectOption("EUR");
+  await page.getByLabel("Revenu mensuel net").fill("1 500,50");
+  await expect(page.getByLabel("Revenu mensuel net")).toHaveAttribute("inputmode", "decimal");
+  await expect(page.getByRole("listitem").filter({ hasText: "Besoins" })).toContainText("750,25");
 });

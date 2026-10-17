@@ -20,16 +20,33 @@ type Texts = { income: string; essentials: string; savings: string };
 const toText = (minor: number | null, sim: Simulation, locale: Locale) =>
   minor ? formatAmount(minor, sim.currency, locale) : "";
 
-/** `?revenu=<minor>&devise=<code>`: invalid values are ignored. */
-function prefill(sim: Simulation): Simulation {
+/** No conversion: the displayed major amount is kept, rounded half-up to the new decimals. */
+function rescale(sim: Simulation, currency: string): Simulation {
+  const from = CURRENCIES[sim.currency], to = CURRENCIES[currency];
+  const move = (v: number) =>
+    Math.min(MAX_INCOME_MINOR, to >= from ? v * 10 ** (to - from) : Math.floor((v + 10 ** (from - to) / 2) / 10 ** (from - to)));
+  return {
+    ...sim, currency, income: move(sim.income),
+    essentials: sim.essentials === null ? null : move(sim.essentials),
+    savings: sim.savings === null ? null : move(sim.savings),
+  };
+}
+
+/** `?revenu=<minor>&devise=<code>&methode=<id>`: invalid values are ignored. */
+function prefill(draft: Simulation): { sim: Simulation; applied: boolean } {
   const q = new URLSearchParams(window.location.search);
   const revenu = q.get("revenu") ?? "";
   const devise = (q.get("devise") ?? "").toUpperCase();
+  const methode = q.get("methode") ?? "";
   const income = /^\d{1,15}$/.test(revenu) ? Number(revenu) : NaN;
+  const sim = Object.hasOwn(CURRENCIES, devise) ? rescale(draft, devise) : draft;
   return {
-    ...sim,
-    ...(income <= MAX_INCOME_MINOR && { income }),
-    ...(Object.hasOwn(CURRENCIES, devise) && { currency: devise }),
+    sim: {
+      ...sim,
+      ...(income <= MAX_INCOME_MINOR && { income }),
+      ...(methods.some((m) => m.id === methode) && { method: methode }),
+    },
+    applied: q.size > 0,
   };
 }
 
@@ -40,7 +57,11 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
 
   // The draft lives in localStorage, so it can only be read after mount.
   useEffect(() => {
-    const s = prefill(loadDraft());
+    const { sim: s, applied } = prefill(loadDraft());
+    if (applied) {
+      saveDraft(s);
+      history.replaceState(null, "", location.pathname);
+    }
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSim(s);
     setTexts({ income: toText(s.income, s, locale), essentials: toText(s.essentials, s, locale), savings: toText(s.savings, s, locale) });
@@ -56,18 +77,11 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
     saveDraft(next);
   };
   const names = new Intl.DisplayNames(locale, { type: "currency" });
+  const mode = CURRENCIES[sim.currency] > 0 ? "decimal" : "numeric";
   const canSave = !method.custom || totals(sim).pct === 100;
 
-  // No conversion: the displayed major amount is kept, rounded half-up to the new decimals.
   const onCurrency = (currency: string) => {
-    const from = CURRENCIES[sim.currency], to = CURRENCIES[currency];
-    const move = (v: number) =>
-      Math.min(MAX_INCOME_MINOR, to >= from ? v * 10 ** (to - from) : Math.floor((v + 10 ** (from - to) / 2) / 10 ** (from - to)));
-    const next = {
-      ...sim, currency, income: move(sim.income),
-      essentials: sim.essentials === null ? null : move(sim.essentials),
-      savings: sim.savings === null ? null : move(sim.savings),
-    };
+    const next = rescale(sim, currency);
     setSim(next);
     saveDraft(next);
     setTexts({ income: toText(next.income, next, locale), essentials: toText(next.essentials, next, locale), savings: toText(next.savings, next, locale) });
@@ -83,7 +97,7 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
         {label} <span className="font-normal text-muted">{s.optional}</span>
       </label>
       <input
-        id={`f-${key}`} maxLength={20} inputMode="numeric" autoComplete="off" className={FIELD}
+        id={`f-${key}`} maxLength={20} inputMode={mode} autoComplete="off" className={FIELD}
         value={texts[key]} onChange={(e) => onText(key, e.target.value)}
         {...(extra ? { "aria-describedby": `f-${key}-help` } : {})}
       />
@@ -99,7 +113,7 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
             <label htmlFor="f-income" className="font-semibold">{s.income}</label>
             <div className="flex gap-2">
               <input
-                id="f-income" maxLength={20} inputMode="numeric" autoComplete="off"
+                id="f-income" maxLength={20} inputMode={mode} autoComplete="off"
                 className={`${FIELD} min-h-14 flex-1 font-display text-2xl font-semibold`}
                 value={texts.income} onChange={(e) => onText("income", e.target.value)}
               />

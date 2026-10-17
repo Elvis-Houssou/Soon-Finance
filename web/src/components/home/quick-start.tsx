@@ -33,7 +33,7 @@ export function QuickStart({ locale, t }: Props) {
       <label htmlFor="qs-income" className="font-semibold">{t.home.income}</label>
       <div className="flex gap-2">
         <input
-          id="qs-income" maxLength={20} inputMode="numeric" autoComplete="off" placeholder="500 000"
+          id="qs-income" maxLength={20} inputMode={CURRENCIES[currency] > 0 ? "decimal" : "numeric"} autoComplete="off" placeholder="500 000"
           className={`${FIELD} min-h-14 flex-1 font-display text-2xl font-semibold`}
           value={text} onChange={(e) => setText(e.target.value)}
         />

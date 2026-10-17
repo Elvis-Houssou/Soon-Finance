@@ -29,7 +29,7 @@ export default async function HomePage() {
             const info = t.methods[m.id as keyof typeof t.methods];
             return (
               <li key={m.id}>
-                <Link href={sim} className="flex h-full min-h-11 flex-col gap-1 rounded-[14px] border border-line bg-surface p-5 hover:border-ink">
+                <Link href={`${sim}?methode=${m.id}`} className="flex h-full min-h-11 flex-col gap-1 rounded-[14px] border border-line bg-surface p-5 hover:border-ink">
                   <span className="font-display text-xl font-semibold">{info.name}</span>
                   <span className="text-muted">{info.description}</span>
                 </Link>

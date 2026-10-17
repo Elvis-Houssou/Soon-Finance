@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import methodsRaw from "@/content/methods.json";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries/fr";
-import { formatAmount, formatMoney, parseAmount } from "@/lib/money";
+import { CURRENCIES, formatAmount, formatMoney, parseAmount } from "@/lib/money";
 import { allocate, loadDraft, saveDraft, totals, type MethodsData, type Simulation } from "@/lib/simulation";
 import { AllocationBar } from "../simulator/allocation-bar";
 import { FIELD, fill, KIND_BG, rowLabel, type SimStrings } from "../simulator/shared";
@@ -69,7 +69,7 @@ export function Compare({ locale, t }: { locale: Locale; t: Strings }) {
         <div className="flex max-w-md flex-col gap-2">
           <label htmlFor="c-income" className="font-semibold">{c.income}</label>
           <input
-            id="c-income" maxLength={20} inputMode="numeric" autoComplete="off" className={FIELD}
+            id="c-income" maxLength={20} inputMode={CURRENCIES[sim.currency] > 0 ? "decimal" : "numeric"} autoComplete="off" className={FIELD}
             value={incomeText} onChange={(e) => onIncome(e.target.value)}
           />
         </div>
