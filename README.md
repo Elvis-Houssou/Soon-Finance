@@ -18,4 +18,13 @@ python -m uv run pytest -q
 
 ## Web (`web/`)
 
-Voir `web/` (à venir).
+Prérequis : Node 20+. L'API doit tourner sur `http://127.0.0.1:8000` (ou `API_ORIGIN`) : `/api/*` lui est réécrit.
+
+```bash
+cd web
+npm install
+npm run dev     # http://localhost:3000
+npm test        # Vitest
+npm run build
+npm run lint
+```

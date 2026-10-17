@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+/*
+ * Thème : clair par défaut, sombre si l'appareil le demande (prefers-color-scheme),
+ * sauf choix explicite de l'utilisateur (data-theme sur <html>). Valeurs : charte §1.
+ */
+:root {
+  --bg:#ffffff;
+  --surface:#ffffff;
+  --sunken:#f3f5f4;
+  --ink:#0e1110;
+  --muted:#5e6662;
+  --line:#e4e7e5;
+  --line-input:#8a928e;
+  --brand:#2ef07f;
+  --on-brand:#0b1410;
+  --on-brand-muted:#1e4a30;
+  --brand-ink:#067a39;
+  --tint:#e6fcef;
+  --gold:#c9a26b;
+  --gold-ink:#86652c;
+  --warning:#995a00;
+  --danger:#c2261b;
+  --on-danger:#ffffff;
+  --chart-1:#067a39;
+  --chart-2:#86652c;
+  --chart-3:#2f6fb3;
+  --chart-4:#c0562f;
+  --chart-5:#7a5aa8;
+  --chart-6:#a3477a;
+  --logo-tile:#0e1110;
+  --logo-hz:#f3f5f4;
+  color-scheme:light;
+  --header-h: 64px;
+  --show-light: initial;
+  --show-dark: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#0b0d0c;
+    --surface:#141816;
+    --sunken:#1b201d;
+    --ink:#eef2ef;
+    --muted:#9ba59f;
+    --line:#262c29;
+    --line-input:#5f6863;
+    --brand:#2ef07f;
+    --on-brand:#0b1410;
+    --on-brand-muted:#1e4a30;
+    --brand-ink:#2ef07f;
+    --tint:#12251a;
+    --gold:#c9a26b;
+    --gold-ink:#d9b27a;
+    --warning:#f0b34a;
+    --danger:#ff8a80;
+    --on-danger:#0b0d0c;
+    --chart-1:#2ef07f;
+    --chart-2:#d9b27a;
+    --chart-3:#6fa8e8;
+    --chart-4:#f08a5d;
+    --chart-5:#b49ae6;
+    --chart-6:#e58ab8;
+    --logo-tile:#1b201d;
+    --logo-hz:#eef2ef;
+    color-scheme:dark;
+    --show-light: none;
+    --show-dark: initial;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:#0b0d0c;
+  --surface:#141816;
+  --sunken:#1b201d;
+  --ink:#eef2ef;
+  --muted:#9ba59f;
+  --line:#262c29;
+  --line-input:#5f6863;
+  --brand:#2ef07f;
+  --on-brand:#0b1410;
+  --on-brand-muted:#1e4a30;
+  --brand-ink:#2ef07f;
+  --tint:#12251a;
+  --gold:#c9a26b;
+  --gold-ink:#d9b27a;
+  --warning:#f0b34a;
+  --danger:#ff8a80;
+  --on-danger:#0b0d0c;
+  --chart-1:#2ef07f;
+  --chart-2:#d9b27a;
+  --chart-3:#6fa8e8;
+  --chart-4:#f08a5d;
+  --chart-5:#b49ae6;
+  --chart-6:#e58ab8;
+  --logo-tile:#1b201d;
+  --logo-hz:#eef2ef;
+  color-scheme:dark;
+  --show-light: none;
+  --show-dark: initial;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-sunken: var(--sunken);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-input: var(--line-input);
+  --color-brand: var(--brand);
+  --color-on-brand: var(--on-brand);
+  --color-on-brand-muted: var(--on-brand-muted);
+  --color-brand-ink: var(--brand-ink);
+  --color-tint: var(--tint);
+  --color-gold: var(--gold);
+  --color-gold-ink: var(--gold-ink);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-on-danger: var(--on-danger);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-logo-tile: var(--logo-tile);
+  --color-logo-hz: var(--logo-hz);
+  --font-display: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+}
+
+/* Éléments visibles selon le thème effectif (sans attendre l'hydratation). */
+@utility when-light {
+  display: var(--show-light);
+}
+@utility when-dark {
+  display: var(--show-dark);
+}
+
+@utility container-site {
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-inline: 16px;
+  box-sizing: border-box;
+}
+
+@layer base {
+  html {
+    scroll-padding-top: var(--header-h);
+    -webkit-text-size-adjust: 100%;
+    scrollbar-color: var(--line-input) var(--bg);
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    caret-color: var(--brand-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--brand-ink);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--brand);
+    color: var(--on-brand);
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--line-input);
+    border-radius: 999px;
+    border: 2px solid var(--bg);
+  }
+}
+
+/* Changement de thème : révélation circulaire depuis le bouton. */
+html.theme-vt::view-transition-old(root),
+html.theme-vt::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
