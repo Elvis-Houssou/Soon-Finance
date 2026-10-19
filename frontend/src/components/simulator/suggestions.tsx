@@ -13,9 +13,12 @@ type Props = {
   locale: Locale;
   t: SimStrings;
   canSave: boolean;
+  /** Signed in: save straight to the account instead of linking to sign-up. */
+  onSave?: () => void;
+  saveError?: boolean;
 };
 
-export function Suggestions({ status, items, currency, locale, t, canSave }: Props) {
+export function Suggestions({ status, items, currency, locale, t, canSave, onSave, saveError }: Props) {
   const s = t.simulator;
   const texts = items.flatMap((it) => {
     const tpl = (t.suggestions as Record<string, string>)[it.id];
@@ -46,7 +49,11 @@ export function Suggestions({ status, items, currency, locale, t, canSave }: Pro
             <span className="text-[15px] text-muted">{s.moreText}</span>
           </div>
         )}
-        {canSave ? (
+        {canSave && onSave ? (
+          <button type="button" onClick={onSave} className="flex min-h-14 items-center rounded-[10px] bg-brand px-7 text-[17px] font-semibold text-on-brand">
+            {s.saveAccount}
+          </button>
+        ) : canSave ? (
           <Link href={`/${locale}/connexion`} className="flex min-h-14 items-center rounded-[10px] bg-brand px-7 text-[17px] font-semibold text-on-brand">
             {s.save}
           </Link>
@@ -55,6 +62,7 @@ export function Suggestions({ status, items, currency, locale, t, canSave }: Pro
             {s.saveDisabled}
           </button>
         )}
+        {saveError && <p role="status" className="text-danger">{s.saveError}</p>}
       </div>
     </section>
   );

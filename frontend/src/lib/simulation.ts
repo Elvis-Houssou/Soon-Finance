@@ -109,3 +109,13 @@ export function suggestionRequest(sim: Simulation): Record<string, unknown> | nu
     essentials: sim.essentials, has_debt: sim.hasDebt, savings: sim.savings,
   };
 }
+
+/** Body for POST /api/onboarding (plan 1 SimulationIn). */
+export function onboardingBody(sim: Simulation) {
+  const custom = data.methods.find((m) => m.id === sim.method)?.custom ?? false;
+  return {
+    income: sim.income, currency: sim.currency, method: sim.method,
+    envelopes: custom ? sim.custom.map((e) => ({ kind: e.kind, pct: e.pct, label: e.name.slice(0, 40) })) : null,
+    essentials: sim.essentials, has_debt: sim.hasDebt, savings: sim.savings,
+  };
+}

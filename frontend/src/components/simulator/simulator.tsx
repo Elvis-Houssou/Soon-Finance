@@ -1,11 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import methodsRaw from "@/content/methods.json";
 import type { Locale } from "@/i18n/config";
+import { apiFetch } from "@/lib/api";
 import { CURRENCIES, formatAmount, MAX_INCOME_MINOR, parseAmount } from "@/lib/money";
 import {
-  DEFAULT_SIMULATION, loadDraft, saveDraft, totals, type MethodsData, type Simulation,
+  DEFAULT_SIMULATION, loadDraft, onboardingBody, saveDraft, totals, type MethodsData, type Simulation,
 } from "@/lib/simulation";
 import { useSuggestions } from "@/lib/use-suggestions";
 import { Allocation } from "./allocation";
@@ -51,6 +53,9 @@ function prefill(draft: Simulation): { sim: Simulation; applied: boolean } {
 }
 
 export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
+  const router = useRouter();
+  const [saveError, setSaveError] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
   const [sim, setSim] = useState<Simulation | null>(null);
   const [texts, setTexts] = useState<Texts>({ income: "", essentials: "", savings: "" });
   const suggestions = useSuggestions(sim ?? DEFAULT_SIMULATION);
@@ -67,6 +72,11 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
     setTexts({ income: toText(s.income, s, locale), essentials: toText(s.essentials, s, locale), savings: toText(s.savings, s, locale) });
   }, [locale]);
 
+  // The session cookie is HttpOnly: ask the API (plain fetch, a 401 must not redirect here).
+  useEffect(() => {
+    fetch("/api/dashboard").then((r) => setSignedIn(r.ok), () => {});
+  }, []);
+
   if (!sim) return <div className="min-h-svh" aria-busy="true" />;
 
   const s = t.simulator;
@@ -80,6 +90,11 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
   const mode = CURRENCIES[sim.currency] > 0 ? "decimal" : "numeric";
   const canSave = !method.custom || totals(sim).pct === 100;
 
+  const onSave = () =>
+    apiFetch("/api/onboarding", { method: "POST", body: JSON.stringify(onboardingBody(sim)) }).then(
+      () => router.push(`/${locale}/tableau-de-bord`),
+      () => setSaveError(true),
+    );
   const onCurrency = (currency: string) => {
     const next = rescale(sim, currency);
     setSim(next);
@@ -154,7 +169,7 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
           {sim.income > 0 ? (
             <>
               <Allocation sim={sim} method={method} locale={locale} t={t} />
-              <Suggestions {...suggestions} currency={sim.currency} locale={locale} t={t} canSave={canSave} />
+              <Suggestions {...suggestions} currency={sim.currency} locale={locale} t={t} canSave={canSave} saveError={saveError} {...(signedIn && { onSave })} />
             </>
           ) : (
             <p role="status" className="rounded-[14px] border border-dashed border-line-input p-8 text-lg text-muted">{s.noIncome}</p>

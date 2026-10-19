@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
-  DEFAULT_SIMULATION, allocate, loadDraft, saveDraft, suggestionRequest, totals,
+  DEFAULT_SIMULATION, allocate, loadDraft, onboardingBody, saveDraft, suggestionRequest, totals,
   type Simulation,
 } from "@/lib/simulation";
 
@@ -84,5 +84,14 @@ describe("suggestionRequest", () => {
     });
     const c = sim({ income: 10, method: "custom", custom: [{ name: "a", kind: "need", pct: 100 }] });
     expect(suggestionRequest(c)!.envelopes).toEqual([{ kind: "need", pct: 100 }]);
+  });
+});
+
+describe("onboardingBody", () => {
+  it("sends preset plans without envelopes and custom ones with their labels", () => {
+    expect(onboardingBody({ ...DEFAULT_SIMULATION, income: 100, method: "50-30-20" }).envelopes).toBeNull();
+    const body = onboardingBody({ ...DEFAULT_SIMULATION, income: 100, method: "custom", custom: [{ name: "Loyer", kind: "need", pct: 100 }] });
+    expect(body.envelopes).toEqual([{ kind: "need", pct: 100, label: "Loyer" }]);
+    expect(body.has_debt).toBeNull();
   });
 });
