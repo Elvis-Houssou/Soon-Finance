@@ -195,6 +195,29 @@ ${e.stack}`));
     await expect.poll(() => page.locator("section[aria-label='Votre répartition'] > div").evaluateAll((els) => els.every((el) => !(el as HTMLElement).style.clipPath))).toBe(true);
   });
 
+  test("removal applies at once, even when leaving right away", async ({ page }) => {
+    await page.addInitScript(() => {
+      if (!localStorage.getItem("sf-simulation"))
+        localStorage.setItem("sf-simulation", JSON.stringify({ v: 1, income: 500000, currency: "XOF", method: "custom", custom: [{ name: "a", kind: "need", pct: 40 }, { name: "b", kind: "want", pct: 30 }, { name: "c", kind: "save", pct: 20 }, { name: "d", kind: "give", pct: 10 }], essentials: null, hasDebt: null, savings: null }));
+    });
+    await page.goto("/fr/simulateur");
+    const names = () => page.evaluate(() => JSON.parse(localStorage.getItem("sf-simulation")!).custom.map((e: { name: string }) => e.name));
+    // Deux suppressions rapides : les deux s'appliquent.
+    await page.getByRole("button", { name: "Retirer l’enveloppe 4" }).click();
+    await page.getByRole("button", { name: "Retirer l’enveloppe 1" }).click();
+    expect(await names()).toEqual(["b", "c"]);
+    await expect(page.getByLabel("Nom, enveloppe 1")).toHaveValue("b");
+    // Suppression puis changement de méthode immédiat : l'enveloppe reste supprimée.
+    await page.getByRole("button", { name: "Retirer l’enveloppe 2" }).click();
+    await page.getByRole("radio", { name: /Méthode 50\/30\/20/ }).click();
+    expect(await names()).toEqual(["b"]);
+    await page.getByRole("radio", { name: /personnalisée/ }).click();
+    await expect(page.getByLabel("Pourcentage, enveloppe 2")).toHaveCount(0);
+    await expect(page.getByLabel("Nom, enveloppe 1")).toHaveValue("b");
+    // Aucun fantôme ne reste dans la page.
+    await expect.poll(() => page.locator("body > [data-env]").count()).toBe(0);
+  });
+
   test("mobile 360 stays within the viewport while animating", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 800 });
     await seedDraft(page);

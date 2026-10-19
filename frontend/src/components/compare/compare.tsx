@@ -33,6 +33,9 @@ export function Compare({ locale, t }: { locale: Locale; t: Strings }) {
   const [ids, setIds] = useState<string[]>(DEFAULTS);
   const [incomeText, setIncomeText] = useState("");
   const [askIncome, setAskIncome] = useState(false); // captured once: the field must survive the first keystroke
+  // Revenu « posé » (600 ms sans frappe, ou sortie du champ) : seul lui décide de l'ordre des colonnes.
+  const [settled, setSettled] = useState(0);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const grid = useRef<HTMLDivElement>(null);
   // Position à l'écran de chaque colonne juste avant un changement (FLIP).
   const before = useRef<Map<string, DOMRect> | null>(null);
@@ -48,7 +51,9 @@ export function Compare({ locale, t }: { locale: Locale; t: Strings }) {
     setAskIncome(s.income === 0);
     setIds(parseIds(new URLSearchParams(window.location.search).get("m")));
     setIncomeText(s.income ? formatAmount(s.income, s.currency, locale) : "");
+    setSettled(s.income);
   }, [locale]);
+  useEffect(() => () => clearTimeout(timer.current), []);
 
   const currency = sim?.currency;
   useEffect(() => {
@@ -60,16 +65,17 @@ export function Compare({ locale, t }: { locale: Locale; t: Strings }) {
     ? ids.map((id) => {
         const s = { ...sim, method: id };
         const { live, saved } = totals(s);
-        return { id, rows: allocate(s), live, saved, tight: known && live < sim.essentials! };
+        const late = known && totals({ ...s, income: settled }).live < sim.essentials!;
+        return { id, rows: allocate(s), live, saved, tight: known && live < sim.essentials!, late };
       })
     : [];
-  // Ce qui couvre vos besoins passe devant (tri stable) : les colonnes se réordonnent quand le revenu change.
-  const shown = [...cols].sort((a, b) => Number(a.tight) - Number(b.tight));
+  // Ce qui couvre vos besoins (au revenu posé) passe devant, tri stable : les colonnes se réordonnent une fois la saisie finie.
+  const shown = [...cols].sort((a, b) => Number(a.late) - Number(b.late));
   const order = shown.map((col) => col.id).join(",");
-  // Meilleure épargne (parmi ce qui couvre vos besoins, si on les connaît) : seulement si elle est unique.
+  // Meilleure épargne (parmi ce qui couvre vos besoins, si on les connaît) : toutes les colonnes à égalité au maximum.
   const pool = cols.filter((col) => !col.tight && col.saved > 0);
   const top = Math.max(...pool.map((col) => col.saved));
-  const best = pool.filter((col) => col.saved === top).length === 1 ? pool.find((col) => col.saved === top)!.id : null;
+  const best = new Set(pool.filter((col) => col.saved === top).map((col) => col.id));
 
   // Les colonnes glissent de leur ancienne place à la nouvelle (translation seule : le texte n'est jamais déformé).
   useGSAP(
@@ -93,7 +99,7 @@ export function Compare({ locale, t }: { locale: Locale; t: Strings }) {
         }
       });
     },
-    { dependencies: [order] },
+    { dependencies: [order], revertOnUpdate: true },
   );
 
   if (!sim) return <div className="min-h-svh" aria-busy="true" />;
@@ -110,12 +116,18 @@ export function Compare({ locale, t }: { locale: Locale; t: Strings }) {
     saveDraft({ ...sim, method: id });
     router.push(`/${locale}/simulateur`);
   };
-  const onIncome = (text: string) => {
+  const settle = (income: number) => {
+    clearTimeout(timer.current);
     capture();
+    setSettled(income);
+  };
+  const onIncome = (text: string) => {
     setIncomeText(text);
     const next = { ...sim, income: parseAmount(text, sim.currency) ?? 0 };
     setSim(next);
     saveDraft(next);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => settle(next.income), 600);
   };
   const free = OPTIONS.filter((id) => !ids.includes(id));
 
@@ -126,13 +138,13 @@ export function Compare({ locale, t }: { locale: Locale; t: Strings }) {
           <label htmlFor="c-income" className="font-semibold">{c.income}</label>
           <input
             id="c-income" maxLength={20} inputMode={CURRENCIES[sim.currency] > 0 ? "decimal" : "numeric"} autoComplete="off" className={FIELD}
-            value={incomeText} onChange={(e) => onIncome(e.target.value)}
+            value={incomeText} onChange={(e) => onIncome(e.target.value)} onBlur={() => settle(sim.income)}
           />
         </div>
       )}
       {!known && <p role="note" className="text-muted">{c.hint}</p>}
       <ul aria-label={c.group} className="flex flex-wrap items-center gap-2">
-        {ids.map((id) => (
+        {shown.map(({ id }) => (
           <li key={id}>
             <button
               type="button" disabled={ids.length <= MIN} aria-label={fill(c.remove, { method: name(id) })}
@@ -177,7 +189,7 @@ export function Compare({ locale, t }: { locale: Locale; t: Strings }) {
               <div><dt className="text-sm text-muted">{c.live}</dt><dd className="font-display text-xl font-semibold tabular-nums"><CountUp value={live} format={money} duration={DUR.view} /></dd></div>
               <div><dt className="text-sm text-muted">{c.saved}</dt><dd className="font-display text-xl font-semibold tabular-nums"><CountUp value={saved * 12} format={money} duration={DUR.view} /></dd></div>
             </dl>
-            {best === id && <BestSun label={c.best} />}
+            {best.has(id) && <BestSun label={c.best} />}
             {tight && <p className="text-[15px] text-warning">{fill(c.missing, { amount: money(sim.essentials! - live) })}</p>}
             <button
               type="button" onClick={() => choose(id)}

@@ -59,9 +59,13 @@ test.describe("with motion", () => {
     });
     await page.getByRole("link", { name: "Essayer les 6 méthodes" }).first().click();
     await expect(page).toHaveURL(/\/fr\/simulateur/);
-    await expect.poll(() => page.evaluate(() => (window as unknown as { __seen: string[] }).__seen.at(-1))).toBe("1|none");
-    const seen = await page.evaluate(() => (window as unknown as { __seen: string[] }).__seen);
-    expect(seen.some((s) => s !== "1|none")).toBe(true); // l'animation a bien eu lieu
+    // Un seul prédicat : l'animation a eu lieu (une image diffère) et elle est terminée (dernière image au repos).
+    await expect
+      .poll(() => page.evaluate(() => {
+        const seen = (window as unknown as { __seen: string[] }).__seen;
+        return seen.some((s) => s !== "1|none") && seen.at(-1) === "1|none";
+      }))
+      .toBe(true);
     await expect(content).toHaveCSS("opacity", "1");
     await expect(content).toHaveCSS("transform", "none");
   });

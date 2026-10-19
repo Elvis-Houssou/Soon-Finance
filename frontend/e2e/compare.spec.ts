@@ -97,6 +97,8 @@ test.describe("with motion", () => {
     await page.getByLabel("Revenu mensuel net").fill("500000");
     // Ce qui couvre les besoins passe devant, avec un mouvement.
     await expect.poll(names).toEqual(["Méthode 50/30/20", "Modèle Soon 10/70/20"]);
+    // Les puces suivent l'ordre des colonnes.
+    await expect(page.getByRole("list", { name: "Méthodes comparées" }).getByRole("button")).toHaveText([/50\/30\/20/, /Soon 10\/70\/20/]);
     await expect.poll(() => page.evaluate(() => (window as unknown as { __moved: boolean }).__moved)).toBe(true);
     await expect.poll(() => page.locator("article").evaluateAll((els) => els.every((a) => !(a as HTMLElement).style.transform))).toBe(true);
     const first = page.getByRole("article", { name: /50\/30\/20/ });
@@ -108,5 +110,13 @@ test.describe("with motion", () => {
     await expect(first.locator("[data-best]")).toContainText("Meilleure épargne");
     await expect.poll(() => page.locator("[data-best] svg circle").evaluate((c) => c.getAttribute("transform") ?? "")).toBe("");
     expect(errors).toEqual([]);
+  });
+
+  test("ties for the best savings all get the sun", async ({ page }) => {
+    await seed(page, 500000, 300000);
+    await page.goto("/fr/comparer");
+    // 50/30/20 et 70/20/10 épargnent toutes deux 20 % et couvrent les besoins ; Soon est trop serré.
+    await expect(page.locator("[data-best]")).toHaveCount(2);
+    await expect(page.getByRole("article", { name: /Soon/ }).locator("[data-best]")).toHaveCount(0);
   });
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { flushSync } from "react-dom";
 import type { Kind, Simulation } from "@/lib/simulation";
 import { BELOW_HORIZON, DUR, EASE, gsap, MOTION_OK, rise, useGSAP } from "@/lib/motion";
@@ -20,14 +20,9 @@ export function CustomEditor({ custom, onChange, t }: { custom: Custom; onChange
   const root = useRef<HTMLElement>(null);
   const status = useRef<HTMLParagraphElement>(null);
   const prev = useRef({ count: custom.length, exact: total === 100 });
-  // Valeurs à jour pour une suppression validée après l'animation de sortie (on peut taper entre-temps).
-  const latest = useRef({ custom, onChange });
-  const leaving = useRef(false);
-  useEffect(() => {
-    latest.current = { custom, onChange };
-  });
+  const ghosts = useRef(new Set<HTMLElement>());
 
-  const { contextSafe } = useGSAP(
+  useGSAP(
     () => {
       const was = prev.current;
       prev.current = { count: custom.length, exact: total === 100 };
@@ -39,22 +34,46 @@ export function CustomEditor({ custom, onChange, t }: { custom: Custom; onChange
           gsap.fromTo(status.current, { scale: 1.04 }, { scale: 1, duration: DUR.view, ease: EASE.out, clearProps: "transform" });
       });
     },
-    { dependencies: [custom.length, total === 100], scope: root },
+    { dependencies: [custom.length, total === 100], scope: root, revertOnUpdate: true },
   );
+  // Contexte stable pour les sorties (pas révoqué à chaque changement) ; au démontage, les fantômes disparaissent.
+  const { contextSafe } = useGSAP(() => () => ghosts.current.forEach((g) => g.remove()), { scope: root });
 
-  // Sortie plus rapide que l'entrée : l'enveloppe redescend sous l'horizon, puis la liste est mise à jour.
+  // La suppression est appliquée tout de suite. Ce qui sort est un fantôme (copie inerte, position fixe) qui
+  // redescend sous l'horizon pendant que les éléments suivants glissent à leur nouvelle place (FLIP).
   const remove = (i: number) => {
-    if (leaving.current) return;
-    const el = root.current!.querySelectorAll<HTMLElement>("[data-env]")[i];
-    const commit = () => {
-      const { custom: c, onChange: change } = latest.current;
-      flushSync(() => change(c.filter((_, j) => j !== i)));
-      gsap.set(el, { clearProps: "clipPath,transform,opacity" }); // l'élément sert à l'enveloppe suivante (clé = rang)
-      leaving.current = false;
-    };
-    if (!window.matchMedia(MOTION_OK).matches) return commit();
-    leaving.current = true;
-    gsap.to(el, { clipPath: BELOW_HORIZON, y: 12, opacity: 0, duration: DUR.state * 0.7, ease: "power2.in", onComplete: commit });
+    const before = [...root.current!.children] as HTMLElement[];
+    const motion = window.matchMedia(MOTION_OK).matches;
+    const rects = motion ? before.map((el) => el.getBoundingClientRect()) : [];
+    const row = before[1 + i]; // enfants : titre, enveloppes…, bouton, total
+    const ghost = motion ? (row.cloneNode(true) as HTMLElement) : null;
+    // Avant la mise à jour : ce nœud servira ensuite à l'enveloppe suivante (clé = rang).
+    if (ghost) row.querySelectorAll("select").forEach((sel, k) => (ghost.querySelectorAll("select")[k].value = sel.value));
+    flushSync(() => onChange(custom.filter((_, j) => j !== i)));
+    if (!ghost) return;
+    contextSafe(() => {
+      const r = rects[1 + i];
+      // Fond opaque : la ligne qui glisse dessous ne transparaît pas.
+      Object.assign(ghost.style, {
+        background: getComputedStyle(document.body).backgroundColor,
+        position: "fixed", left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, margin: "0", pointerEvents: "none", zIndex: "1" });
+      ghost.setAttribute("aria-hidden", "true");
+      ghost.querySelectorAll("[aria-label]").forEach((el) => el.removeAttribute("aria-label")); // jamais confondu avec un vrai champ
+      ghost.inert = true;
+      document.body.append(ghost);
+      ghosts.current.add(ghost);
+      const drop = () => { ghost.remove(); ghosts.current.delete(ghost); };
+      gsap.to(ghost, { clipPath: BELOW_HORIZON, y: 12, opacity: 0, duration: DUR.state * 0.7, ease: "power2.in", onComplete: drop });
+      // Le nœud à l'index m montre maintenant ce qui était à m + 1 (clé = rang) : il part de cette ancienne place.
+      const after = [...root.current!.children] as HTMLElement[];
+      after.forEach((el, m) => {
+        if (m < 1 + i) return;
+        gsap.killTweensOf(el);
+        gsap.set(el, { clearProps: "transform,clipPath,opacity" });
+        const dy = rects[m + 1].top - el.getBoundingClientRect().top;
+        if (Math.abs(dy) > 0.5) gsap.fromTo(el, { y: dy }, { y: 0, duration: DUR.state, ease: EASE.out, clearProps: "transform" });
+      });
+    })();
   };
 
   return (
