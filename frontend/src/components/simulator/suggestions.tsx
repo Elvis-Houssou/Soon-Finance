@@ -22,15 +22,19 @@ type Props = {
   saveError?: boolean;
 };
 
-export function Suggestions({ status, items, currency, locale, t, canSave, onSave, saveError }: Props) {
-  const s = t.simulator;
-  const press = usePress<HTMLButtonElement>();
-  const texts = items.flatMap((it) => {
+/** Texte de chaque conseil connu, montants formatés dans la devise. */
+export const suggestionTexts = (items: Suggestion[], t: SimStrings, currency: string, locale: Locale) =>
+  items.flatMap((it) => {
     const tpl = (t.suggestions as Record<string, string>)[it.id];
     if (!tpl) return [];
     const vars = Object.fromEntries(Object.entries(it.params).map(([k, v]) => [k, formatMoney(v, currency, locale)]));
     return [{ id: it.id, text: fill(tpl, vars) }];
   });
+
+export function Suggestions({ status, items, currency, locale, t, canSave, onSave, saveError }: Props) {
+  const s = t.simulator;
+  const press = usePress<HTMLButtonElement>();
+  const texts = suggestionTexts(items, t, currency, locale);
   const more = texts.length - 2;
 
   // Les conseils arrivent en cascade ; un conseil qui n'était pas là avant pulse une fois.

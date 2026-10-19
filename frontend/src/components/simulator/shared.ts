@@ -21,3 +21,6 @@ export const FIELD =
 /** Label of an allocation row: custom name, its kind when blank, else the envelope name. */
 export const rowLabel = (t: SimStrings, r: Allocation) =>
   r.label !== undefined ? (r.label ? envelopeLabel(t, r.label) : t.kinds[r.kind]) : envelopeLabel(t, r.key);
+
+/** Simulator page strings: the shared ones plus the plan report and its PDF. */
+export type PlanStrings = SimStrings & Pick<Dictionary, "plan">;

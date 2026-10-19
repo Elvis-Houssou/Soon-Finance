@@ -1,21 +1,24 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import methodsRaw from "@/content/methods.json";
 import type { Locale } from "@/i18n/config";
 import { apiFetch } from "@/lib/api";
 import { track } from "@/lib/events";
-import { CURRENCIES, formatAmount, MAX_INCOME_MINOR, parseAmount } from "@/lib/money";
+import { CURRENCIES, formatAmount, formatMoney, MAX_INCOME_MINOR, parseAmount } from "@/lib/money";
+import { planDetails } from "@/lib/plan";
 import {
-  DEFAULT_SIMULATION, loadDraft, onboardingBody, saveDraft, totals, type MethodsData, type Simulation,
+  allocate, DEFAULT_SIMULATION, loadDraft, onboardingBody, saveDraft, totals, type MethodsData, type Simulation,
 } from "@/lib/simulation";
 import { useSuggestions } from "@/lib/use-suggestions";
+import { usePress } from "../motion/press";
+import { duration, InvestDirections, PlanDownload, PlanReport, PlanSummary, SavingsProposals, scrollToPlan } from "../plan/plan-report";
 import { Allocation } from "./allocation";
 import { CustomEditor } from "./custom-editor";
 import { MethodPicker } from "./method-picker";
-import { FIELD, type SimStrings } from "./shared";
-import { Suggestions } from "./suggestions";
+import { envelopeLabel, FIELD, rowLabel, type PlanStrings } from "./shared";
+import { Suggestions, suggestionTexts } from "./suggestions";
 
 const { methods } = methodsRaw as MethodsData;
 type Texts = { income: string; essentials: string; savings: string };
@@ -53,16 +56,22 @@ function prefill(draft: Simulation): { sim: Simulation; applied: boolean } {
   };
 }
 
-export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
+export function Simulator({ locale, t }: { locale: Locale; t: PlanStrings }) {
   const router = useRouter();
   const [saveError, setSaveError] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [sim, setSim] = useState<Simulation | null>(null);
   const [texts, setTexts] = useState<Texts>({ income: "", essentials: "", savings: "" });
+  // Number of times the plan was computed (0 = not yet): each new calculation replays the reveal.
+  const [run, setRun] = useState(0);
+  const [pdfReturn, setPdfReturn] = useState(false);
+  const result = useRef<HTMLDivElement>(null);
+  const press = usePress<HTMLButtonElement>();
   const suggestions = useSuggestions(sim ?? DEFAULT_SIMULATION);
 
   // The draft lives in localStorage, so it can only be read after mount.
   useEffect(() => {
+    const pdf = new URLSearchParams(location.search).get("pdf") === "1";
     const { sim: s, applied } = prefill(loadDraft());
     if (applied) {
       saveDraft(s);
@@ -71,14 +80,21 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSim(s);
     setTexts({ income: toText(s.income, s, locale), essentials: toText(s.essentials, s, locale), savings: toText(s.savings, s, locale) });
+    // A draft that already has an income was validated before (here or from the home page): show its plan.
+    if (s.income > 0) setRun(1);
+    setPdfReturn(pdf && s.income > 0);
   }, [locale]);
+
+  useEffect(() => {
+    if (pdfReturn) document.getElementById("plan-pdf")?.scrollIntoView({ block: "center" });
+  }, [pdfReturn]);
 
   // The session cookie is HttpOnly: ask the API (plain fetch, a 401 must not redirect here).
   useEffect(() => {
     fetch("/api/dashboard").then((r) => setSignedIn(r.ok), () => {});
   }, []);
 
-  const shown = !!sim && sim.income > 0;
+  const shown = !!sim && sim.income > 0 && run > 0;
   const currency = sim?.currency ?? "";
   useEffect(() => {
     if (shown) void track("simulation_completed", locale, currency);
@@ -96,6 +112,25 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
   const names = new Intl.DisplayNames(locale, { type: "currency" });
   const mode = CURRENCIES[sim.currency] > 0 ? "decimal" : "numeric";
   const canSave = !method.custom || totals(sim).pct === 100;
+  const p = t.plan;
+  const plan = planDetails(sim);
+  const money = (n: number) => formatMoney(n, sim.currency, locale);
+  const methodName = t.methods[method.id as keyof PlanStrings["methods"]];
+  const onCalculate = () => {
+    setRun((n) => n + 1);
+    requestAnimationFrame(() => scrollToPlan(result.current));
+  };
+  const pdfData = {
+    p, slogan: p.slogan, methodName: methodName.name, methodDescription: methodName.description,
+    income: money(sim.income), date: new Date().toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" }),
+    money, duration: (m: number) => duration(p, m),
+    rows: allocate(sim).map((r) => ({
+      label: rowLabel(t, r), kind: r.kind, pct: r.pct, amount: r.amount,
+      children: r.children.map((c) => ({ label: envelopeLabel(t, c.key), pct: c.pct, amount: c.amount })),
+    })),
+    plan,
+    tips: suggestions.status === "ready" ? suggestionTexts(suggestions.items, t, sim.currency, locale).map((x) => x.text) : [],
+  };
 
   const onSave = () =>
     apiFetch("/api/onboarding", { method: "POST", body: JSON.stringify(onboardingBody(sim)) }).then(
@@ -172,15 +207,37 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
             <MethodPicker methods={methods} value={sim.method} onChange={(method) => update({ method })} t={t} />
           </section>
           {method.custom && <CustomEditor custom={sim.custom} onChange={(custom) => update({ custom })} t={t} />}
+          <button
+            ref={press}
+            type="button"
+            onClick={onCalculate}
+            disabled={sim.income <= 0 || !canSave}
+            className="group relative flex min-h-16 items-center justify-center gap-3 overflow-hidden rounded-[14px] bg-brand px-7 font-display text-xl font-semibold text-on-brand shadow-[0_10px_30px_-12px_var(--brand)] transition-[box-shadow,opacity] hover:shadow-[0_16px_40px_-12px_var(--brand)] disabled:opacity-50 disabled:shadow-none"
+          >
+            {run > 0 ? p.recalculate : p.calculate}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" className="motion-safe:transition-transform group-hover:translate-x-1">
+              <path d="M5 12h14m-5-5 5 5-5 5" />
+            </svg>
+          </button>
         </div>
-        <div className="flex min-w-0 flex-1 flex-col gap-6">
-          {sim.income > 0 ? (
-            <>
-              <Allocation sim={sim} method={method} locale={locale} t={t} />
-              <Suggestions {...suggestions} currency={sim.currency} locale={locale} t={t} canSave={canSave} saveError={saveError} {...(signedIn && { onSave })} />
-            </>
+        <div ref={result} className="flex min-w-0 flex-1 scroll-mt-24 flex-col gap-6">
+          {shown ? (
+            <PlanReport key={run}>
+              <PlanSummary plan={plan} methodName={methodName.name} currency={sim.currency} locale={locale} p={p} />
+              <div data-reveal><Allocation sim={sim} method={method} locale={locale} t={t} /></div>
+              <SavingsProposals plan={plan} currency={sim.currency} locale={locale} p={p} />
+              <InvestDirections plan={plan} locale={locale} p={p} />
+              <div data-reveal>
+                <Suggestions {...suggestions} currency={sim.currency} locale={locale} t={t} canSave={canSave} saveError={saveError} {...(signedIn && { onSave })} />
+              </div>
+              <PlanDownload data={pdfData} locale={locale} p={p} autoStart={pdfReturn} />
+            </PlanReport>
           ) : (
-            <p role="status" className="rounded-[14px] border border-dashed border-line-input p-8 text-lg text-muted">{s.noIncome}</p>
+            <div role="status" className="relative isolate flex min-h-80 flex-col justify-end gap-2 overflow-hidden rounded-[20px] border border-dashed border-line-input p-8">
+              <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-[radial-gradient(ellipse_at_50%_100%,color-mix(in_srgb,var(--gold)_30%,transparent),transparent_70%)] motion-safe:animate-pulse" />
+              <strong className="font-display text-2xl font-semibold">{sim.income > 0 ? p.placeholderTitle : s.noIncome}</strong>
+              <p className="max-w-prose text-muted">{p.placeholderText}</p>
+            </div>
           )}
           <p className="text-[13px] text-muted">{s.disclaimer}</p>
         </div>

@@ -35,6 +35,7 @@ test("try with my income preselects method", async ({ page }) => {
 test("simulator understand link is always active", async ({ page }) => {
   await page.goto("/fr/simulateur?methode=80-20");
   await page.getByLabel("Revenu mensuel net").fill("500000");
+  await page.getByRole("button", { name: "Calculer mon plan" }).click();
   await page.getByRole("link", { name: "Comprendre cette méthode" }).click();
   await expect(page).toHaveURL(/\/fr\/apprendre\/80-20$/);
 });

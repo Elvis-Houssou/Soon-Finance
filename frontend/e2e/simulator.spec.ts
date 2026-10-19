@@ -2,16 +2,19 @@ import { expect, test } from "@playwright/test";
 import { formatMoney } from "../src/lib/money";
 
 const nf = (n: number, tag: string) => new Intl.NumberFormat(tag).format(n);
+const calc = (page: import("@playwright/test").Page) => page.getByRole("button", { name: "Calculer mon plan" }).click();
 
 test("shows amounts as you type", async ({ page }) => {
   await page.goto("/fr/simulateur");
   await page.getByLabel("Revenu mensuel net").fill("500 000");
+  await calc(page);
   await expect(page.getByRole("listitem").filter({ hasText: "Besoins" })).toContainText(nf(250000, "fr-FR"));
 });
 
 test("soon model shows warning", async ({ page }) => {
   await page.goto("/fr/simulateur");
   await page.getByLabel("Revenu mensuel net").fill("500000");
+  await calc(page);
   await page.getByRole("radio", { name: /Modèle Soon 10\/70\/20/ }).click();
   await expect(page.getByText("Ce modèle convient si vos dépenses essentielles sont déjà couvertes.")).toBeVisible();
 });
@@ -20,14 +23,57 @@ test("custom total 95 disables save", async ({ page }) => {
   await page.goto("/fr/simulateur");
   await page.getByLabel("Revenu mensuel net").fill("500000");
   await page.getByRole("radio", { name: /Répartition personnalisée/ }).click();
+  await calc(page);
   await page.getByLabel("Pourcentage, enveloppe 2").fill("20");
-  await expect(page.locator("main").getByRole("status")).toContainText("Il reste 5 % à répartir.");
+  await expect(page.locator("main").getByRole("status").filter({ hasText: "Il reste" })).toContainText("Il reste 5 % à répartir.");
   await expect(page.getByRole("button", { name: /Ajustez le total/ })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Mettre à jour mon plan" })).toBeDisabled();
+});
+
+test("the plan appears only after calculating", async ({ page }) => {
+  await page.goto("/fr/simulateur");
+  await page.getByLabel("Revenu mensuel net").fill("500000");
+  await expect(page.getByText("Votre plan apparaîtra ici")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Vos propositions d’épargne" })).toHaveCount(0);
+  await calc(page);
+  await expect(page.getByText("Votre plan est prêt.")).toBeVisible();
+  await expect(page.getByText("à mettre de côté chaque mois")).toBeVisible();
+  await expect(page.locator("section[aria-label='Votre plan est prêt.']")).toContainText(formatMoney(100000, "XOF", "fr"));
+  await expect(page.getByText(`Visez 3 à 6 mois de dépenses essentielles : ${formatMoney(750000, "XOF", "fr")}`)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Pistes d’investissement" })).toBeVisible();
+  await expect(page.getByText("Après votre réserve")).toHaveCount(2);
+});
+
+test("pdf download asks to sign up, then returns to the plan", async ({ page }) => {
+  await page.goto("/fr/simulateur");
+  await page.getByLabel("Revenu mensuel net").fill("500000");
+  await calc(page);
+  await page.getByRole("button", { name: "Télécharger mon plan (PDF)" }).click();
+  await expect(page.getByText("Créez votre compte gratuit pour recevoir votre PDF")).toBeVisible();
+  const link = page.getByRole("link", { name: "M’inscrire et télécharger" });
+  await expect(link).toHaveAttribute("href", "/fr/connexion?next=%2Ffr%2Fsimulateur%3Fpdf%3D1");
+});
+
+test("signed-in users get a real pdf, and the sign-up return starts it", async ({ page }) => {
+  await page.route("**/api/me", (r) => r.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
+  await page.addInitScript(() => {
+    if (!localStorage.getItem("sf-simulation"))
+      localStorage.setItem("sf-simulation", JSON.stringify({ v: 1, income: 500000, currency: "XOF", method: "six-jars", custom: [{ name: "a", kind: "need", pct: 100 }], essentials: 200000, hasDebt: true, savings: 50000 }));
+  });
+  const download = page.waitForEvent("download");
+  await page.goto("/fr/simulateur?pdf=1");
+  const file = await download;
+  expect(file.suggestedFilename()).toBe("plan-soon-finance.pdf");
+  const bytes = await (await import("node:fs/promises")).readFile((await file.path())!);
+  expect(bytes.subarray(0, 5).toString()).toBe("%PDF-");
+  expect(bytes.length).toBeGreaterThan(10_000);
+  await expect(page.getByText("Votre PDF est téléchargé.")).toBeVisible();
 });
 
 test("essentials not covered suggestion", async ({ page }) => {
   await page.goto("/fr/simulateur");
   await page.getByLabel("Revenu mensuel net").fill("500000");
+  await calc(page);
   await page.getByLabel(/Dépenses essentielles/).fill("300000");
   await page.getByRole("radio", { name: /Modèle Soon 10\/70\/20/ }).click();
   await expect(page.getByText(/moins que vos dépenses essentielles/)).toBeVisible();
@@ -37,6 +83,7 @@ test("api down keeps amounts", async ({ page }) => {
   await page.route("**/api/suggestions", (r) => r.fulfill({ status: 503, body: "" }));
   await page.goto("/fr/simulateur");
   await page.getByLabel("Revenu mensuel net").fill("500000");
+  await calc(page);
   await expect(page.getByRole("listitem").filter({ hasText: "Besoins" })).toContainText(nf(250000, "fr-FR"));
   await expect(page.getByText("Les conseils sont momentanément indisponibles.")).toBeVisible();
 });
@@ -44,6 +91,7 @@ test("api down keeps amounts", async ({ page }) => {
 test("english formats numbers", async ({ page }) => {
   await page.goto("/en/simulateur");
   await page.getByLabel("Net monthly income").fill("500000");
+  await page.getByRole("button", { name: "Calculate my plan" }).click();
   await expect(page.getByRole("listitem").filter({ hasText: "Needs" })).toContainText("250,000");
   const text = await page.locator("main").innerText();
   expect(text).not.toMatch(/Revenu|Besoins|Épargne|Enregistrer|conseils|Choisissez/);
@@ -61,6 +109,7 @@ test("mobile 360 no horizontal scroll", async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 800 });
   await page.goto("/fr/simulateur");
   await page.getByLabel("Revenu mensuel net").fill("500000");
+  await calc(page);
   await page.getByRole("radio", { name: /6 comptes/ }).click();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
 });
@@ -68,6 +117,7 @@ test("mobile 360 no horizontal scroll", async ({ page }) => {
 test("custom split shows translated labels", async ({ page }) => {
   await page.goto("/fr/simulateur");
   await page.getByLabel("Revenu mensuel net").fill("500000");
+  await calc(page);
   await page.getByRole("radio", { name: /Répartition personnalisée/ }).click();
   await expect(page.getByRole("listitem").filter({ hasText: "Besoins" })).toBeVisible();
   await page.goto("/en/simulateur");
@@ -83,6 +133,7 @@ test("currency switch keeps the displayed amount", async ({ page }) => {
   await page.getByLabel("Devise").selectOption("EUR");
   const income = page.getByLabel("Revenu mensuel net");
   await income.fill("1 000,50");
+  await calc(page);
   await page.getByLabel("Devise").selectOption("XOF");
   await expect(income).toHaveValue(nf(1001, "fr-FR"));
   await expect(page.locator("[aria-live=polite]")).toContainText(nf(1001, "fr-FR"));
@@ -106,6 +157,7 @@ test("decimal currency accepts cents", async ({ page }) => {
   await page.goto("/fr/simulateur");
   await page.locator("select").first().selectOption("EUR");
   await page.getByLabel("Revenu mensuel net").fill("1 500,50");
+  await calc(page);
   await expect(page.getByLabel("Revenu mensuel net")).toHaveAttribute("inputmode", "decimal");
   await expect(page.getByRole("listitem").filter({ hasText: "Besoins" })).toContainText("750,25");
 });
