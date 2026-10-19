@@ -27,6 +27,16 @@ describe("proxy", () => {
     expect(proxy(at("/api/health"))).toBeUndefined();
     expect(proxy(at("/fr/simulateur"))).toBeUndefined();
   });
+  it("redirige une page de compte sans session vers la connexion", () => {
+    const res = proxy(at("/fr/tableau-de-bord"));
+    expect(new URL(res!.headers.get("location")!).pathname + new URL(res!.headers.get("location")!).search).toBe(
+      "/fr/connexion?next=%2Ffr%2Ftableau-de-bord",
+    );
+  });
+  it("laisse passer une page de compte avec session", () => {
+    const withCookie = new NextRequest("http://localhost/en/bilan", { headers: { cookie: "sf_session=abc" } });
+    expect(proxy(withCookie)).toBeUndefined();
+  });
   it("matcher : cible /simulateur, pas /api, /_next ni les fichiers", () => {
     const re = new RegExp("^" + config.matcher[0] + "$");
     expect(re.test("/simulateur")).toBe(true);

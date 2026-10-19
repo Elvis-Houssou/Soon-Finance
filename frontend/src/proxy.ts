@@ -19,11 +19,23 @@ export function pickLocale(request: NextRequest): Locale {
   return match && hasLocale(match) ? match : defaultLocale;
 }
 
+export const ACCOUNT_PATHS = ["tableau-de-bord", "bilan", "historique", "objectifs", "parametres"];
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (pathname === "/api" || pathname.startsWith("/api/")) return;
   const hasPrefix = locales.some((locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`));
-  if (hasPrefix) return;
+  if (hasPrefix) {
+    // Présence seule du cookie : la validité est vérifiée par l'API (401 → connexion).
+    const [, , page] = pathname.split("/");
+    if (ACCOUNT_PATHS.includes(page) && !request.cookies.has("sf_session")) {
+      const url = request.nextUrl.clone();
+      url.pathname = `/${pathname.split("/")[1]}/connexion`;
+      url.search = `?next=${encodeURIComponent(pathname)}`;
+      return NextResponse.redirect(url);
+    }
+    return;
+  }
 
   const url = request.nextUrl.clone();
   url.pathname = `/${pickLocale(request)}${pathname === "/" ? "" : pathname}`;
