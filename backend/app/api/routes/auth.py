@@ -52,7 +52,7 @@ def _find_user(db: Session, email: str) -> User | None:
 @router.post("/request-link", status_code=202)
 def request_link(body: RequestLink, request: Request, db: Session = Depends(get_session), settings: Settings = Depends(get_settings)):
     ip_hash = auth.hash_token(_client_ip(request, settings))
-    waits = [w for w in (_retry_after(db, LoginToken.email, body.email, 5), _retry_after(db, LoginToken.ip_hash, ip_hash, 20)) if w]
+    waits = [w for w in (_retry_after(db, LoginToken.email, body.email, 5), _retry_after(db, LoginToken.ip_hash, ip_hash, settings.login_limit_per_ip)) if w]
     if waits:
         return JSONResponse({"detail": "rate_limited", "retry_after": max(waits)}, status_code=429)
     raw = secrets.token_urlsafe(32)

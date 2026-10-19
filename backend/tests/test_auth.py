@@ -250,3 +250,10 @@ def test_verify_user_created_concurrently_logs_in(client, sent, monkeypatch):
     assert r.status_code == 303 and r.headers["location"] == "/fr/tableau-de-bord"
     assert count(client, User) == 1 and count(client, SessionToken) == 1 and count(client, Event) == 0
     assert client.get("/api/me").json()["id"] == "u1"
+
+
+def test_rate_limit_ip_follows_setting(client, sent):
+    app.dependency_overrides[get_settings] = lambda: Settings(_env_file=None, login_limit_per_ip=2)
+    for i in range(2):
+        assert request_link(client, email=f"s{i}@example.com").status_code == 202
+    assert request_link(client, email="s9@example.com").status_code == 429

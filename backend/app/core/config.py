@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     resend_api_key: str | None = None
     email_from: str = "Soon Finance <onboarding@resend.dev>"
     admin_emails: Annotated[list[str], NoDecode] = []  # comma-separated in the environment
+    login_limit_per_ip: int = 20  # login links per IP per hour; raised only by the e2e backend
 
     @field_validator("admin_emails", mode="before")
     @classmethod

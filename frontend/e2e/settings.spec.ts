@@ -11,7 +11,6 @@ async function signIn(page: Page) {
   await expect(page).toHaveURL(/\/fr\/tableau-de-bord$/);
 }
 
-// Few sign-ins on purpose: the backend allows 20 login links per IP per hour across the whole suite.
 test.describe.serial("settings", () => {
   let page: Page;
   test.beforeAll(async ({ browser }) => {
@@ -53,6 +52,13 @@ test.describe.serial("settings", () => {
     await expect(page).toHaveURL(/\/en\/parametres$/);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Settings");
     expect((await (await page.request.get("/api/me")).json()).locale).toBe("en");
+  });
+
+  test("sign out returns home", async () => {
+    await page.goto("/en/parametres");
+    await page.getByRole("main").getByRole("button", { name: "Sign out" }).click();
+    await expect(page).toHaveURL(/\/en$/);
+    await signIn(page);
   });
 
   test("delete account confirms then signs out", async () => {
