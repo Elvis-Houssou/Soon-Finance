@@ -32,3 +32,12 @@ test("account page redirects when signed out", async ({ page }) => {
   await page.goto("/fr/tableau-de-bord");
   await expect(page).toHaveURL(/\/fr\/connexion\?next=%2Ffr%2Ftableau-de-bord$/);
 });
+
+for (const path of ["/fr/connexion", "/fr/connexion/lien-envoye?email=a-very-long-address-that-keeps-going@example-domain-name.com", "/fr/connexion/lien-expire"]) {
+  test(`no horizontal scroll at 360px (${path})`, async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    await page.goto(path);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
+}

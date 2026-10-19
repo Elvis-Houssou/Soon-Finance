@@ -33,6 +33,10 @@ describe("proxy", () => {
       "/fr/connexion?next=%2Ffr%2Ftableau-de-bord",
     );
   });
+  it("conserve la query string dans next", () => {
+    const res = proxy(at("/fr/bilan?mois=2026-10"));
+    expect(new URL(res!.headers.get("location")!).search).toBe("?next=%2Ffr%2Fbilan%3Fmois%3D2026-10");
+  });
   it("laisse passer une page de compte avec session", () => {
     const withCookie = new NextRequest("http://localhost/en/bilan", { headers: { cookie: "sf_session=abc" } });
     expect(proxy(withCookie)).toBeUndefined();

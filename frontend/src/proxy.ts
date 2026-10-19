@@ -22,7 +22,7 @@ export function pickLocale(request: NextRequest): Locale {
 export const ACCOUNT_PATHS = ["tableau-de-bord", "bilan", "historique", "objectifs", "parametres"];
 
 export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
   if (pathname === "/api" || pathname.startsWith("/api/")) return;
   const hasPrefix = locales.some((locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`));
   if (hasPrefix) {
@@ -31,7 +31,7 @@ export function proxy(request: NextRequest) {
     if (ACCOUNT_PATHS.includes(page) && !request.cookies.has("sf_session")) {
       const url = request.nextUrl.clone();
       url.pathname = `/${pathname.split("/")[1]}/connexion`;
-      url.search = `?next=${encodeURIComponent(pathname)}`;
+      url.search = `?next=${encodeURIComponent(pathname + search)}`;
       return NextResponse.redirect(url);
     }
     return;
