@@ -1,6 +1,7 @@
 "use client";
 
 import { useGSAP } from "@gsap/react";
+import { useRef, useSyncExternalStore } from "react";
 import { gsap } from "gsap";
 import { Flip } from "gsap/Flip";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -8,7 +9,7 @@ import { SplitText } from "gsap/SplitText";
 
 declare global {
   interface Window {
-    /** Point d'observation des tests e2e (ScrollTrigger orphelins). */
+    /** Point d'observation des tests e2e (ScrollTrigger orphelins) ; absent des builds de production hors e2e. */
     __sfMotion?: { ScrollTrigger: typeof ScrollTrigger };
   }
 }
@@ -16,7 +17,7 @@ declare global {
 // Seul point d'enregistrement des plugins, côté client uniquement.
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText, Flip);
-  window.__sfMotion = { ScrollTrigger };
+  if (process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_E2E === "1") window.__sfMotion = { ScrollTrigger };
 }
 
 export { gsap, useGSAP, ScrollTrigger, SplitText, Flip };
@@ -26,8 +27,29 @@ export const DUR = { feedback: 0.12, state: 0.24, view: 0.42, signature: 0.9 } a
 export const REDUCED = "(prefers-reduced-motion: reduce)";
 export const MOTION_OK = "(prefers-reduced-motion: no-preference)";
 
-/** Masque « sous l'horizon » : tout est rogné par le haut ; `inset(0)` = entièrement levé. */
-export const BELOW_HORIZON = "inset(100% 0% 0% 0%)";
+/** Masque « sous l'horizon » : tout est rogné par le bas, le haut apparaît en premier ; `inset(0)` = entièrement levé. */
+export const BELOW_HORIZON = "inset(0% 0% 100% 0%)";
+
+const noSubscribe = () => () => {};
+
+/**
+ * `true` au premier passage d'un composant hydraté (son HTML serveur est déjà peint) : ne pas le cacher
+ * pour l'animer. `false` pour tout ce qui est monté côté client (navigation, contenu chargé ensuite) et
+ * pour les passages suivants (page réaffichée par Activity). À appeler dans useGSAP :
+ * `const hydrating = useHydrating(); useGSAP(() => { if (hydrating()) return; … })`.
+ */
+export function useHydrating(): () => boolean {
+  // Instantané serveur pendant l'hydratation (y compris des frontières Suspense hydratées plus tard).
+  const first = useRef(useSyncExternalStore(noSubscribe, () => false, () => true));
+  return () => {
+    const was = first.current;
+    first.current = false;
+    return was;
+  };
+}
+
+/** Sous la ligne de flottaison : jamais vu avant l'hydratation, on peut l'animer au défilement. */
+export const belowFold = (el: Element | null | undefined) => !!el && el.getBoundingClientRect().top >= window.innerHeight;
 
 /**
  * Images d'un compteur, de `from` à `to` en unités mineures entières, formatées par `format`.

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { countFrames, DUR, EASE, gsap, MOTION_OK, useGSAP } from "@/lib/motion";
+import { countFrames, DUR, EASE, gsap, MOTION_OK, useGSAP, useHydrating } from "@/lib/motion";
 
 type Props = {
   value: number;
@@ -9,6 +9,8 @@ type Props = {
   from?: number;
   format: (n: number) => string;
   duration?: number;
+  /** Défile aussi au premier chargement (HTML serveur déjà peint) : réservé aux moments signature. */
+  firstLoad?: boolean;
   className?: string;
 };
 
@@ -16,14 +18,16 @@ type Props = {
  * Montant qui défile jusqu'à `value`. Le HTML serveur et le texte final sont exactement `format(value)` ;
  * pas d'aria-live : les valeurs intermédiaires ne sont jamais annoncées. Mouvement réduit : saut direct.
  */
-export function CountUp({ value, from, format, duration = DUR.signature, className }: Props) {
+export function CountUp({ value, from, format, duration = DUR.signature, firstLoad = false, className }: Props) {
   const ref = useRef<HTMLSpanElement>(null);
   const shown = useRef(0); // valeur numérique actuellement à l'écran
+  const hydrating = useHydrating();
 
   useGSAP(
     () => {
       const text = ref.current?.firstChild;
-      const start = from ?? shown.current;
+      // Premier chargement : la valeur finale est déjà peinte, on ne la fait pas retomber à 0.
+      const start = hydrating() && !firstLoad ? value : (from ?? shown.current);
       shown.current = value;
       if (!text) return;
       const final = format(value);
@@ -60,8 +64,8 @@ export function CountUp({ value, from, format, duration = DUR.signature, classNa
         };
       });
     },
-    // `format` est souvent une fonction en ligne : seule la valeur relance le défilement.
-    { dependencies: [value], revertOnUpdate: true },
+    // `format` est souvent une fonction en ligne : on suit son résultat (devise, langue), pas son identité.
+    { dependencies: [value, format(value)], revertOnUpdate: true },
   );
 
   return (
