@@ -5,7 +5,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Cookie, Depends, Request, Response
 from fastapi.responses import JSONResponse, RedirectResponse
-from sqlalchemy import select
+from sqlalchemy import select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings, get_settings
@@ -30,10 +31,27 @@ def _retry_after(db: Session, column, value: str, limit: int) -> int | None:
     return max(1, int((times[0] + HOUR - now).total_seconds()) + 1)
 
 
+def _client_ip(request: Request, settings: Settings) -> str:
+    # In production the app sits behind Vercel/Render, so client.host is the proxy.
+    # shortcut: trusts the leftmost X-Forwarded-For entry, spoofable if the proxy appends rather than overwrites.
+    forwarded = request.headers.get("x-forwarded-for", "").split(",")[0].strip()
+    if settings.env == "production" and forwarded:
+        return forwarded
+    return request.client.host if request.client else "unknown"
+
+
+def _claim(db: Session, token_id: str, now) -> bool:
+    """Atomically mark the token used; False if someone else got there first."""
+    return db.execute(update(LoginToken).where(LoginToken.id == token_id, LoginToken.used_at.is_(None)).values(used_at=now)).rowcount == 1
+
+
+def _find_user(db: Session, email: str) -> User | None:
+    return db.scalar(select(User).where(User.email == email))
+
+
 @router.post("/request-link", status_code=202)
 def request_link(body: RequestLink, request: Request, db: Session = Depends(get_session), settings: Settings = Depends(get_settings)):
-    # shortcut: request.client is the proxy IP behind Render; switch to the forwarded IP if the limit proves too coarse.
-    ip_hash = auth.hash_token(request.client.host if request.client else "unknown")
+    ip_hash = auth.hash_token(_client_ip(request, settings))
     waits = [w for w in (_retry_after(db, LoginToken.email, body.email, 5), _retry_after(db, LoginToken.ip_hash, ip_hash, 20)) if w]
     if waits:
         return JSONResponse({"detail": "rate_limited", "retry_after": max(waits)}, status_code=429)
@@ -56,14 +74,20 @@ def verify(token: str, db: Session = Depends(get_session), settings: Settings = 
     now = auth.now()
     if row is None or row.used_at is not None or row.expires_at <= now:
         return RedirectResponse(f"/{row.locale if row else 'fr'}/connexion/lien-expire", status_code=303)
-    row.used_at = now
-    user = db.scalar(select(User).where(User.email == row.email))
+    if not _claim(db, row.id, now):
+        db.rollback()
+        return RedirectResponse(f"/{row.locale}/connexion/lien-expire", status_code=303)
+    user = _find_user(db, row.email)
     if user is None:
         user = User(id=str(uuid.uuid4()), email=row.email, locale=row.locale, consent_at=now, created_at=now,
                     role="admin" if row.email in settings.admin_emails else "user")
-        db.add(user)
-        db.add(Event(type="signup_completed", occurred_at=now, locale=row.locale))
-        db.flush()
+        try:
+            with db.begin_nested():
+                db.add(user)
+                db.flush()
+            db.add(Event(type="signup_completed", occurred_at=now, locale=row.locale))
+        except IntegrityError:  # created concurrently: sign in to the existing account
+            user = db.scalar(select(User).where(User.email == row.email))
     raw = secrets.token_urlsafe(32)
     db.add(SessionToken(id_hash=auth.hash_token(raw), user_id=user.id, expires_at=now + SESSION_TTL, created_at=now))
     db.commit()

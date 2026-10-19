@@ -207,3 +207,46 @@ def test_existing_user_signs_in_without_duplicate(client, sent):
         request_link(client)
         verify(client, sent[-1][1])
     assert count(client, User) == 1 and count(client, Event) == 1 and count(client, SessionToken) == 2
+
+
+def test_production_rate_limit_uses_forwarded_ip(client, sent):
+    app.dependency_overrides[get_settings] = lambda: Settings(_env_file=None, env="production")
+    a, b = {"X-Forwarded-For": " 1.1.1.1 , 10.0.0.1"}, {"X-Forwarded-For": "2.2.2.2"}
+    for i in range(20):
+        assert client.post("/api/auth/request-link", json={"email": f"u{i}@x.co", "locale": "fr", "consent": True}, headers=a).status_code == 202
+    body = {"email": "z@x.co", "locale": "fr", "consent": True}
+    assert client.post("/api/auth/request-link", json=body, headers=a).status_code == 429
+    assert client.post("/api/auth/request-link", json=body, headers=b).status_code == 202
+
+
+def test_claim_is_atomic(client, sent):
+    from app.api.routes.auth import _claim
+
+    request_link(client)
+    with client.session_factory() as s:
+        tid = s.scalars(select(LoginToken)).one().id
+        assert _claim(s, tid, datetime.now(UTC)) is True
+        assert _claim(s, tid, datetime.now(UTC)) is False
+
+
+def test_verify_lost_claim_goes_to_expired(client, sent, monkeypatch):
+    request_link(client)
+    monkeypatch.setattr("app.api.routes.auth._claim", lambda *a: False)
+    r = verify(client, sent[0][1])
+    assert r.status_code == 303 and r.headers["location"] == "/fr/connexion/lien-expire"
+    assert count(client, SessionToken) == 0 and count(client, User) == 0
+
+
+def test_verify_user_created_concurrently_logs_in(client, sent, monkeypatch):
+    from app.api.routes import auth as route
+
+    request_link(client)
+    with client.session_factory() as s:
+        now = datetime.now(UTC)
+        s.add(User(id="u1", email="ana@example.com", consent_at=now, created_at=now))
+        s.commit()
+    monkeypatch.setattr(route, "_find_user", lambda db, email: None)  # simulates the lookup losing the race
+    r = verify(client, sent[0][1])
+    assert r.status_code == 303 and r.headers["location"] == "/fr/tableau-de-bord"
+    assert count(client, User) == 1 and count(client, SessionToken) == 1 and count(client, Event) == 0
+    assert client.get("/api/me").json()["id"] == "u1"
