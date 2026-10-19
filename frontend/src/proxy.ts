@@ -20,7 +20,7 @@ export function pickLocale(request: NextRequest): Locale {
   return match && hasLocale(match) ? match : defaultLocale;
 }
 
-export const ACCOUNT_PATHS = ["tableau-de-bord", "bilan", "historique", "objectifs", "parametres"];
+export const ACCOUNT_PATHS = ["admin", "tableau-de-bord", "bilan", "historique", "objectifs", "parametres"];
 
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
