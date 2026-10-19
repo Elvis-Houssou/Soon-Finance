@@ -440,6 +440,7 @@ const fr = {
     retry: "Réessayer",
     filters: "Filtres",
     period: "Période",
+    since: "Depuis le",
     periods: { "30": "30 derniers jours", "90": "90 derniers jours", "365": "12 derniers mois" },
     currency: "Devise",
     allCurrencies: "Toutes devises",

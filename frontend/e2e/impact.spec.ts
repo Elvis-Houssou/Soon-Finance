@@ -17,6 +17,7 @@ test("admin sees impact", async ({ browser }) => {
   await signIn(page, ADMIN);
   await page.goto("/fr/admin/impact");
   await expect(page.getByRole("heading", { level: 1, name: "Est-ce que Soon Finance aide vraiment ?" })).toBeVisible();
+  await expect(page.getByText(/^Depuis le \d{1,2}(er)? \S+ \d{4}$/)).toBeVisible();
   const a = page.getByRole("region", { name: "A · Épargne réelle" });
   await expect(a).toBeVisible();
   await expect(a.getByText("—").first()).toBeVisible(); // moins de 5 personnes : masqué

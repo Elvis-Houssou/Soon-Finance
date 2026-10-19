@@ -442,6 +442,7 @@ const en: Dictionary = {
     retry: "Try again",
     filters: "Filters",
     period: "Period",
+    since: "Since",
     periods: { "30": "Last 30 days", "90": "Last 90 days", "365": "Last 12 months" },
     currency: "Currency",
     allCurrencies: "All currencies",

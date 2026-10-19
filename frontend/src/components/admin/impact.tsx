@@ -15,6 +15,7 @@ type Data = {
   savings: { median_rate_bp: N; improved_share_bp: N; helpfulness_avg_x100: N };
   amounts: { currency: string; saved_total: N }[];
   min_group: number;
+  since: string;
 };
 
 const SELECT = "min-h-11 rounded-[10px] border border-line-input bg-surface px-3 text-base text-ink";
@@ -167,6 +168,11 @@ export function Impact({ locale, t }: { locale: Locale; t: Dictionary["impact"] 
           </select>
         </label>
       </form>
+      {data && (
+        <p className="text-sm text-muted">
+          {t.since} {new Intl.DateTimeFormat(tag, { dateStyle: "long", timeZone: "UTC" }).format(new Date(data.since))}
+        </p>
+      )}
       {body}
     </main>
   );

@@ -2,8 +2,8 @@
 
 Règle de vie privée : tout chiffre calculé sur moins de MIN_GROUP personnes distinctes (utilisateurs, ou anon_id pour
 les événements) vaut None. Choix là où le cahier des charges est muet :
-- fenêtre `days` : les événements d'usage et les inscrits sont comptés dans la fenêtre ; épargne et montants utilisent
-  les mois clôturés (closed_at) dans la fenêtre ; les cohortes sont les mois d'inscription dans la fenêtre.
+- fenêtre `days` : tous les chiffres (événements, inscrits, cohortes, mois clôturés, montants) partagent le même début,
+  le 1er du mois contenant now - days (réponse : `since`).
 - les comptes admin (ADMIN_EMAILS) sont exclus de tous les agrégats.
 - filtre devise : mois de cette devise (épargne/montants) et utilisateurs dont la devise est celle-ci (inscrits/cohortes).
 - anti-différence : si une cohorte est masquée, le total des inscrits (et la conversion) l'est aussi, sinon
@@ -13,7 +13,7 @@ les événements) vaut None. Choix là où le cahier des charges est muet :
   y compris l'écart croisé des compléments ((tout - filtré) à 90 j moins (tout - filtré) à 30 j).
 - règle du complément : avec un filtre devise/langue, chaque chiffre n'est affiché que si la population complémentaire
   (tout − filtré) pour ce chiffre vaut 0 ou au moins 5 personnes ; sinon « tout » moins « filtré » révélerait un petit groupe.
-- cohortes : le début de fenêtre est ramené au 1er du mois, donc une ligne de cohorte est identique d'une période à l'autre.
+- cohortes : le début aligné sur le mois rend une ligne de cohorte identique d'une période à l'autre.
 - médiane et moyenne de notes : une valeur par utilisateur (dernier taux clôturé de la fenêtre ; sa note moyenne), puis
   médiane/moyenne entre utilisateurs, pour qu'un utilisateur très actif ne pèse pas davantage.
 """
@@ -40,10 +40,14 @@ def _saved(m: Month) -> int:
     return sum(e.get("actual") or 0 for e in m.envelopes if e["kind"] in SAVE_KINDS)
 
 
+def window_start(now: datetime, days: int) -> datetime:
+    """Début commun à tous les chiffres : 1er du mois contenant now - days."""
+    return (now - timedelta(days=days)).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+
 def _raw(db: Session, now: datetime, days: int, currency: str | None, locale: str | None, admins: list[str]) -> dict:
     """Chiffres bruts (non masqués) et nombre de personnes derrière chacun."""
-    since = now - timedelta(days=days)
-    cohort_start = since.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    since = window_start(now, days)
 
     events = {}
     for key, etype in EVENT_TYPES.items():
@@ -65,7 +69,7 @@ def _raw(db: Session, now: datetime, days: int, currency: str | None, locale: st
         closed_all[uid] = n
     cohorts: dict[str, list[User]] = defaultdict(list)
     for u in users:
-        if u.created_at >= cohort_start:
+        if u.created_at >= since:
             cohorts[u.created_at.strftime("%Y-%m")].append(u)
     now_ym = now.strftime("%Y-%m")
     rows = {}
@@ -158,4 +162,5 @@ def compute(db: Session, now: datetime, days: int, currency: str | None, locale:
         "savings": {"median_rate_bp": val("median"), "improved_share_bp": val("improved"), "helpfulness_avg_x100": val("help")},
         "amounts": amounts,
         "min_group": MIN_GROUP,
+        "since": window_start(now, days).date().isoformat(),
     }

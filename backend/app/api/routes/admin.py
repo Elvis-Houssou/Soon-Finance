@@ -47,6 +47,7 @@ class ImpactOut(BaseModel):
     savings: Savings
     amounts: list[Amount]
     min_group: int
+    since: str
 
 
 @router.get("/admin/impact", response_model=ImpactOut)

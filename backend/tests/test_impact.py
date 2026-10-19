@@ -150,6 +150,22 @@ def test_window_excludes_old_months(client, login):
     assert d["amounts"] == [{"currency": "XOF", "saved_total": sum(s for _, ym, s, _ in SEEDED if ym == "2026-09")}]
 
 
+def test_signups_and_events_share_the_month_aligned_window(client, login):
+    # NOW = Oct 15 ; days=30 -> since = Sep 1 : a signup and a simulation on Sep 1 are both in, one on Aug 31 is out.
+    sep1, aug31 = datetime(2026, 9, 1, 0, 30, tzinfo=UTC), datetime(2026, 8, 31, 23, tzinfo=UTC)
+    with client.session_factory() as s:
+        for i in range(5):
+            add_user(s, i, sep1)
+        add_user(s, 9, aug31)
+        for a in range(5):
+            s.add(Event(type="simulation_completed", anon_id=f"in-{a:03d}", locale="fr", currency="XOF", occurred_at=sep1))
+        s.add(Event(type="simulation_completed", anon_id="out-000", locale="fr", currency="XOF", occurred_at=aug31))
+        s.commit()
+    d = get(login(ADMIN), "?days=30").json()
+    assert d["since"] == "2026-09-01"
+    assert d["usage"]["simulations"] == 5 and d["usage"]["signups_completed"] == 5 and d["usage"]["conversion_bp"] == 10000
+
+
 def test_bad_params_rejected(client, login):
     c = login(ADMIN)
     assert c.get("/api/admin/impact?days=7").status_code == 422
@@ -163,7 +179,7 @@ def test_no_individual_fields_in_response(client, login):
     for banned in ("email", "user_id", "anon", "@x.com", "u0-", "first_name"):
         assert banned not in text
     d = r.json()
-    assert set(d) == {"usage", "retention", "savings", "amounts", "min_group"}
+    assert set(d) == {"usage", "retention", "savings", "amounts", "min_group", "since"}
     assert set(d["usage"]) == {"simulations", "comparisons", "signups_started", "signups_completed", "conversion_bp"}
 
 

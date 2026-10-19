@@ -61,4 +61,6 @@ La CI GitHub (`.github/workflows/ci.yml`) lance tous ces tests à chaque push et
 1. **Base sur Neon** : créer un projet (région Europe, Francfort) et copier l'URL de connexion.
 2. **Backend sur Render** : créer un Blueprint en indiquant le fichier `backend/render.yaml` (Render cherche `render.yaml` à la racine par défaut), puis saisir `DATABASE_URL` (URL Neon). Le build applique les migrations Alembic. Noter l'URL du service.
 3. **Frontend sur Vercel** : importer le dépôt, dossier racine `frontend/`, variable `API_ORIGIN` = URL Render (sans slash final). Copier `frontend/.env.example` pour le développement.
+   `API_ORIGIN` doit être défini en production sur le frontend : sans lui, `/admin` renvoie toujours 404 et les réécritures `/api` échouent.
+   Avant le lancement, remplacer les marqueurs de `frontend/src/content/legal.ts` (`PLACEHOLDERS` : date, raison sociale, adresse, immatriculation, responsable, email de contact).
 4. **Vérifier** : `https://<backend>/api/health` renvoie `{"status":"ok"}`, puis le simulateur en ligne affiche des conseils.

@@ -5,7 +5,7 @@ test("privacy page reachable from footer and consent link", async ({ page }) => 
   await page.getByRole("contentinfo").getByRole("link", { name: "Confidentialité" }).click();
   await expect(page).toHaveURL(/\/fr\/confidentialite$/);
   await expect(page.getByRole("heading", { level: 1, name: "Confidentialité" })).toBeVisible();
-  await expect(page.getByText("Nous ne vendons, ne louons et ne partageons aucune donnée")).toBeVisible();
+  await expect(page.getByText("Nous ne vendons ni ne louons aucune donnée")).toBeVisible();
   await expect(page.getByRole("link", { name: "Paramètres" })).toHaveAttribute("href", "/fr/parametres");
   await page.getByRole("contentinfo").getByRole("link", { name: "Mentions légales" }).click();
   await expect(page).toHaveURL(/\/fr\/confidentialite#mentions$/);
