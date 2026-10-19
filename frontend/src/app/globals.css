@@ -189,6 +189,8 @@ html.theme-vt::view-transition-new(root) {
   mix-blend-mode: normal;
 }
 
+/* Mouvement réduit, côté CSS (transitions, view transitions). Le mouvement JS (GSAP) suit la même requête via
+   gsap.matchMedia(REDUCED / MOTION_OK) dans src/lib/motion.ts : ces deux chemins ne se recouvrent pas. */
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(*),
   ::view-transition-new(*),

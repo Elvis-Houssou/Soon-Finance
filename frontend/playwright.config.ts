@@ -15,7 +15,8 @@ const BACKEND = `${UV} run --frozen --project "${BACKEND_DIR}"`;
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
-  use: { baseURL: "http://127.0.0.1:3100" },
+  // Mouvement réduit par défaut : tests déterministes ; les tests d'animation passent en "no-preference".
+  use: { baseURL: "http://127.0.0.1:3100", reducedMotion: "reduce" },
   webServer: [
     {
       command: `${BACKEND} alembic -c "${BACKEND_DIR}/alembic.ini" upgrade head && ${BACKEND} uvicorn app.main:app --port 8100`,

@@ -65,6 +65,7 @@ test("dashboard shows sun and month", async ({ page }) => {
 });
 
 test("reduced motion has no sun animation", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" }); // la config passe tout en "reduce" par défaut
   await signIn(page, DRAFT);
   const sun = page.locator("[data-sun]");
   const duration = () => sun.evaluate((el) => getComputedStyle(el).transitionDuration);
