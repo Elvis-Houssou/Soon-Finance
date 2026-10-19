@@ -65,14 +65,30 @@ test("dashboard shows sun and month", async ({ page }) => {
 });
 
 test("reduced motion has no sun animation", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "no-preference" }); // la config passe tout en "reduce" par défaut
-  await signIn(page, DRAFT);
+  await signIn(page);
+  await seedClosed(page);
+  await page.reload();
   const sun = page.locator("[data-sun]");
-  const duration = () => sun.evaluate((el) => getComputedStyle(el).transitionDuration);
   await expect(sun).toBeVisible();
-  expect(parseFloat(await duration())).toBeGreaterThan(0.5);
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  expect(parseFloat(await duration())).toBeLessThan(0.001); // règle globale : ~0 s
+  // Mouvement réduit (défaut de la config) : position finale tout de suite, aucune image intermédiaire.
+  const frames = await sun.evaluate((el) => new Promise<string[]>((done) => {
+    const out: string[] = [];
+    const tick = () => { out.push(el.getAttribute("transform") ?? ""); out.length < 30 ? requestAnimationFrame(tick) : done(out); };
+    tick();
+  }));
+  expect(new Set(frames)).toEqual(new Set(["translate(76.66666666666667 86)"]));
+});
+
+test.describe("with motion", () => {
+  test.use({ reducedMotion: "no-preference" });
+  test("sun rises along its arc to its exact height", async ({ page }) => {
+    await signIn(page);
+    await seedClosed(page);
+    await page.reload();
+    const sun = page.locator("[data-sun]");
+    await expect(sun).toBeVisible();
+    await expect.poll(() => sun.getAttribute("transform"), { timeout: 8000 }).toBe("translate(76.66666666666667 86)");
+  });
 });
 
 test("no horizontal scroll at 360px", async ({ page }) => {

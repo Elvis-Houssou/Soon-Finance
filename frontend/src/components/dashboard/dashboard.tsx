@@ -73,7 +73,7 @@ function Tracking({ data, locale, t }: Ctx & { data: DashboardData }) {
       <section aria-label={d.progress} className="flex flex-col gap-3 rounded-[14px] bg-tint p-5">
         <span className="text-muted">{fill(d.savedSince, { month: since })}</span>
         <strong className="font-display text-3xl tabular-nums">{formatMoney(data.saved_total, data.currency, locale)}</strong>
-        <SunHorizon steps={data.steps} label={label} size="lg" />
+        <SunHorizon steps={data.steps} label={label} size="lg" animateOnMount />
         <p className="text-muted">{fill(d.sunCaption, { rates })}</p>
       </section>
       {cur && (
