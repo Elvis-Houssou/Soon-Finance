@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -103,6 +103,11 @@ def put_month(ym: str, body: MonthPlanIn, db: Session = Depends(get_session), us
     return month_out(m)
 
 
+def _claim_close(db: Session, m: Month, now) -> bool:
+    """Atomically set closed_at; False if a concurrent request closed the month first."""
+    return db.execute(update(Month).where(Month.id == m.id, Month.closed_at.is_(None)).values(closed_at=now)).rowcount == 1
+
+
 @router.post("/months/{ym}/close", response_model=CloseOut)
 def close_month(ym: str, body: CloseIn, db: Session = Depends(get_session), user: User = Depends(current_user)):
     m = _get_or_404(db, user, ym)
@@ -113,10 +118,13 @@ def close_month(ym: str, body: CloseIn, db: Session = Depends(get_session), user
         raise HTTPException(422, "actuals_length")
     if sum(body.actuals) != m.income:
         return JSONResponse({"detail": "totals_mismatch"}, status_code=422)
-    first = m.closed_at is None
+    first = m.closed_at is None and _claim_close(db, m, now)
+    if first:
+        m.closed_at = now
+    else:
+        db.refresh(m)  # re-close, or lost the claim: keep the existing closed_at
     m.envelopes = [{**e, "actual": a} for e, a in zip(m.envelopes, body.actuals, strict=True)]
     m.review_went_well, m.review_change_next, m.helpfulness = body.went_well, body.change_next, body.helpfulness
-    m.closed_at = m.closed_at or now
     nxt = next_ym(ym)
     if _get(db, user, nxt) is None:
         custom = [{"label": e["label"], "kind": e["kind"], "pct": e["pct"]} for e in m.envelopes] if m.method == "custom" else None

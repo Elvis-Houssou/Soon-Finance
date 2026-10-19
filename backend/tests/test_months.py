@@ -1,9 +1,9 @@
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from sqlalchemy import select
+from sqlalchemy import select, update
 
-from app.db.models import Month
+from app.db.models import Event, Month
 from app.domain.months import sun_steps
 from app.services import auth as auth_service
 
@@ -76,6 +76,8 @@ def test_close_twice_does_not_duplicate_next_month(client, login):
     onboard(c)
     assert close(c).status_code == 200 and close(c).status_code == 200
     assert [m["year_month"] for m in c.get("/api/months").json()] == ["2026-11", YM]
+    with client.session_factory() as s:
+        assert len(s.scalars(select(Event).where(Event.type == "month_closed")).all()) == 1
 
 
 def test_reclose_within_7_days_updates(client, login, clock):
@@ -169,3 +171,25 @@ def test_sun_steps():
     assert sun_steps([]) == 0 and sun_steps([5]) == 1
     assert sun_steps([1, 2, 2, 3]) == 3
     assert sun_steps(list(range(30))) == 12
+
+
+def test_lost_close_claim_is_a_reclose(client, login, monkeypatch):
+    # another request closes the month between our read and our claim: no second event, closed_at unchanged
+    c = login("a@x.com")
+    onboard(c)
+    from app.api.routes import months as routes
+    real = routes._claim_close
+    other = NOW - timedelta(minutes=5)
+
+    def racing(db, m, now):
+        with client.session_factory() as s:
+            s.execute(update(Month).where(Month.id == m.id).values(closed_at=other))
+            s.commit()
+        return real(db, m, now)
+
+    monkeypatch.setattr(routes, "_claim_close", racing)
+    r = close(c)
+    assert r.status_code == 200
+    assert datetime.fromisoformat(r.json()["month"]["closed_at"]).replace(tzinfo=UTC) == other
+    with client.session_factory() as s:
+        assert s.scalars(select(Event).where(Event.type == "month_closed")).all() == []
