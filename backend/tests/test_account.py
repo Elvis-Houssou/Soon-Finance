@@ -30,6 +30,14 @@ def test_patch_me_changes_currency_without_conversion(client, login):
         assert (m.income, m.currency) == (1000, "XOF")
 
 
+def test_me_exposes_essentials_from_profile(client, login):
+    c = login("a@x.com")
+    assert c.get("/api/me").json()["essentials"] is None
+    _seed(c)
+    assert c.get("/api/me").json()["essentials"] == 100
+    assert c.patch("/api/me", json={"first_name": None, "locale": "fr", "currency": "XOF"}).json()["essentials"] == 100
+
+
 def test_export_contains_all_user_data_only(client, login):
     login("b@x.com").post("/api/goals", json={**G, "label": "SecretB"})
     c = login("a@x.com")

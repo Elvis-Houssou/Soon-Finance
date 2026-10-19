@@ -17,7 +17,8 @@ def _row(obj) -> dict:
     return {c.name: getattr(obj, c.name) for c in obj.__table__.columns}
 
 
-def _me(user: User) -> dict:
+def _me(db: Session, user: User) -> dict:
+    profile = db.get(Profile, user.id)
     return {
         "id": user.id,
         "email": user.email,
@@ -26,12 +27,13 @@ def _me(user: User) -> dict:
         "currency": user.currency,
         "role": user.role,
         "created_at": user.created_at,
+        "essentials": profile.essentials if profile else None,
     }
 
 
 @router.get("/me")
-def me(user: User = Depends(current_user)) -> dict:
-    return _me(user)
+def me(db: Session = Depends(get_session), user: User = Depends(current_user)) -> dict:
+    return _me(db, user)
 
 
 @router.patch("/me")
@@ -39,7 +41,7 @@ def patch_me(body: MePatch, db: Session = Depends(get_session), user: User = Dep
     # Existing months keep their own currency: no conversion.
     user.first_name, user.locale, user.currency = body.first_name, body.locale, body.currency
     db.commit()
-    return _me(user)
+    return _me(db, user)
 
 
 @router.get("/me/export")
