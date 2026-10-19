@@ -80,10 +80,17 @@ test.describe("hero with motion", () => {
   test("quick start updates amounts", async ({ page }) => {
     await page.goto("/fr");
     const savings = page.getByRole("listitem").filter({ hasText: /^Épargne · 20 %/ });
+    // Échantillonne le montant à chaque image : il doit passer par des valeurs intermédiaires.
+    await savings.evaluate((el) => {
+      const w = window as unknown as { __texts: string[] };
+      w.__texts = [];
+      const tick = () => { w.__texts.push(el.textContent ?? ""); requestAnimationFrame(tick); };
+      tick();
+    });
     await page.getByLabel("Votre revenu mensuel net").fill("800 000");
-    await page.waitForTimeout(80);
-    expect(await savings.textContent()).not.toContain(nf(160000)); // défile
     await expect(savings).toContainText(nf(160000));
+    const texts = await page.evaluate(() => (window as unknown as { __texts: string[] }).__texts);
+    expect(new Set(texts).size).toBeGreaterThan(2); // défile
   });
 
   test("pinned section only on desktop", async ({ page }) => {

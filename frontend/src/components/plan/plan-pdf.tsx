@@ -59,7 +59,7 @@ const s = StyleSheet.create({
   key: { flex: 1, borderRadius: 10, padding: 12, backgroundColor: "#1B201D" },
   keyBrand: { flex: 1, borderRadius: 10, padding: 12, backgroundColor: C.brand, color: C.ink },
   keyLabel: { fontSize: 8.5, opacity: 0.8 },
-  keyValue: { fontFamily: "Syne", fontWeight: 700, fontSize: 15, marginTop: 4 },
+  keyValue: { fontFamily: "Syne", fontWeight: 700, fontSize: 13, marginTop: 4 },
   h2: { fontFamily: "Syne", fontWeight: 700, fontSize: 16, marginBottom: 10 },
   section: { marginBottom: 20 },
   bar: { flexDirection: "row", height: 14, borderRadius: 7, overflow: "hidden", marginBottom: 12 },
@@ -168,7 +168,7 @@ function PlanDocument({ d }: { d: PdfData }) {
 
         <View style={s.section} wrap={false}>
           <Text style={s.h2}>{p.savingTitle}</Text>
-          <View style={s.cards}>
+          <View style={{ gap: 10 }}>
             <View style={s.card}>
               <Text style={s.h3}>{p.emergencyTitle}</Text>
               <Text>{fill(p.emergencyText, { min: money(e.min), max: money(e.max) })}</Text>
@@ -184,7 +184,7 @@ function PlanDocument({ d }: { d: PdfData }) {
               <View style={{ flexDirection: "row", alignItems: "flex-end", height: 96, gap: 8, marginTop: 6 }}>
                 {plan.projection.map((x) => (
                   <View key={x.months} style={{ flex: 1, alignItems: "center", justifyContent: "flex-end", height: 96 }}>
-                    <Text style={{ fontSize: 7.5, fontWeight: 600, marginBottom: 3 }}>{clean(money(x.total))}</Text>
+                    <Text style={{ fontSize: 9, fontWeight: 600, marginBottom: 3 }}>{clean(money(x.total))}</Text>
                     <View style={{ width: "100%", height: Math.max(3, (x.total / top) * 64), backgroundColor: C.brand, borderTopLeftRadius: 5, borderTopRightRadius: 5 }} />
                   </View>
                 ))}

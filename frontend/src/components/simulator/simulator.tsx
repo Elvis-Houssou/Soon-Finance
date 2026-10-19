@@ -230,7 +230,7 @@ export function Simulator({ locale, t }: { locale: Locale; t: PlanStrings }) {
               <div data-reveal>
                 <Suggestions {...suggestions} currency={sim.currency} locale={locale} t={t} canSave={canSave} saveError={saveError} {...(signedIn && { onSave })} />
               </div>
-              <PlanDownload data={pdfData} locale={locale} p={p} autoStart={pdfReturn} />
+              <PlanDownload data={pdfData} locale={locale} p={p} autoStart={pdfReturn && suggestions.status !== "idle" && suggestions.status !== "loading"} />
             </PlanReport>
           ) : (
             <div role="status" className="relative isolate flex min-h-80 flex-col justify-end gap-2 overflow-hidden rounded-[20px] border border-dashed border-line-input p-8">

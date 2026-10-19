@@ -1,7 +1,10 @@
 "use client";
 
 import { useRef } from "react";
-import { EASE, gsap, MOTION_OK, REDUCED, useGSAP, useHydrating } from "@/lib/motion";
+import { BELOW_HORIZON, belowFold, EASE, gsap, MOTION_OK, REDUCED, rise, ScrollTrigger, useGSAP, useHydrating } from "@/lib/motion";
+
+/** Blocs révélés au défilement sur toutes les pages (les sections qui gèrent leur propre entrée portent data-reveal). */
+const BLOCKS = "section, article, form, li, h2, figure, table";
 
 /**
  * Entrée de page (navigation client ou page réaffichée) : le contenu se lève depuis le haut, un trait menthe
@@ -34,6 +37,46 @@ export default function Template({ children }: { children: React.ReactNode }) {
       });
       mm.add(REDUCED, () => {
         gsap.fromTo(page, { opacity: 0 }, { opacity: 1, duration: 0.15, ease: "none", clearProps: "opacity" });
+      });
+    },
+    { scope: root },
+  );
+
+  // Au défilement, chaque bloc encore sous la ligne de flottaison se lève à son tour, y compris le contenu
+  // chargé plus tard (tableau de bord, historique…) : un MutationObserver relance la recherche.
+  useGSAP(
+    () => {
+      const page = root.current?.querySelector<HTMLElement>("[data-page]");
+      if (!page) return;
+      gsap.matchMedia().add(MOTION_OK, () => {
+        const seen = new WeakSet<Element>();
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        const scan = () => {
+          const fresh = [...page.querySelectorAll<HTMLElement>(BLOCKS)].filter(
+            (el) => !seen.has(el) && !el.closest("[data-reveal], [data-no-reveal], nav, [aria-hidden=true]"),
+          );
+          fresh.forEach((el) => seen.add(el));
+          const below = fresh.filter(belowFold);
+          // Le plus extérieur seulement : un bloc déjà animé emporte ses enfants.
+          const targets = below.filter((el) => !below.some((o) => o !== el && o.contains(el)));
+          if (!targets.length) return;
+          gsap.set(targets, { clipPath: BELOW_HORIZON, y: 40 });
+          ScrollTrigger.batch(targets, {
+            start: "top 94%",
+            once: true,
+            onEnter: (batch) => rise(batch, { distance: 40, duration: 0.9, stagger: 0.07 }),
+          });
+        };
+        scan();
+        const mo = new MutationObserver(() => {
+          clearTimeout(timer);
+          timer = setTimeout(scan, 80);
+        });
+        mo.observe(page, { childList: true, subtree: true });
+        return () => {
+          mo.disconnect();
+          clearTimeout(timer);
+        };
       });
     },
     { scope: root },

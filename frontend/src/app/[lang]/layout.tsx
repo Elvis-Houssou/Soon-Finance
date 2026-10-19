@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Instrument_Sans, Syne } from "next/font/google";
+import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { locales } from "@/i18n/config";
@@ -59,6 +60,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
           {children}
         </main>
         <SiteFooter />
+        <SmoothScroll />
       </body>
     </html>
   );

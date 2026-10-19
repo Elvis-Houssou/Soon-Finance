@@ -431,7 +431,7 @@ const en: Dictionary = {
     ready: "Your plan is ready.",
     placeholderTitle: "Your plan will appear here",
     placeholderText: "Enter your income, pick a method, then click “Calculate my plan”. You will get your split, your savings proposals and investment directions.",
-    kicker: "Your plan with the {method} method",
+    kicker: "{method}",
     perMonth: "to set aside every month",
     perYear: "that is {amount} a year",
     savingTitle: "Your savings proposals",

@@ -8,6 +8,7 @@ import { belowFold, DUR, EASE, gsap, MOTION_OK, rise, useGSAP } from "@/lib/moti
 import type { Horizon, Plan } from "@/lib/plan";
 import { CountUp } from "../motion/count-up";
 import { usePress } from "../motion/press";
+import { smoothScrollTo } from "../motion/smooth-scroll";
 import { fill, type PlanStrings } from "../simulator/shared";
 import type { PdfData } from "./plan-pdf";
 
@@ -96,7 +97,7 @@ export function SavingsProposals({ plan, currency, locale, p }: { plan: Plan; cu
   return (
     <section data-reveal aria-labelledby="plan-saving" className="flex flex-col gap-4">
       <h2 id="plan-saving" className="font-display text-2xl font-semibold">{p.savingTitle}</h2>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4">
         <article className="flex flex-col gap-3 rounded-[16px] border border-line bg-surface p-5 sm:p-6">
           <h3 className="text-lg font-semibold">{p.emergencyTitle}</h3>
           <p>{fill(p.emergencyText, { min: money(e.min), max: money(e.max) })}</p>
@@ -112,7 +113,7 @@ export function SavingsProposals({ plan, currency, locale, p }: { plan: Plan; cu
           <ul data-bars className="grid h-48 grid-cols-4 items-end gap-3">
             {plan.projection.map((x) => (
               <li key={x.months} className="flex h-full flex-col justify-end gap-2 text-center">
-                <span className="text-[13px] font-semibold tabular-nums">{money(x.total)}</span>
+                <span className="text-[13px] leading-tight font-semibold tabular-nums">{money(x.total)}</span>
                 <span className="relative block flex-1">
                   <span
                     data-bar
@@ -138,7 +139,7 @@ export function InvestDirections({ plan, locale, p }: { plan: Plan; locale: Loca
         <h2 id="plan-invest" className="font-display text-2xl font-semibold">{p.investTitle}</h2>
         <p className="text-muted">{p.investLead}</p>
       </div>
-      <ul className="grid gap-4 md:grid-cols-3">
+      <ul className="grid gap-4">
         {plan.invest.map(({ horizon, ready }) => (
           <li
             key={horizon}
@@ -174,6 +175,7 @@ type Status = "idle" | "busy" | "gate" | "done" | "error";
 
 /** Téléchargement du PDF : réservé aux inscrits ; sinon on propose l'inscription, qui ramène ici et relance le téléchargement. */
 export function PlanDownload({ data, locale, p, autoStart }: { data: PdfData; locale: Locale; p: P; autoStart: boolean }) {
+  // `autoStart` is passed only once the tips are known, so the PDF is complete.
   const [status, setStatus] = useState<Status>("idle");
   const [welcome, setWelcome] = useState(false);
   const gate = useRef<HTMLDivElement>(null);
@@ -196,9 +198,10 @@ export function PlanDownload({ data, locale, p, autoStart }: { data: PdfData; lo
   };
 
   // Retour d'inscription (`?pdf=1`) : le téléchargement repart tout seul.
+  const started = useRef(false);
   useEffect(() => {
-    if (!autoStart) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (!autoStart || started.current) return;
+    started.current = true;
     setWelcome(true);
     void download();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -253,6 +256,5 @@ export function PlanDownload({ data, locale, p, autoStart }: { data: PdfData; lo
   );
 }
 
-/** Fait défiler jusqu'au plan calculé (instantané en mouvement réduit). */
-export const scrollToPlan = (el: Element | null) =>
-  el?.scrollIntoView({ behavior: matchMedia(MOTION_OK).matches ? "smooth" : "auto", block: "start" });
+/** Fait glisser jusqu'au plan calculé. */
+export const scrollToPlan = (el: HTMLElement | null) => smoothScrollTo(el);

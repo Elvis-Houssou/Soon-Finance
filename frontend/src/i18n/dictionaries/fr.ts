@@ -429,7 +429,7 @@ const fr = {
     ready: "Votre plan est prêt.",
     placeholderTitle: "Votre plan apparaîtra ici",
     placeholderText: "Entrez votre revenu, choisissez une méthode, puis cliquez sur « Calculer mon plan ». Vous obtiendrez votre répartition, vos propositions d’épargne et des pistes d’investissement.",
-    kicker: "Votre plan avec la méthode {method}",
+    kicker: "{method}",
     perMonth: "à mettre de côté chaque mois",
     perYear: "soit {amount} par an",
     savingTitle: "Vos propositions d’épargne",
