@@ -212,3 +212,36 @@ def test_median_is_per_user_not_per_month(client, login):
         s.commit()
     d = login(ADMIN).get("/api/admin/impact?days=365").json()
     assert d["savings"]["median_rate_bp"] == 1000  # by month it would be 5000
+
+
+def test_two_filters_rejected(client, login):
+    r = login(ADMIN).get("/api/admin/impact?currency=XOF&locale=fr")
+    assert r.status_code == 422 and r.json() == {"detail": "one_filter"}
+
+
+def test_nested_window_difference_hides_figure(client, login):
+    # 6 holders in 90 days; only 5 of them closed within the last 30 days -> difference of 1 person -> null at 90 days.
+    with client.session_factory() as s:
+        users = [add_user(s, i, AUG) for i in range(6)]
+        s.flush()
+        for i, u in enumerate(users):
+            add_month(s, u, "2026-09", 20000, OCT_CLOSE if i < 5 else datetime(2026, 8, 31, tzinfo=UTC))
+        s.commit()
+    c = login(ADMIN)
+    assert c.get("/api/admin/impact?days=30").json()["amounts"] == [{"currency": "XOF", "saved_total": 100000}]
+    d = c.get("/api/admin/impact?days=90").json()
+    assert d["amounts"] == [{"currency": "XOF", "saved_total": None}]
+    assert d["savings"]["median_rate_bp"] is None
+
+
+def test_helpfulness_is_mean_of_user_means(client, login):
+    with client.session_factory() as s:
+        users = [add_user(s, i, AUG) for i in range(5)]
+        s.flush()
+        for m, h in enumerate((5, 5, 5, 5)):  # one user rates 4 times: 5 each
+            add_month(s, users[0], f"2026-0{m + 1}", 10000, OCT_CLOSE, h)
+        for u in users[1:]:
+            add_month(s, u, "2026-09", 10000, OCT_CLOSE, 1)
+        s.commit()
+    d = login(ADMIN).get("/api/admin/impact?days=365").json()
+    assert d["savings"]["helpfulness_avg_x100"] == (5 + 1 * 4) * 100 // 5 == 180  # by rating it would be 2.5

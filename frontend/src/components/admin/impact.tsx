@@ -153,14 +153,14 @@ export function Impact({ locale, t }: { locale: Locale; t: Dictionary["impact"] 
         </label>
         <label className="flex flex-col gap-1 text-sm text-muted">
           {t.currency}
-          <select value={currency} onChange={(e) => setCurrency(e.target.value)} className={SELECT}>
+          <select value={currency} onChange={(e) => { setCurrency(e.target.value); setLang("all"); }} className={SELECT}>
             <option value="all">{t.allCurrencies}</option>
             {Object.keys(CURRENCIES).map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </label>
         <label className="flex flex-col gap-1 text-sm text-muted">
           {t.locale}
-          <select value={lang} onChange={(e) => setLang(e.target.value)} className={SELECT}>
+          <select value={lang} onChange={(e) => { setLang(e.target.value); setCurrency("all"); }} className={SELECT}>
             <option value="all">{t.allLocales}</option>
             <option value="fr">FR</option>
             <option value="en">EN</option>

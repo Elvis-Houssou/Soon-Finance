@@ -17,9 +17,11 @@ export default async function Page() {
   const res = await fetch(`${origin}/api/admin/impact?days=30`, {
     headers: { cookie: (await cookies()).toString() },
     cache: "no-store",
+    signal: AbortSignal.timeout(3000),
   }).catch(() => null);
   if (res?.status === 404) notFound();
   if (res?.status === 401) redirect(`/${locale}/connexion?next=${encodeURIComponent(`/${locale}/admin/impact`)}`);
+  if (!res?.ok) notFound(); // fermé par défaut : API en panne ou réponse inattendue = rien d'admin
   const { impact } = await getDictionary(locale);
   return <Impact locale={locale} t={impact} />;
 }

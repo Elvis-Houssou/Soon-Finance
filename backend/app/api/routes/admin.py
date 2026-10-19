@@ -60,6 +60,8 @@ def get_impact(
 ):
     if days not in (30, 90, 365):  # Literal[int] refuse les entiers de la query string
         raise HTTPException(422, "days must be 30, 90 or 365")
+    if currency != "all" and locale != "all":  # deux filtres ensemble contourneraient la règle du complément
+        raise HTTPException(422, "one_filter")
     return impact.compute(
         db, auth.now(), days, None if currency == "all" else currency.upper(), None if locale == "all" else locale, settings.admin_emails
     )
