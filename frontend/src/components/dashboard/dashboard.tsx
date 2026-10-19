@@ -17,7 +17,7 @@ import type { Ctx, DashboardData, DashStrings } from "./types";
 const LINK = "flex min-h-11 w-fit items-center rounded-[10px] bg-brand px-5 font-semibold text-on-brand";
 const monthYear = (ym: string, locale: Locale) => `${monthName(ym, locale)} ${ym.slice(0, 4)}`;
 
-function suggestionTexts(data: DashboardData, { locale, t }: Ctx) {
+export function suggestionTexts(data: DashboardData, { locale, t }: Ctx) {
   return data.suggestions.flatMap((s) => {
     const tpl = (t.suggestions as Record<string, string>)[s.id];
     if (!tpl) return [];
@@ -98,7 +98,7 @@ function Tracking({ data, locale, t }: Ctx & { data: DashboardData }) {
             );
           })}
           {open && (
-            <Link href={`/${locale}/bilan`} className={LINK}>{fill(d.close, { month: monthName(open.year_month, locale) })}</Link>
+            <Link href={`/${locale}/bilan/${open.year_month}`} className={LINK}>{fill(d.close, { month: monthName(open.year_month, locale) })}</Link>
           )}
         </section>
       )}

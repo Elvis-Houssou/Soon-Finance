@@ -11,3 +11,4 @@ export type DashboardData = {
 };
 export type DashStrings = Pick<Dictionary, "dashboard" | "account" | "suggestions" | "envelopes" | "kinds" | "methods">;
 export type Ctx = { locale: Locale; t: DashStrings };
+export type MonthStrings = DashStrings & Pick<Dictionary, "month">;
