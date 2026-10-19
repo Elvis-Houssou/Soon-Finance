@@ -23,7 +23,8 @@ export function usePress<T extends HTMLElement>(ref?: RefObject<T | null>): RefC
               duration: DUR.feedback,
               ease: EASE.out,
               overwrite: "auto",
-              clearProps: scale === 1 ? "transform" : undefined,
+              // Pas de clé `clearProps: undefined` : GSAP la lirait en fin de tween et planterait (undefined.split).
+              ...(scale === 1 && { clearProps: "transform" }),
             }),
           ) as () => void;
         const down = to(0.97);

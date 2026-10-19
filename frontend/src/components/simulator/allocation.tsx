@@ -3,6 +3,8 @@
 import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import { formatMoney } from "@/lib/money";
+import { DUR } from "@/lib/motion";
+import { CountUp } from "../motion/count-up";
 import { allocate, totals, type MethodData, type Simulation } from "@/lib/simulation";
 import { AllocationBar } from "./allocation-bar";
 import { envelopeLabel, KIND_BG, rowLabel, type SimStrings } from "./shared";
@@ -29,7 +31,7 @@ export function Allocation({
       )}
       <AllocationBar rows={rows} />
       <ul className="flex flex-col gap-3">
-        {rows.map((r) => {
+        {rows.map((r, i) => {
           const label = rowLabel(t, r);
           const head = (chevron: boolean) => (
             <>
@@ -43,12 +45,15 @@ export function Allocation({
                 <span className="min-w-0 break-words">{label}</span>
                 <span className="font-mono text-xs text-muted">{r.pct} %</span>
               </span>
-              <strong className="font-display text-xl font-semibold tabular-nums">{money(r.amount)}</strong>
+              <strong className="font-display text-xl font-semibold tabular-nums">
+                <CountUp value={r.amount} format={money} duration={DUR.view} />
+              </strong>
             </>
           );
           const cls = "flex min-h-11 flex-wrap items-center justify-between gap-x-3 gap-y-1";
           return (
-            <li key={r.key} className="rounded-[10px] bg-sunken px-4 py-2">
+            // Clé = rang : d'une méthode à l'autre, le montant défile depuis la valeur précédente.
+            <li key={i} className="rounded-[10px] bg-sunken px-4 py-2">
               {r.children.length ? (
                 <details className="group">
                   <summary className={`${cls} cursor-pointer list-none [&::-webkit-details-marker]:hidden`}>{head(true)}</summary>

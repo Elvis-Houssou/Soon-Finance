@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { formatMoney } from "../src/lib/money";
 
 const nf = (n: number) => new Intl.NumberFormat("fr-FR").format(n);
 
@@ -71,4 +72,41 @@ test("income field survives typing", async ({ page }) => {
   await income.pressSequentially("500000");
   await expect(income).toBeFocused();
   await expect(page.getByRole("article", { name: /50\/30\/20/ })).toContainText(nf(400000));
+});
+
+test.describe("with motion", () => {
+  test.use({ reducedMotion: "no-preference" });
+
+  test("reorders with animation and exact values", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await seed(page, 0, 300000);
+    await page.goto("/fr/comparer?m=soon-10-70-20,50-30-20");
+    const names = () => page.getByRole("article").evaluateAll((els) => els.map((e) => e.getAttribute("aria-label")));
+    // Revenu nul : tout est trop serré, l'ordre demandé est gardé.
+    await expect.poll(names).toEqual(["Modèle Soon 10/70/20", "Méthode 50/30/20"]);
+    await page.evaluate(() => {
+      const w = window as unknown as { __moved: boolean };
+      w.__moved = false;
+      const tick = () => {
+        if ([...document.querySelectorAll<HTMLElement>("article")].some((a) => a.style.transform)) w.__moved = true;
+        requestAnimationFrame(tick);
+      };
+      tick();
+    });
+    await page.getByLabel("Revenu mensuel net").fill("500000");
+    // Ce qui couvre les besoins passe devant, avec un mouvement.
+    await expect.poll(names).toEqual(["Méthode 50/30/20", "Modèle Soon 10/70/20"]);
+    await expect.poll(() => page.evaluate(() => (window as unknown as { __moved: boolean }).__moved)).toBe(true);
+    await expect.poll(() => page.locator("article").evaluateAll((els) => els.every((a) => !(a as HTMLElement).style.transform))).toBe(true);
+    const first = page.getByRole("article", { name: /50\/30\/20/ });
+    await expect(first.locator("dd").first()).toHaveText(formatMoney(400000, "XOF", "fr"));
+    await expect(first.locator("dd").nth(1)).toHaveText(formatMoney(1200000, "XOF", "fr"));
+    await expect(page.getByRole("article", { name: /Soon/ }).locator("dd").first()).toHaveText(formatMoney(100000, "XOF", "fr"));
+    // Meilleure épargne parmi les méthodes qui couvrent les besoins : un seul soleil, posé.
+    await expect(page.locator("[data-best]")).toHaveCount(1);
+    await expect(first.locator("[data-best]")).toContainText("Meilleure épargne");
+    await expect.poll(() => page.locator("[data-best] svg circle").evaluate((c) => c.getAttribute("transform") ?? "")).toBe("");
+    expect(errors).toEqual([]);
+  });
 });

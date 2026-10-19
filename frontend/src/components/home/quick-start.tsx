@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries/fr";
 import { CURRENCIES, formatAmount, MAX_INCOME_MINOR, parseAmount, split } from "@/lib/money";
-import { DUR, EASE, gsap, MOTION_OK, useGSAP } from "@/lib/motion";
+import { DUR } from "@/lib/motion";
 import type { Allocation } from "@/lib/simulation";
 import methods from "@/content/methods.json";
 import { CountUp } from "../motion/count-up";
@@ -31,26 +31,6 @@ export function QuickStart({ locale, t }: Props) {
   const rows: Allocation[] = envs.map((e, i) => ({ key: e.key, kind: e.kind as Allocation["kind"], pct: e.pct, amount: amounts[i], children: [] }));
   const href = `/${locale}/simulateur` + (income ? `?revenu=${income}&devise=${currency}` : "");
 
-  // Votre revenu remplace l'exemple (ou la devise change) : la barre se recompose de gauche à droite.
-  const bar = useRef<HTMLDivElement>(null);
-  const mounted = useRef(false);
-  useGSAP(
-    () => {
-      if (!mounted.current) {
-        mounted.current = true; // premier rendu : rien à recomposer
-        return;
-      }
-      gsap.matchMedia().add(MOTION_OK, () => {
-        gsap.fromTo(
-          bar.current!.querySelectorAll(":scope > div > div"),
-          { scaleX: 0, transformOrigin: "0% 50%" },
-          { scaleX: 1, duration: DUR.state, stagger: 0.05, ease: EASE.out, clearProps: "transform" },
-        );
-      });
-    },
-    { dependencies: [isExample, currency], revertOnUpdate: true },
-  );
-
   return (
     <div className="flex flex-col gap-4 rounded-[14px] border border-line bg-surface p-5 sm:p-6">
       <label htmlFor="qs-income" className="font-semibold">{t.home.income}</label>
@@ -72,9 +52,8 @@ export function QuickStart({ locale, t }: Props) {
         <span>{t.home.preview}</span>
         {isExample && <span>{t.home.example}</span>}
       </div>
-      <div ref={bar}>
-        <AllocationBar rows={rows} />
-      </div>
+      {/* Votre revenu remplace l'exemple (ou la devise change) : la barre se redessine depuis la gauche. */}
+      <AllocationBar rows={rows} replay={`${isExample}|${currency}`} />
       <ul className="flex flex-col gap-2">
         {rows.map((r) => (
           <li key={r.key} className="flex items-center gap-3">

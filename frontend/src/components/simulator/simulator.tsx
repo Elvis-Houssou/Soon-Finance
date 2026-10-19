@@ -139,9 +139,10 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
                 className={`${FIELD} min-h-14 flex-1 font-display text-2xl font-semibold`}
                 value={texts.income} onChange={(e) => onText("income", e.target.value)}
               />
+              {/* w-28! : FIELD porte w-full, généré après w-28 dans la feuille de style. */}
               <select
                 aria-label={s.currency} value={sim.currency} onChange={(e) => onCurrency(e.target.value)}
-                className={`${FIELD} min-h-14 w-28 shrink-0 font-mono`}
+                className={`${FIELD} min-h-14 w-28! shrink-0 font-mono`}
               >
                 {Object.keys(CURRENCIES).map((c) => <option key={c} value={c}>{c} — {names.of(c)}</option>)}
               </select>
