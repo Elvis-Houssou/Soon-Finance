@@ -47,6 +47,8 @@ const fr = {
   footer: {
     disclaimer: "Contenu éducatif, pas un conseil financier personnalisé.",
     brand: "Une marque Soon",
+    privacy: "Confidentialité",
+    legal: "Mentions légales",
   },
   methods: {
     "50-30-20": {
@@ -159,6 +161,7 @@ const fr = {
     emailLabel: "Adresse email",
     emailError: "Entrez une adresse email complète, par exemple nom@exemple.com.",
     consent: "J’accepte que Soon Finance conserve mes données de budget pour me les afficher.",
+    consentLink: "politique de confidentialité",
     consentError: "Cochez la case pour que nous puissions conserver votre budget.",
     submit: "Recevoir mon lien de connexion",
     sending: "Envoi en cours…",
@@ -369,6 +372,7 @@ const fr = {
     appearanceNote: "Auto suit le réglage de votre appareil.",
     data: "Mes données",
     dataText: "Vos budgets, objectifs et bilans vous appartiennent.",
+    keepLink: "Ce que nous conservons",
     download: "Télécharger mes données",
     delete: "Supprimer mon compte",
     confirmTitle: "Supprimer définitivement votre compte ?",

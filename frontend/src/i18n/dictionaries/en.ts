@@ -49,6 +49,8 @@ const en: Dictionary = {
   footer: {
     disclaimer: "Educational content, not personalised financial advice.",
     brand: "A Soon brand",
+    privacy: "Privacy",
+    legal: "Legal notice",
   },
   methods: {
     "50-30-20": {
@@ -161,6 +163,7 @@ const en: Dictionary = {
     emailLabel: "Email address",
     emailError: "Enter a full email address, for example name@example.com.",
     consent: "I agree that Soon Finance keeps my budget data to show it back to me.",
+    consentLink: "privacy policy",
     consentError: "Tick the box so that we can keep your budget.",
     submit: "Get my sign-in link",
     sending: "Sending…",
@@ -371,6 +374,7 @@ const en: Dictionary = {
     appearanceNote: "Auto follows your device setting.",
     data: "My data",
     dataText: "Your budgets, goals and reviews belong to you.",
+    keepLink: "What we keep",
     download: "Download my data",
     delete: "Delete my account",
     confirmTitle: "Permanently delete your account?",

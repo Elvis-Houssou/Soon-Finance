@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { AccountNav } from "@/components/account/account-nav";
@@ -139,6 +140,7 @@ export function Settings({ locale, t }: { locale: Locale; t: Strings }) {
         <section aria-labelledby={`${id}-data`} className="flex flex-col items-start gap-3 rounded-[14px] border border-line bg-surface p-5 sm:p-6">
           <h2 id={`${id}-data`} className="font-display text-xl font-semibold">{s.data}</h2>
           <p className="text-muted">{s.dataText}</p>
+          <Link href={`/${locale}/confidentialite`} className="flex min-h-11 items-center font-semibold text-brand-ink underline">{s.keepLink}</Link>
           <a href="/api/me/export" download className={OUTLINE}>{s.download}</a>
           {!confirming && (
             <button type="button" onClick={() => setConfirming(true)} className={`${OUTLINE} text-danger`}>{s.delete}</button>

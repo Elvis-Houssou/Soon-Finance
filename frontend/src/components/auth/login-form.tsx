@@ -182,7 +182,7 @@ export function LoginForm({ locale, t, variant }: Props) {
               aria-describedby={consentError ? `${emailId}-cerr` : undefined}
               className="mt-1 size-6 shrink-0 accent-brand-ink"
             />
-            <span>{t.consent}</span>
+            <span>{t.consent} (<Link href={`/${locale}/confidentialite`} target="_blank" rel="noopener" className="font-semibold text-brand-ink underline">{t.consentLink}</Link>)</span>
           </label>
           {consentError && (
             <p id={`${emailId}-cerr`} role="alert" className="text-sm text-danger">
