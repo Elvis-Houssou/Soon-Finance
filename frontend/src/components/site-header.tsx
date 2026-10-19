@@ -34,7 +34,7 @@ export async function SiteHeader() {
   ];
 
   return (
-    <header className="border-b border-line">
+    <header data-site-header className="z-40 border-b border-line bg-bg/85 backdrop-blur-md transition-shadow duration-300 lg:sticky lg:top-0">
       <div className="container-site flex min-h-16 flex-wrap items-center justify-between gap-x-4 gap-y-2 py-2">
         <Link href={`/${locale}`} aria-label={`Soon Finance — ${t.nav.home}`} className="group shrink-0">
           <Logo />

@@ -56,6 +56,21 @@ export default function Template({ children }: { children: React.ReactNode }) {
             (el) => !seen.has(el) && !el.closest("[data-reveal], [data-no-reveal], nav, [aria-hidden=true]"),
           );
           fresh.forEach((el) => seen.add(el));
+          // Barres et jauges (data-grow="x" | "y") : elles poussent depuis leur base quand elles arrivent à l'écran.
+          const grow = [...page.querySelectorAll<HTMLElement>("[data-grow]")].filter((el) => !seen.has(el));
+          grow.forEach((el) => {
+            seen.add(el);
+            const y = el.dataset.grow === "y";
+            gsap.from(el, {
+              [y ? "scaleY" : "scaleX"]: 0,
+              transformOrigin: y ? "50% 100%" : "0% 50%",
+              duration: 1.1,
+              ease: EASE.expo,
+              delay: 0.05 * [...(el.parentElement?.parentElement?.children ?? [])].indexOf(el.parentElement as Element),
+              clearProps: "transform",
+              scrollTrigger: { trigger: el, start: "top 96%", once: true },
+            });
+          });
           const below = fresh.filter(belowFold);
           // Le plus extérieur seulement : un bloc déjà animé emporte ses enfants.
           const targets = below.filter((el) => !below.some((o) => o !== el && o.contains(el)));

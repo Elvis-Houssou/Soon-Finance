@@ -8,7 +8,39 @@ import { SunHorizon } from "@/components/horizon/sun-horizon";
 import { fill } from "@/components/simulator/shared";
 import type { Locale } from "@/i18n/config";
 import { formatMoney } from "@/lib/money";
+import { EASE, gsap, MOTION_OK, rise, useGSAP } from "@/lib/motion";
 import { useApi } from "@/lib/use-api";
+import { useRef, type ReactNode } from "react";
+import { CountUp } from "@/components/motion/count-up";
+
+/**
+ * La célébration « Un pas de plus » : éclat de lumière derrière le soleil, titre qui se lève, chiffres qui
+ * défilent, tampon « Mois tenu ! ». Un clic ou une touche passe directement à l'état final.
+ */
+function Celebrate({ up, children }: { up: boolean; children: ReactNode }) {
+  const root = useRef<HTMLDivElement>(null);
+  useGSAP(
+    () => {
+      gsap.matchMedia().add(MOTION_OK, () => {
+        const q = gsap.utils.selector(root);
+        const tl = gsap.timeline({ defaults: { ease: EASE.expo } });
+        if (up) tl.fromTo(q("[data-burst]"), { scale: 0.2, opacity: 0 }, { scale: 1.6, opacity: 0.9, duration: 1.1 }, 0.5)
+          .to(q("[data-burst]"), { opacity: 0, duration: 1.2, ease: EASE.out }, 1.4);
+        tl.add(rise(q("[data-step]"), { stagger: 0.15, distance: 30, duration: 0.8 }), 0.35);
+        tl.fromTo(q("[data-stamp]"), { scale: 1.8, rotate: -10, opacity: 0 }, { scale: 1, rotate: -3, opacity: 1, duration: 0.5, ease: "back.out(2.2)" }, 1.6);
+        const skip = () => tl.progress(1);
+        window.addEventListener("pointerdown", skip, { once: true });
+        window.addEventListener("keydown", skip, { once: true });
+        return () => {
+          window.removeEventListener("pointerdown", skip);
+          window.removeEventListener("keydown", skip);
+        };
+      });
+    },
+    { scope: root },
+  );
+  return <div ref={root} className="flex flex-col">{children}</div>;
+}
 
 type Month = MonthData & { savings_rate_bp: number | null; kept: boolean | null };
 const SAVE = ["save", "save2"];
@@ -51,15 +83,16 @@ export function MonthDone({ ym, locale, t }: { ym: string; locale: Locale; t: Mo
   const next = fill(m.forNext, { month: monthName(nextYm(ym), locale) });
 
   return (
-    <div className="flex flex-col">
-      <section className="flex flex-col bg-brand py-6 text-on-brand">
+    <Celebrate up={up}>
+      <section className="relative isolate flex flex-col overflow-hidden bg-brand py-6 text-on-brand">
+        <div aria-hidden="true" data-burst className="pointer-events-none absolute top-1/2 left-1/2 -z-10 size-[560px] -translate-1/2 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--gold)_75%,transparent),transparent_65%)] opacity-0" />
         <div className="container-site flex max-w-2xl flex-col gap-3.5">
           <SunHorizon
             steps={steps} previousSteps={previousSteps} size="lg"
             label={fill(up ? m.sunLabel : m.sunLabelNo, { n: steps })}
           />
-          <h1 className="font-display text-4xl font-bold leading-none">{up ? m.doneUp : m.doneSame}</h1>
-          <p className="text-[17px]">
+          <h1 data-step className="font-display text-4xl font-bold leading-none">{up ? m.doneUp : m.doneSame}</h1>
+          <p data-step className="text-[17px]">
             {prev
               ? fill(m.doneText, { month: name, from: rateText(prev.savings_rate_bp), to })
               : fill(m.doneFirst, { month: name, to })}
@@ -70,15 +103,15 @@ export function MonthDone({ ym, locale, t }: { ym: string; locale: Locale; t: Mo
         <dl className="grid grid-cols-2 gap-3 tabular-nums">
           <div className="rounded-[14px] border border-line bg-surface p-4">
             <dt className="text-[13px] text-muted">{fill(m.savedIn, { month: name })}</dt>
-            <dd className="mt-1 font-display text-[22px] font-semibold text-brand-ink">{formatMoney(savedNow, cur, locale)}</dd>
+            <dd className="mt-1 font-display text-[22px] font-semibold text-brand-ink"><CountUp value={savedNow} format={(n) => formatMoney(n, cur, locale)} duration={1.4} /></dd>
           </div>
           <div className="rounded-[14px] border border-line bg-surface p-4">
             <dt className="text-[13px] text-muted">{fill(m.savedSince, { month: since })}</dt>
-            <dd className="mt-1 font-display text-[22px] font-semibold">{formatMoney(data.saved_total, cur, locale)}</dd>
+            <dd className="mt-1 font-display text-[22px] font-semibold"><CountUp value={data.saved_total} format={(n) => formatMoney(n, cur, locale)} duration={1.6} /></dd>
           </div>
         </dl>
         {month.kept ? (
-          <p className="font-semibold text-brand-ink">{m.kept}</p>
+          <p data-stamp className="w-fit rounded-[10px] border-2 border-brand-ink px-4 py-2 font-display text-xl font-bold text-brand-ink">{m.kept}</p>
         ) : (
           <p className="text-muted">
             {fill(m.notKept, { amount: formatMoney(plannedSave - savedNow, cur, locale), planned: formatMoney(plannedSave, cur, locale) })}
@@ -92,6 +125,6 @@ export function MonthDone({ ym, locale, t }: { ym: string; locale: Locale; t: Mo
         )}
         <Link href={dashLink} className="flex min-h-11 items-center justify-center font-semibold underline">{m.toDashboard}</Link>
       </div>
-    </div>
+    </Celebrate>
   );
 }

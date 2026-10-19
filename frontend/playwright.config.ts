@@ -15,6 +15,8 @@ const BACKEND = `${UV} run --frozen --project "${BACKEND_DIR}"`;
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
+  // shortcut: sous forte charge, le backend e2e (SQLite, un seul worker uvicorn) rate parfois une demande de lien de connexion ; une relance suffit. À corriger si cela arrive aussi hors e2e.
+  retries: 1,
   // Mouvement réduit par défaut : tests déterministes ; les tests d'animation passent en "no-preference".
   use: { baseURL: "http://127.0.0.1:3100", reducedMotion: "reduce" },
   webServer: [

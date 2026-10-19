@@ -92,7 +92,7 @@ function Tracking({ data, locale, t }: Ctx & { data: DashboardData }) {
                 </div>
                 {e.actual !== null && (
                   <div className="h-2 overflow-hidden rounded-full bg-sunken">
-                    <div className="h-full bg-chart-1" style={{ width: `${Math.min(100, e.planned ? (e.actual / e.planned) * 100 : 0)}%` }} />
+                    <div data-grow="x" className="h-full bg-chart-1" style={{ width: `${Math.min(100, e.planned ? (e.actual / e.planned) * 100 : 0)}%` }} />
                   </div>
                 )}
                 {over && (
@@ -137,7 +137,7 @@ function Tracking({ data, locale, t }: Ctx & { data: DashboardData }) {
                   <strong>{g.label}</strong>
                   <span className="text-sm text-muted">{fill(d.goalDeadline, { month: monthYear(g.deadline, locale) })}</span>
                 </div>
-                <div className="h-2 overflow-hidden rounded-full bg-sunken"><div className="h-full bg-chart-1" style={{ width: `${p}%` }} /></div>
+                <div className="h-2 overflow-hidden rounded-full bg-sunken"><div data-grow="x" className="h-full bg-chart-1" style={{ width: `${p}%` }} /></div>
                 <span className="tabular-nums">
                   {fill(d.goalOf, { saved: formatMoney(g.saved, data.currency, locale), target: formatMoney(g.target, data.currency, locale), pct: p })}
                 </span>

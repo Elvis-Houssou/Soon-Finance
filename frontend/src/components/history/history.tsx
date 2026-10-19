@@ -75,7 +75,7 @@ export function History({ locale, t }: { locale: Locale; t: Strings }) {
                       {isClosed(m) ? rate(m.savings_rate_bp!) : <span className="text-muted">{h.open}</span>}
                     </span>
                     {isClosed(m) ? (
-                      <div className="w-full rounded-t-md bg-chart-1" style={{ height: `${Math.max(4, Math.round((m.savings_rate_bp! / max) * 90))}%` }} />
+                      <div data-grow="y" className="w-full rounded-t-md bg-chart-1" style={{ height: `${Math.max(4, Math.round((m.savings_rate_bp! / max) * 90))}%` }} />
                     ) : (
                       <div className="h-full w-full rounded-t-md border-[1.5px] border-b-0 border-dashed border-line-input" />
                     )}

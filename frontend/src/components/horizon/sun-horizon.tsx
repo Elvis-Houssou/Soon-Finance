@@ -46,7 +46,7 @@ export function SunHorizon({ steps, previousSteps, size = "md", label, animateOn
         if (from !== target) {
           const state = { s: from };
           gsap.set(sun, { attr: { transform: place(from) } });
-          gsap.set(sky, { opacity: skyOpacity(from) });
+          gsap.set(sky, { attr: { "fill-opacity": skyOpacity(from) } });
           dots.forEach((d, i) => i >= Math.min(from, target) && i < Math.max(from, target) && gsap.set(d, { attr: { r: 3 }, fill: "var(--line-input)" }));
           const tl = gsap.timeline({ delay: 0.25 });
           tl.to(state, {
@@ -55,7 +55,7 @@ export function SunHorizon({ steps, previousSteps, size = "md", label, animateOn
             ease: EASE.expo,
             onUpdate: () => sun.setAttribute("transform", place(state.s)),
           });
-          tl.to(sky, { opacity: skyOpacity(target), duration: 1.4, ease: EASE.out }, 0);
+          tl.to(sky, { attr: { "fill-opacity": skyOpacity(target) }, duration: 1.4, ease: EASE.out }, 0);
           const lit = dots.slice(Math.min(from, target), Math.max(from, target));
           if (target > from)
             tl.to(lit, { attr: { r: 4 }, fill: "var(--brand-ink)", duration: 0.35, ease: "back.out(3)", stagger: 0.09, clearProps: "fill" }, 0.3);
@@ -81,7 +81,7 @@ export function SunHorizon({ steps, previousSteps, size = "md", label, animateOn
           <rect x="-40" y="-60" width="400" height={HORIZON + 60} />
         </clipPath>
       </defs>
-      <ellipse data-sky cx="160" cy={HORIZON} rx="175" ry="80" fill={`url(#sky-${id})`} style={{ opacity: skyOpacity(target) }} />
+      <ellipse data-sky cx="160" cy={HORIZON} rx="175" ry="80" fill={`url(#sky-${id})`} fillOpacity={skyOpacity(target)} />
       <g clipPath={`url(#above-${id})`}>
         <g data-sun transform={place(target)}>
           <circle data-halo r="54" className="fill-gold" fillOpacity="0.12" />

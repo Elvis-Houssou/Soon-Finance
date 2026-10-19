@@ -25,6 +25,14 @@ export function SmoothScroll() {
     };
   }, []);
 
+  // En-tête : ombre portée dès qu'on a quitté le haut de page.
+  useEffect(() => {
+    const onScroll = () => document.documentElement.toggleAttribute("data-scrolled", window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   // Nouvelle page : on repart du haut sans glisser depuis la position précédente.
   useEffect(() => {
     lenis?.scrollTo(0, { immediate: true, force: true });

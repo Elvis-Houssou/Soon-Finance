@@ -135,7 +135,7 @@ export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
                 <span className="shrink-0 font-mono text-xs uppercase text-muted">{my(goal.deadline)}</span>
               </div>
               <div className="h-2.5 overflow-hidden rounded-full bg-sunken" role="img" aria-label={`${p} %`}>
-                <div className="h-full bg-gold" style={{ width: `${p}%` }} />
+                <div data-grow="x" className="h-full bg-gold" style={{ width: `${p}%` }} />
               </div>
               <p className="text-sm text-muted tabular-nums">
                 {fill(g.progress, { saved: money(goal.saved), target: money(goal.target), pct: p })}
