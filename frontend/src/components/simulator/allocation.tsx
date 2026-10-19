@@ -7,8 +7,6 @@ import { allocate, totals, type MethodData, type Simulation } from "@/lib/simula
 import { AllocationBar } from "./allocation-bar";
 import { envelopeLabel, KIND_BG, rowLabel, type SimStrings } from "./shared";
 
-const LEARN = process.env.NEXT_PUBLIC_LEARN_ENABLED === "true";
-
 export function Allocation({
   sim, method, locale, t,
 }: { sim: Simulation; method: MethodData; locale: Locale; t: SimStrings }) {
@@ -22,11 +20,9 @@ export function Allocation({
       <div className="flex flex-col gap-1.5">
         <h2 className="font-display text-2xl font-semibold sm:text-3xl">{name.name}</h2>
         <p className="text-muted">{name.description}</p>
-        {LEARN && (
-          <Link href={`/${locale}/apprendre/${method.id}`} className="flex min-h-11 w-fit items-center font-semibold text-brand-ink">
-            {t.simulator.understand}
-          </Link>
-        )}
+        <Link href={`/${locale}/apprendre/${method.id}`} className="flex min-h-11 w-fit items-center font-semibold text-brand-ink">
+          {t.simulator.understand}
+        </Link>
       </div>
       {method.demanding && (
         <p role="note" className="rounded-[10px] bg-sunken px-4 py-3.5 text-[15px] text-warning">{t.simulator.warning}</p>

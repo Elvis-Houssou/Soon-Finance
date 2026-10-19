@@ -106,7 +106,15 @@ function Tracking({ data, locale, t }: Ctx & { data: DashboardData }) {
       {tips.length > 0 && (
         <section aria-label={d.tips} className="flex flex-col gap-3">
           <h2 className="text-[17px] font-semibold">{d.tips}</h2>
-          {tips.map((text, i) => <article key={i} className="rounded-[14px] bg-tint p-5"><p>{text}</p></article>)}
+          {tips.map((text, i) => (
+            <article key={i} className="rounded-[14px] bg-tint p-5">
+              <p>
+                {text === t.suggestions["learn-investing"]
+                  ? <Link href={`/${locale}/apprendre/risques-frais-duree`} className="font-semibold text-brand-ink underline">{text}</Link>
+                  : text}
+              </p>
+            </article>
+          ))}
           {prev && (
             <Link href={`/${locale}/bilan/${String(prev.params.year_month)}`} className={LINK}>
               {fill(d.close, { month: monthName(String(prev.params.year_month), locale) })}

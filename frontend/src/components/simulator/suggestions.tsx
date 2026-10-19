@@ -38,7 +38,13 @@ export function Suggestions({ status, items, currency, locale, t, canSave, onSav
       {status === "ready" && texts.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-2">
           {texts.slice(0, 2).map((text, i) => (
-            <article key={i} className="rounded-[14px] bg-tint p-5"><p>{text}</p></article>
+            <article key={i} className="rounded-[14px] bg-tint p-5">
+              <p>
+                {text === t.suggestions["learn-investing"]
+                  ? <Link href={`/${locale}/apprendre/risques-frais-duree`} className="font-semibold text-brand-ink underline">{text}</Link>
+                  : text}
+              </p>
+            </article>
           ))}
         </div>
       )}

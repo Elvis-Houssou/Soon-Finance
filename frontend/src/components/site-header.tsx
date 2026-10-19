@@ -30,6 +30,7 @@ export async function SiteHeader() {
   const items = [
     { href: `/${locale}/simulateur`, label: t.nav.simulator },
     { href: `/${locale}/comparer`, label: t.nav.compare },
+    { href: `/${locale}/apprendre`, label: t.nav.learn },
   ];
 
   return (
