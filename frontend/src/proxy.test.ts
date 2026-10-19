@@ -58,6 +58,12 @@ describe("proxy", () => {
         expect(await rewritesTo404()).toContain("/fr/introuvable");
       }
     });
+    it("renvoie vers la connexion sur 401 (session expirée)", async () => {
+      vi.stubGlobal("fetch", vi.fn(() => Promise.resolve(new Response("", { status: 401 }))));
+      const res = await proxy(admin());
+      expect(res?.status).toBe(307);
+      expect(res?.headers.get("location")).toContain("/fr/connexion?next=%2Ffr%2Fadmin%2Fimpact");
+    });
     it("laisse passer un admin (200)", async () => {
       vi.stubGlobal("fetch", vi.fn(() => Promise.resolve(new Response("{}", { status: 200 }))));
       expect(await proxy(admin())).toBeUndefined();

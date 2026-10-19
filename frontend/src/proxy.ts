@@ -39,16 +39,18 @@ export async function proxy(request: NextRequest) {
       headers.set("x-lang", lang);
       return NextResponse.rewrite(url, { request: { headers } });
     }
-    if (ACCOUNT_PATHS.includes(page) && !request.cookies.has("sf_session")) {
+    const toLogin = () => {
       const url = request.nextUrl.clone();
       url.pathname = `/${pathname.split("/")[1]}/connexion`;
       url.search = `?next=${encodeURIComponent(pathname + search)}`;
       return NextResponse.redirect(url);
-    }
+    };
+    if (ACCOUNT_PATHS.includes(page) && !request.cookies.has("sf_session")) return toLogin();
     // Zone admin : le rôle est vérifié par l'API ; un non-admin reçoit le vrai 404 du site, sans aucun balisage admin.
     if (page === "admin") {
       const origin = process.env.API_ORIGIN || "http://127.0.0.1:8000";
       const res = await fetch(`${origin}/api/admin/impact?days=30`, { headers: { cookie: request.headers.get("cookie") ?? "" }, cache: "no-store", signal: AbortSignal.timeout(3000) }).catch(() => null);
+      if (res?.status === 401) return toLogin(); // session expirée : connexion, pas 404
       if (res?.status !== 200) {  // fermé par défaut : seule une réponse 200 de l'API ouvre la zone admin
         const lang = pathname.split("/")[1];
         const url = request.nextUrl.clone();

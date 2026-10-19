@@ -245,3 +245,22 @@ def test_helpfulness_is_mean_of_user_means(client, login):
         s.commit()
     d = login(ADMIN).get("/api/admin/impact?days=365").json()
     assert d["savings"]["helpfulness_avg_x100"] == (5 + 1 * 4) * 100 // 5 == 180  # by rating it would be 2.5
+
+
+def test_cross_window_double_difference_hides_figure(client, login):
+    # fr holders: 5 @30d, 10 @90d; en holders: 5 @30d, 6 @90d. Pairwise checks pass (5 and 10; complement 6 then 5),
+    # but (all-fr)@90 - (all-fr)@30 = 6 - 5 = 1: one English user's amount would leak through four views.
+    old = datetime(2026, 8, 31, tzinfo=UTC)
+    with client.session_factory() as s:
+        fr = [add_user(s, i, AUG) for i in range(10)]
+        en = [add_user(s, 100 + i, AUG, locale="en") for i in range(6)]
+        s.flush()
+        for i, u in enumerate(fr):
+            add_month(s, u, "2026-09", 20000, OCT_CLOSE if i < 5 else old)
+        for i, u in enumerate(en):
+            add_month(s, u, "2026-09", 20000, OCT_CLOSE if i < 5 else old)
+        s.commit()
+    c = login(ADMIN)
+    d30 = c.get("/api/admin/impact?days=30&locale=fr").json()
+    assert d30["amounts"] == [{"currency": "XOF", "saved_total": 100000}]
+    assert c.get("/api/admin/impact?days=90&locale=fr").json()["amounts"] == [{"currency": "XOF", "saved_total": None}]

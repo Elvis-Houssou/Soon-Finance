@@ -9,7 +9,8 @@ les événements) vaut None. Choix là où le cahier des charges est muet :
 - anti-différence : si une cohorte est masquée, le total des inscrits (et la conversion) l'est aussi, sinon
   total - somme des lignes visibles révélerait la petite cohorte. NON couvert : la différence entre deux requêtes
   aux filtres différents entre eux : un seul filtre à la fois (422 sinon), donc seul « tous » moins « filtré » existe.
-- fenêtres emboîtées : 90 j et 365 j appliquent la même règle contre chaque fenêtre plus courte (écart de personnes 0 ou >= 5).
+- fenêtres emboîtées : 90 j et 365 j appliquent la même règle contre chaque fenêtre plus courte (écart de personnes 0 ou >= 5),
+  y compris l'écart croisé des compléments ((tout - filtré) à 90 j moins (tout - filtré) à 30 j).
 - règle du complément : avec un filtre devise/langue, chaque chiffre n'est affiché que si la population complémentaire
   (tout − filtré) pour ce chiffre vaut 0 ou au moins 5 personnes ; sinon « tout » moins « filtré » révélerait un petit groupe.
 - cohortes : le début de fenêtre est ramené au 1er du mois, donc une ligne de cohorte est identique d'une période à l'autre.
@@ -112,34 +113,43 @@ def compute(db: Session, now: datetime, days: int, currency: str | None, locale:
     f = _raw(db, now, days, currency, locale, admins)
     a = _raw(db, now, days, None, None, admins) if (currency or locale) else f  # population de référence pour le complément
     # Fenêtres emboîtées : 90 j et 365 j sont aussi comparés à chaque fenêtre plus courte (même filtre).
-    smaller = [_raw(db, now, d, currency, locale, admins) for d in (30, 90) if d < days]
+    pairs = []
+    for d in (30, 90):
+        if d < days:
+            fw = _raw(db, now, d, currency, locale, admins)
+            pairs.append((fw, _raw(db, now, d, None, None, admins) if (currency or locale) else fw))
 
-    def ok(n: int, whole: int, others: list[int]) -> bool:
-        """Au moins MIN_GROUP personnes ; complément (tout - filtré) et écart avec chaque fenêtre plus courte : 0 ou >= MIN_GROUP."""
-        return _ok(n) and all(d == 0 or _ok(d) for d in [whole - n, *(n - o for o in others)])
+    def ok(n: int, whole: int, g) -> bool:
+        """Au moins MIN_GROUP personnes ; chaque écart de personnes vaut 0 ou >= MIN_GROUP : complément (tout - filtré),
+        écart avec chaque fenêtre plus courte, et écart croisé des compléments entre fenêtres (double différence)."""
+        gaps = [whole - n]
+        for fw, aw in pairs:
+            o, ow = g(fw), g(aw)
+            gaps += [n - o, (whole - n) - (ow - o)]
+        return _ok(n) and all(d == 0 or _ok(d) for d in gaps)
 
     def val(key: str):
         v, n = f[key]
-        return v if v is not None and ok(n, a[key][1], [w[key][1] for w in smaller]) else None
+        return v if v is not None and ok(n, a[key][1], lambda r: r[key][1]) else None
 
     usage: dict = {}
     for key in EVENT_TYPES:
         total, anons = f["events"][key]
-        usage[key] = total if ok(anons, a["events"][key][1], [w["events"][key][1] for w in smaller]) else None
+        usage[key] = total if ok(anons, a["events"][key][1], lambda r, key=key: r["events"][key][1]) else None
 
     retention = []
     for ym in sorted(f["rows"]):
         n, ms = f["rows"][ym]
-        shown = ok(n, a["rows"].get(ym, (0, []))[0], [w["rows"].get(ym, (0, []))[0] for w in smaller])
+        shown = ok(n, a["rows"].get(ym, (0, []))[0], lambda r, ym=ym: r["rows"].get(ym, (0, []))[0])
         retention.append({"cohort": ym, "users": n if shown else None, **{f"m{i + 1}_bp": ms[i] if shown else None for i in range(3)}})
     # Une cohorte masquée masque aussi le total (sinon total - lignes visibles la révèle).
-    signups_ok = ok(f["signups"], a["signups"], [w["signups"] for w in smaller]) and all(r["users"] is not None for r in retention)
+    signups_ok = ok(f["signups"], a["signups"], lambda r: r["signups"]) and all(r["users"] is not None for r in retention)
     usage["signups_completed"] = f["signups"] if signups_ok else None
     sims = usage["simulations"]
     usage["conversion_bp"] = usage["signups_completed"] * 10000 // sims if sims and usage["signups_completed"] is not None else None
 
     amounts = [
-        {"currency": c, "saved_total": t if ok(h, a["amounts"].get(c, (0, 0))[1], [w["amounts"].get(c, (0, 0))[1] for w in smaller]) else None}
+        {"currency": c, "saved_total": t if ok(h, a["amounts"].get(c, (0, 0))[1], lambda r, c=c: r["amounts"].get(c, (0, 0))[1]) else None}
         for c, (t, h) in sorted(f["amounts"].items())
     ]
     return {
