@@ -8,9 +8,15 @@ les événements) vaut None. Choix là où le cahier des charges est muet :
 - filtre devise : mois de cette devise (épargne/montants) et utilisateurs dont la devise est celle-ci (inscrits/cohortes).
 - anti-différence : si une cohorte est masquée, le total des inscrits (et la conversion) l'est aussi, sinon
   total - somme des lignes visibles révélerait la petite cohorte. NON couvert : la différence entre deux requêtes
-  aux filtres différents (ex. « toutes devises » moins « XOF ») ; chaque requête reste sûre, pas leur combinaison.
+  aux filtres différents entre eux (deux filtres non vides, ex. fr puis XOF) ; seul « tous » moins « filtré » est couvert.
+- règle du complément : avec un filtre devise/langue, chaque chiffre n'est affiché que si la population complémentaire
+  (tout − filtré) pour ce chiffre vaut 0 ou au moins 5 personnes ; sinon « tout » moins « filtré » révélerait un petit groupe.
+- cohortes : le début de fenêtre est ramené au 1er du mois, donc une ligne de cohorte est identique d'une période à l'autre.
+- médiane et moyenne de notes : une valeur par utilisateur (dernier taux clôturé de la fenêtre ; sa note moyenne), puis
+  médiane/moyenne entre utilisateurs, pour qu'un utilisateur très actif ne pèse pas davantage.
 """
 import statistics
+from fractions import Fraction
 from collections import defaultdict
 from datetime import datetime, timedelta
 
@@ -32,85 +38,110 @@ def _saved(m: Month) -> int:
     return sum(e.get("actual") or 0 for e in m.envelopes if e["kind"] in SAVE_KINDS)
 
 
-def compute(db: Session, now: datetime, days: int, currency: str | None, locale: str | None, admin_emails: list[str]) -> dict:
+def _raw(db: Session, now: datetime, days: int, currency: str | None, locale: str | None, admins: list[str]) -> dict:
+    """Chiffres bruts (non masqués) et nombre de personnes derrière chacun."""
     since = now - timedelta(days=days)
-    admins = [e.lower() for e in admin_emails]
+    cohort_start = since.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
-    # --- Utilisation (événements) ---
-    usage: dict = {}
+    events = {}
     for key, etype in EVENT_TYPES.items():
         q = select(func.count(Event.id), func.count(func.distinct(Event.anon_id))).where(Event.type == etype, Event.occurred_at >= since)
         if currency:
             q = q.where(Event.currency == currency)
         if locale:
             q = q.where(Event.locale == locale)
-        total, anons = db.execute(q).one()
-        usage[key] = total if _ok(anons) else None
+        events[key] = tuple(db.execute(q).one())  # (total, anon_id distincts)
 
-    # --- Utilisateurs de la portée (hors admins) ---
     base = select(User).where(func.lower(User.email).notin_(admins))
     if locale:
         base = base.where(User.locale == locale)
-    scope_ids = {u.id for u in db.scalars(base)}  # le filtre devise des mois porte sur Month.currency
+    scope = base.with_only_columns(User.id)  # le filtre devise des mois porte sur Month.currency
     users = db.scalars(base.where(User.currency == currency) if currency else base).all()
 
-    # --- Cohortes ---
     closed_all: dict[str, int] = defaultdict(int)
     for uid, n in db.execute(select(Month.user_id, func.count(Month.id)).where(Month.closed_at.is_not(None)).group_by(Month.user_id)):
         closed_all[uid] = n
     cohorts: dict[str, list[User]] = defaultdict(list)
     for u in users:
-        if u.created_at >= since:
+        if u.created_at >= cohort_start:
             cohorts[u.created_at.strftime("%Y-%m")].append(u)
     now_ym = now.strftime("%Y-%m")
-    retention = []
-    for ym in sorted(cohorts):
-        members = cohorts[ym]
-        row: dict = {"cohort": ym, "users": len(members) if _ok(len(members)) else None, "m1_bp": None, "m2_bp": None, "m3_bp": None}
-        if _ok(len(members)):
-            for n in (1, 2, 3):
-                end = ym
-                for _ in range(n - 1):
-                    end = next_ym(end)
-                if end < now_ym:  # le N-ième mois n'est mesurable qu'une fois terminé
-                    row[f"m{n}_bp"] = sum(closed_all[u.id] >= n for u in members) * 10000 // len(members)
-        retention.append(row)
-    hidden_cohort = any(not _ok(len(m)) for m in cohorts.values())
-    signups = sum(len(m) for m in cohorts.values())
-    usage["signups_completed"] = signups if _ok(signups) and not hidden_cohort else None
-    sims = usage["simulations"]
-    usage["conversion_bp"] = usage["signups_completed"] * 10000 // sims if sims and usage["signups_completed"] is not None else None
+    rows = {}
+    for ym, members in cohorts.items():
+        ms = []
+        for n in (1, 2, 3):
+            end = ym
+            for _ in range(n - 1):
+                end = next_ym(end)
+            # le N-ième mois n'est mesurable qu'une fois terminé
+            ms.append(sum(closed_all[u.id] >= n for u in members) * 10000 // len(members) if end < now_ym else None)
+        rows[ym] = (len(members), ms)
 
-    # --- Épargne réelle (mois clôturés dans la fenêtre) ---
-    mq = select(Month).where(Month.closed_at.is_not(None), Month.closed_at >= since, Month.user_id.in_(scope_ids))
+    mq = select(Month).where(Month.closed_at.is_not(None), Month.closed_at >= since, Month.user_id.in_(scope))
     if currency:
         mq = mq.where(Month.currency == currency)
-    months = db.scalars(mq).all()
     by_user: dict[str, list[Month]] = defaultdict(list)
-    for m in months:
+    for m in db.scalars(mq):
         by_user[m.user_id].append(m)
+    for ms in by_user.values():
+        ms.sort(key=lambda m: m.year_month)
 
-    median = statistics.median_low([rate_bp(m.income, m.envelopes) for m in months]) if _ok(len(by_user)) else None
-    multi = [sorted(ms, key=lambda m: m.year_month) for ms in by_user.values() if len(ms) >= 2]
-    improved = (
-        sum(rate_bp(ms[-1].income, ms[-1].envelopes) > rate_bp(ms[0].income, ms[0].envelopes) for ms in multi) * 10000 // len(multi)
-        if _ok(len(multi)) else None
-    )
-    rated = [m for m in months if m.helpfulness is not None]
-    help_users = len({m.user_id for m in rated})
-    helpfulness = sum(m.helpfulness for m in rated) * 100 // len(rated) if _ok(help_users) else None
+    rate = lambda m: rate_bp(m.income, m.envelopes)  # noqa: E731
+    median = statistics.median_low([rate(ms[-1]) for ms in by_user.values()]) if by_user else None
+    multi = [ms for ms in by_user.values() if len(ms) >= 2]
+    improved = sum(rate(ms[-1]) > rate(ms[0]) for ms in multi) * 10000 // len(multi) if multi else None
+    per_user = [Fraction(sum(r), len(r)) for r in ([m.helpfulness for m in ms if m.helpfulness is not None] for ms in by_user.values()) if r]
+    helpfulness = int(sum(per_user) * 100 / len(per_user)) if per_user else None
 
     totals: dict[str, int] = defaultdict(int)
     holders: dict[str, set[str]] = defaultdict(set)
-    for m in months:
-        totals[m.currency] += _saved(m)
-        holders[m.currency].add(m.user_id)
-    amounts = [{"currency": c, "saved_total": totals[c] if _ok(len(holders[c])) else None} for c in sorted(totals)]
+    for uid, ms in by_user.items():
+        for m in ms:
+            totals[m.currency] += _saved(m)
+            holders[m.currency].add(uid)
+    return {
+        "events": events, "rows": rows, "signups": sum(n for n, _ in rows.values()),
+        "median": (median, len(by_user)), "improved": (improved, len(multi)), "help": (helpfulness, len(per_user)),
+        "amounts": {c: (totals[c], len(holders[c])) for c in totals},
+    }
 
+
+def compute(db: Session, now: datetime, days: int, currency: str | None, locale: str | None, admin_emails: list[str]) -> dict:
+    admins = [e.lower() for e in admin_emails]
+    f = _raw(db, now, days, currency, locale, admins)
+    a = _raw(db, now, days, None, None, admins) if (currency or locale) else f  # population de référence pour le complément
+
+    def ok(n: int, whole: int) -> bool:
+        """Au moins MIN_GROUP personnes, et un complément (tout - filtré) vide ou d'au moins MIN_GROUP."""
+        return _ok(n) and (whole == n or _ok(whole - n))
+
+    def val(key: str):
+        v, n = f[key]
+        return v if v is not None and ok(n, a[key][1]) else None
+
+    usage: dict = {}
+    for key in EVENT_TYPES:
+        total, anons = f["events"][key]
+        usage[key] = total if ok(anons, a["events"][key][1]) else None
+
+    retention = []
+    for ym in sorted(f["rows"]):
+        n, ms = f["rows"][ym]
+        shown = ok(n, a["rows"].get(ym, (0, []))[0])
+        retention.append({"cohort": ym, "users": n if shown else None, **{f"m{i + 1}_bp": ms[i] if shown else None for i in range(3)}})
+    # Une cohorte masquée masque aussi le total (sinon total - lignes visibles la révèle).
+    usage["signups_completed"] = f["signups"] if ok(f["signups"], a["signups"]) and all(r["users"] is not None for r in retention) else None
+    sims = usage["simulations"]
+    usage["conversion_bp"] = usage["signups_completed"] * 10000 // sims if sims and usage["signups_completed"] is not None else None
+
+    amounts = [
+        {"currency": c, "saved_total": t if ok(h, a["amounts"].get(c, (0, 0))[1]) else None}
+        for c, (t, h) in sorted(f["amounts"].items())
+    ]
     return {
         "usage": usage,
         "retention": retention,
-        "savings": {"median_rate_bp": median, "improved_share_bp": improved, "helpfulness_avg_x100": helpfulness},
+        "savings": {"median_rate_bp": val("median"), "improved_share_bp": val("improved"), "helpfulness_avg_x100": val("help")},
         "amounts": amounts,
         "min_group": MIN_GROUP,
     }

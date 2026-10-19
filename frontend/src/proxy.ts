@@ -22,7 +22,7 @@ export function pickLocale(request: NextRequest): Locale {
 
 export const ACCOUNT_PATHS = ["admin", "tableau-de-bord", "bilan", "historique", "objectifs", "parametres"];
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   if (pathname === "/api" || pathname.startsWith("/api/")) return;
   const hasPrefix = locales.some((locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`));
@@ -44,6 +44,19 @@ export function proxy(request: NextRequest) {
       url.pathname = `/${pathname.split("/")[1]}/connexion`;
       url.search = `?next=${encodeURIComponent(pathname + search)}`;
       return NextResponse.redirect(url);
+    }
+    // Zone admin : le rôle est vérifié par l'API ; un non-admin reçoit le vrai 404 du site, sans aucun balisage admin.
+    if (page === "admin") {
+      const origin = process.env.API_ORIGIN || "http://127.0.0.1:8000";
+      const res = await fetch(`${origin}/api/admin/impact?days=30`, { headers: { cookie: request.headers.get("cookie") ?? "" }, cache: "no-store" }).catch(() => null);
+      if (res?.status === 404) {
+        const lang = pathname.split("/")[1];
+        const url = request.nextUrl.clone();
+        url.pathname = `/${lang}/introuvable`;
+        const headers = new Headers(request.headers);
+        headers.set("x-lang", lang);
+        return NextResponse.rewrite(url, { request: { headers } });
+      }
     }
     return;
   }

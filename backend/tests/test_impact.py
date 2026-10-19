@@ -79,7 +79,8 @@ def test_conversion_and_cohorts(client, login):
     seed_ten(client)
     c = login(ADMIN)
     d = c.get("/api/admin/impact?days=90").json()
-    rates = [s // 10 for _, _, s, _ in SEEDED]  # income 100000: saved * 10000 // 100000
+    latest = {i: s for i, _, s, _ in SEEDED}  # SEEDED est trié par mois : le dernier gagne
+    rates = [s // 10 for s in latest.values()]  # un taux par utilisateur ; revenu 100000
     assert d["usage"]["simulations"] == 9
     assert d["usage"]["comparisons"] == 5
     assert d["usage"]["signups_started"] is None  # 2 anon_id < 5
@@ -94,7 +95,7 @@ def test_conversion_and_cohorts(client, login):
     last = {i: s for i, ym, s, _ in SEEDED if ym == "2026-09"}
     multi = [i for i in first if i in last]
     assert d["savings"]["improved_share_bp"] == sum(last[i] > first[i] for i in multi) * 10000 // len(multi) == 6000
-    ratings = [h for *_, h in SEEDED if h]
+    ratings = [h for *_, h in SEEDED if h]  # un seul avis par utilisateur dans le jeu
     assert d["savings"]["helpfulness_avg_x100"] == sum(ratings) * 100 // len(ratings)
     assert d["amounts"] == [{"currency": "XOF", "saved_total": sum(s for _, _, s, _ in SEEDED)}]
     assert d["min_group"] == 5
@@ -145,7 +146,7 @@ def test_hidden_cohort_cannot_be_differenced(client, login):
 def test_window_excludes_old_months(client, login):
     seed_ten(client)
     d = login(ADMIN).get("/api/admin/impact?days=30").json()
-    assert d["retention"] == []  # nobody signed up in the last 30 days
+    assert [r["cohort"] for r in d["retention"]] == ["2026-09"]  # window start snapped to Sep 1; August cohort out
     assert d["amounts"] == [{"currency": "XOF", "saved_total": sum(s for _, ym, s, _ in SEEDED if ym == "2026-09")}]
 
 
@@ -164,3 +165,50 @@ def test_no_individual_fields_in_response(client, login):
     d = r.json()
     assert set(d) == {"usage", "retention", "savings", "amounts", "min_group"}
     assert set(d["usage"]) == {"simulations", "comparisons", "signups_started", "signups_completed", "conversion_bp"}
+
+
+def test_complement_rule_hides_filtered_figure(client, login):
+    # 7 XOF holders, one of them English: locale=fr leaves 6 holders but a complement of 1 -> hidden.
+    with client.session_factory() as s:
+        users = [add_user(s, i, AUG, locale="en" if i == 6 else "fr") for i in range(7)]
+        s.flush()
+        for u in users:
+            add_month(s, u, "2026-09", 20000, OCT_CLOSE, 4)
+        s.commit()
+    c = login(ADMIN)
+    assert c.get("/api/admin/impact?days=90").json()["amounts"] == [{"currency": "XOF", "saved_total": 140000}]
+    fr = c.get("/api/admin/impact?days=90&locale=fr").json()
+    assert fr["amounts"] == [{"currency": "XOF", "saved_total": None}]
+    assert fr["savings"] == {k: None for k in fr["savings"]}
+    assert fr["retention"][0]["users"] is None and fr["usage"]["signups_completed"] is None
+
+
+def test_complement_of_five_is_allowed(client, login):
+    with client.session_factory() as s:
+        users = [add_user(s, i, AUG, locale="en" if i < 5 else "fr") for i in range(11)]
+        s.flush()
+        for u in users:
+            add_month(s, u, "2026-09", 20000, OCT_CLOSE)
+        s.commit()
+    fr = login(ADMIN).get("/api/admin/impact?days=90&locale=fr").json()
+    assert fr["amounts"] == [{"currency": "XOF", "saved_total": 120000}]
+
+
+def test_cohort_row_is_identical_across_periods(client, login):
+    seed_ten(client)
+    c = login(ADMIN)
+    rows = [c.get(f"/api/admin/impact?days={d}").json()["retention"] for d in (90, 365)]
+    assert rows[0] == rows[1] and len(rows[0]) == 2
+
+
+def test_median_is_per_user_not_per_month(client, login):
+    with client.session_factory() as s:
+        users = [add_user(s, i, AUG) for i in range(5)]
+        s.flush()
+        for m in range(12):  # one heavy user: 12 months at 50 %
+            add_month(s, users[0], f"{2025 + (10 + m) // 12}-{(10 + m) % 12 + 1:02d}", 50000, OCT_CLOSE)
+        for u in users[1:]:
+            add_month(s, u, "2026-09", 10000, OCT_CLOSE)
+        s.commit()
+    d = login(ADMIN).get("/api/admin/impact?days=365").json()
+    assert d["savings"]["median_rate_bp"] == 1000  # by month it would be 5000
