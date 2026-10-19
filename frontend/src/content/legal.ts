@@ -39,8 +39,8 @@ export const legal = {
       {
         label: { fr: "Hébergement", en: "Hosting" },
         value: {
-          fr: "Site : Vercel Inc. · API : hébergeur à confirmer · Base de données : Neon, région UE (Francfort)",
-          en: "Website: Vercel Inc. · API: host to be confirmed · Database: Neon, EU region (Frankfurt)",
+          fr: "Site : Vercel Inc. · API : Render · Base de données : Neon, région UE (Francfort)",
+          en: "Website: Vercel Inc. · API: Render · Database: Neon, EU region (Frankfurt)",
         },
         placeholders: [],
       },
@@ -75,11 +75,15 @@ export const legal = {
       paragraphs: {
         fr: [
           "Dans une base de données hébergée dans l’Union européenne (Francfort). Votre lien de connexion vous est envoyé par email via Resend, notre service d’envoi.",
-          "Un seul cookie est nécessaire : le cookie de session, qui vous garde connecté 30 jours. Votre navigateur retient aussi, sur votre appareil seulement, votre langue (cookie sf-lang), votre thème et votre simulation en cours (sf-theme, sf-simulation), ainsi qu’un identifiant anonyme (sf-anon). Un événement anonyme au plus est envoyé par visite.",
+          "Deux cookies sont utilisés. Le cookie de session vous garde connecté 30 jours ; il n’est pas lisible par les scripts de la page. Le cookie de langue (sf-lang) retient votre langue pendant 1 an.",
+          "Le stockage local de votre navigateur, sur votre appareil seulement, retient aussi votre thème (sf-theme), votre simulation en cours (sf-simulation), un marqueur valable le temps d’une visite pour n’envoyer qu’une seule fois l’événement « simulation faite » (sf-sim-sent), et un identifiant anonyme (sf-anon).",
+          "Cet identifiant est aléatoire. Il reste sur cet appareil et relie entre eux les événements d’usage anonymes venant du même navigateur, jamais à votre email, votre prénom ou vos montants. Vous pouvez l’effacer en vidant les données du site dans votre navigateur.",
         ],
         en: [
           "In a database hosted in the European Union (Frankfurt). Your sign-in link is emailed to you through Resend, our sending service.",
-          "One cookie is required: the session cookie, which keeps you signed in for 30 days. Your browser also remembers, on your device only, your language (sf-lang cookie), your theme and your simulation in progress (sf-theme, sf-simulation), plus an anonymous identifier (sf-anon). At most one anonymous event is sent per visit.",
+          "Two cookies are used. The session cookie keeps you signed in for 30 days; page scripts cannot read it. The language cookie (sf-lang) remembers your language for 1 year.",
+          "Your browser's local storage, on your device only, also remembers your theme (sf-theme), your simulation in progress (sf-simulation), a marker valid for one visit so that the “simulation done” event is sent only once (sf-sim-sent), and an anonymous identifier (sf-anon).",
+          "This identifier is random. It stays on this device and links together anonymous usage events from the same browser, never to your email, first name or amounts. You can erase it by clearing the site data in your browser.",
         ],
       },
     },

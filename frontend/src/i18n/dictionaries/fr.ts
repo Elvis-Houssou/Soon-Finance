@@ -162,6 +162,7 @@ const fr = {
     emailError: "Entrez une adresse email complète, par exemple nom@exemple.com.",
     consent: "J’accepte que Soon Finance conserve mes données de budget pour me les afficher.",
     consentLink: "politique de confidentialité",
+    newTab: "(s’ouvre dans un nouvel onglet)",
     consentError: "Cochez la case pour que nous puissions conserver votre budget.",
     submit: "Recevoir mon lien de connexion",
     sending: "Envoi en cours…",

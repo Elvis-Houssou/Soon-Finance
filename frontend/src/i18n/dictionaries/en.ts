@@ -164,6 +164,7 @@ const en: Dictionary = {
     emailError: "Enter a full email address, for example name@example.com.",
     consent: "I agree that Soon Finance keeps my budget data to show it back to me.",
     consentLink: "privacy policy",
+    newTab: "(opens in a new tab)",
     consentError: "Tick the box so that we can keep your budget.",
     submit: "Get my sign-in link",
     sending: "Sending…",
