@@ -32,7 +32,7 @@ def _retry_after(db: Session, column, value: str, limit: int) -> int | None:
 
 
 def _client_ip(request: Request, settings: Settings) -> str:
-    # In production the app sits behind Vercel/Render, so client.host is the proxy.
+    # In production the API sits behind Render's proxy, so client.host is the proxy.
     # shortcut: trusts the leftmost X-Forwarded-For entry, spoofable if the proxy appends rather than overwrites.
     forwarded = request.headers.get("x-forwarded-for", "").split(",")[0].strip()
     if settings.env == "production" and forwarded:
@@ -60,7 +60,7 @@ def request_link(body: RequestLink, request: Request, db: Session = Depends(get_
     db.add(LoginToken(id=str(uuid.uuid4()), email=body.email, token_hash=auth.hash_token(raw), locale=body.locale,
                       next_path=body.next, ip_hash=ip_hash, expires_at=now + timedelta(minutes=15), created_at=now))
     db.commit()
-    link = f"{settings.app_url}/api/auth/verify?token={raw}"
+    link = f"{settings.api_url}/api/auth/verify?token={raw}"
     try:
         send_login_link(body.email, link, body.locale, settings)
     except EmailError:
@@ -73,10 +73,10 @@ def verify(token: str, db: Session = Depends(get_session), settings: Settings = 
     row = db.scalar(select(LoginToken).where(LoginToken.token_hash == auth.hash_token(token)))
     now = auth.now()
     if row is None or row.used_at is not None or row.expires_at <= now:
-        return RedirectResponse(f"/{row.locale if row else 'fr'}/connexion/lien-expire", status_code=303)
+        return RedirectResponse(f"{settings.app_url}/{row.locale if row else 'fr'}/connexion/lien-expire", status_code=303)
     if not _claim(db, row.id, now):
         db.rollback()
-        return RedirectResponse(f"/{row.locale}/connexion/lien-expire", status_code=303)
+        return RedirectResponse(f"{settings.app_url}/{row.locale}/connexion/lien-expire", status_code=303)
     user = _find_user(db, row.email)
     if user is None:
         user = User(id=str(uuid.uuid4()), email=row.email, locale=row.locale, consent_at=now, created_at=now,
@@ -91,17 +91,18 @@ def verify(token: str, db: Session = Depends(get_session), settings: Settings = 
     raw = secrets.token_urlsafe(32)
     db.add(SessionToken(id_hash=auth.hash_token(raw), user_id=user.id, expires_at=now + SESSION_TTL, created_at=now))
     db.commit()
-    resp = RedirectResponse(row.next_path or f"/{row.locale}/tableau-de-bord", status_code=303)
-    resp.set_cookie(auth.SESSION_COOKIE, raw, max_age=int(SESSION_TTL.total_seconds()), httponly=True,
-                    samesite="lax", path="/", secure=settings.env == "production")
+    # The API is on its own domain: send the browser back to the website.
+    resp = RedirectResponse(settings.app_url + (row.next_path or f"/{row.locale}/tableau-de-bord"), status_code=303)
+    resp.set_cookie(auth.SESSION_COOKIE, raw, max_age=int(SESSION_TTL.total_seconds()), **auth.cookie_args(settings))
     return resp
 
 
 @router.post("/logout", status_code=204)
-def logout(raw: Annotated[str | None, Cookie(alias=auth.SESSION_COOKIE)] = None, db: Session = Depends(get_session)):
+def logout(raw: Annotated[str | None, Cookie(alias=auth.SESSION_COOKIE)] = None, db: Session = Depends(get_session),
+           settings: Settings = Depends(get_settings)):
     if raw and (row := db.get(SessionToken, auth.hash_token(raw))):
         db.delete(row)
         db.commit()
     resp = Response(status_code=204)
-    resp.delete_cookie(auth.SESSION_COOKIE, path="/")
+    resp.delete_cookie(auth.SESSION_COOKIE, **auth.cookie_args(settings))
     return resp

@@ -16,7 +16,8 @@ class Settings(BaseSettings):
     database_url: str = LOCAL_DATABASE_URL
 
     env: Literal["development", "production"] = "development"
-    app_url: str = "http://localhost:3000"
+    app_url: str = "http://localhost:3000"  # the website (CORS origin, redirects after sign-in)
+    api_url: str = "http://localhost:8000"  # this API, as the browser reaches it (magic links point here)
     resend_api_key: str | None = None
     email_from: str = "Soon Finance <onboarding@resend.dev>"
     admin_emails: Annotated[list[str], NoDecode] = []  # comma-separated in the environment
@@ -32,8 +33,8 @@ class Settings(BaseSettings):
         if self.env == "production":
             if not self.resend_api_key:
                 raise ValueError("RESEND_API_KEY is required in production")
-            if not self.app_url.startswith("https://"):
-                raise ValueError("APP_URL must start with https:// in production")
+            if not self.app_url.startswith("https://") or not self.api_url.startswith("https://"):
+                raise ValueError("APP_URL and API_URL must start with https:// in production")
             if "resend.dev" in self.email_from:
                 log.warning("EMAIL_FROM uses resend.dev: no verified domain yet, mail only reaches the Resend account owner")
         return self

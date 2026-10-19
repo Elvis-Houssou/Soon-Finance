@@ -31,9 +31,9 @@ const monthName = (key: string) => {
 async function seedClosed(page: Page) {
   const plan = { income: 500000, currency: "XOF", method: "50-30-20" };
   for (const [back, actuals] of [[2, [250000, 150000, 100000]], [1, [240000, 140000, 120000]]] as const) {
-    const put = await page.request.put(`/api/months/${ym(back)}`, { data: plan });
+    const put = await page.request.put(`http://127.0.0.1:8100/api/months/${ym(back)}`, { data: plan });
     expect(put.ok()).toBe(true);
-    const close = await page.request.post(`/api/months/${ym(back)}/close`, { data: { actuals } });
+    const close = await page.request.post(`http://127.0.0.1:8100/api/months/${ym(back)}/close`, { data: { actuals } });
     expect(close.ok()).toBe(true);
   }
 }
@@ -102,12 +102,12 @@ test("no horizontal scroll at 360px", async ({ page }) => {
 
 test("stale draft does not overwrite a returning user's month", async ({ page }) => {
   await signIn(page);
-  const old = await page.request.put(`/api/months/${ym(3)}`, { data: { income: 700000, currency: "EUR", method: "80-20" } });
+  const old = await page.request.put(`http://127.0.0.1:8100/api/months/${ym(3)}`, { data: { income: 700000, currency: "EUR", method: "80-20" } });
   expect(old.ok()).toBe(true);
   await page.evaluate((d) => localStorage.setItem("sf-simulation", JSON.stringify(d)), DRAFT);
   await page.reload();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Bienvenue, votre budget");
-  const cur = await (await page.request.get(`/api/months/${ym(0)}`)).json();
+  const cur = await (await page.request.get(`http://127.0.0.1:8100/api/months/${ym(0)}`)).json();
   expect([cur.income, cur.currency, cur.method]).toEqual([700000, "EUR", "80-20"]);
 });
 

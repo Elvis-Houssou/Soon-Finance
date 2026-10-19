@@ -13,7 +13,7 @@ from app.services import email as email_service
 from app.services.auth import SESSION_COOKIE
 
 
-PROD = {"env": "production", "resend_api_key": "k", "app_url": "https://soon.example"}
+PROD = {"env": "production", "resend_api_key": "k", "app_url": "https://soon.example", "api_url": "https://api.soon.example"}
 
 
 @pytest.fixture
@@ -48,7 +48,7 @@ def test_request_link_returns_dev_link_in_development(client, sent):
     body = r.json()
     assert body["sent"] is True and body["dev_link"] == sent[0][1]
     assert sent[0][0] == "ana@example.com" and sent[0][2] == "fr"
-    assert sent[0][1].startswith("http://localhost:3000/api/auth/verify?token=")
+    assert sent[0][1].startswith("http://localhost:8000/api/auth/verify?token=")
 
 
 def test_no_dev_link_in_production(client, sent):
@@ -84,7 +84,7 @@ def test_token_stored_hashed(client, sent):
 def test_verify_creates_user_session_and_redirects(client, sent):
     request_link(client)
     r = verify(client, sent[0][1])
-    assert r.status_code == 303 and r.headers["location"] == "/fr/tableau-de-bord"
+    assert r.status_code == 303 and r.headers["location"] == "http://localhost:3000" + "/fr/tableau-de-bord"
     cookie = r.headers["set-cookie"].lower()
     assert f"{SESSION_COOKIE}=" in cookie and "httponly" in cookie and "samesite=lax" in cookie
     assert "max-age=2592000" in cookie and "secure" not in cookie
@@ -97,19 +97,19 @@ def test_verify_creates_user_session_and_redirects(client, sent):
 
 def test_verify_honours_next(client, sent):
     request_link(client, next="/fr/suivi")
-    assert verify(client, sent[0][1]).headers["location"] == "/fr/suivi"
+    assert verify(client, sent[0][1]).headers["location"] == "http://localhost:3000" + "/fr/suivi"
 
 
 def test_verify_twice_goes_to_expired(client, sent):
     request_link(client)
     verify(client, sent[0][1])
     r = verify(client, sent[0][1])
-    assert r.status_code == 303 and r.headers["location"] == "/fr/connexion/lien-expire"
+    assert r.status_code == 303 and r.headers["location"] == "http://localhost:3000" + "/fr/connexion/lien-expire"
 
 
 def test_verify_unknown_token_goes_to_expired_fr(client):
     r = client.get("/api/auth/verify?token=zzz", follow_redirects=False)
-    assert r.status_code == 303 and r.headers["location"] == "/fr/connexion/lien-expire"
+    assert r.status_code == 303 and r.headers["location"] == "http://localhost:3000" + "/fr/connexion/lien-expire"
 
 
 def test_verify_after_15_minutes_goes_to_expired(client, sent, monkeypatch):
@@ -117,7 +117,7 @@ def test_verify_after_15_minutes_goes_to_expired(client, sent, monkeypatch):
     t = datetime.now(UTC) + timedelta(minutes=16)
     monkeypatch.setattr(auth_service, "now", lambda: t)
     r = verify(client, sent[0][1])
-    assert r.headers["location"] == "/en/connexion/lien-expire"
+    assert r.headers["location"] == "http://localhost:3000" + "/en/connexion/lien-expire"
     assert SESSION_COOKIE not in r.headers.get("set-cookie", "")
 
 
@@ -236,7 +236,7 @@ def test_verify_lost_claim_goes_to_expired(client, sent, monkeypatch):
     request_link(client)
     monkeypatch.setattr("app.api.routes.auth._claim", lambda *a: False)
     r = verify(client, sent[0][1])
-    assert r.status_code == 303 and r.headers["location"] == "/fr/connexion/lien-expire"
+    assert r.status_code == 303 and r.headers["location"] == "http://localhost:3000" + "/fr/connexion/lien-expire"
     assert count(client, SessionToken) == 0 and count(client, User) == 0
 
 
@@ -250,7 +250,7 @@ def test_verify_user_created_concurrently_logs_in(client, sent, monkeypatch):
         s.commit()
     monkeypatch.setattr(route, "_find_user", lambda db, email: None)  # simulates the lookup losing the race
     r = verify(client, sent[0][1])
-    assert r.status_code == 303 and r.headers["location"] == "/fr/tableau-de-bord"
+    assert r.status_code == 303 and r.headers["location"] == "http://localhost:3000" + "/fr/tableau-de-bord"
     assert count(client, User) == 1 and count(client, SessionToken) == 1 and count(client, Event) == 0
     assert client.get("/api/me").json()["id"] == "u1"
 
@@ -288,3 +288,16 @@ def test_production_settings_validation(caplog, monkeypatch):
 def test_login_limit_must_be_positive():
     with pytest.raises(ValueError):
         Settings(_env_file=None, login_limit_per_ip=0)
+
+
+def test_cors_allows_the_website_with_credentials(client):
+    r = client.options("/api/me", headers={"Origin": "http://localhost:3000", "Access-Control-Request-Method": "GET"})
+    assert r.headers["access-control-allow-origin"] == "http://localhost:3000"
+    assert r.headers["access-control-allow-credentials"] == "true"
+    r = client.options("/api/me", headers={"Origin": "https://evil.example", "Access-Control-Request-Method": "GET"})
+    assert "access-control-allow-origin" not in r.headers
+
+
+def test_production_cookie_is_cross_site():
+    args = auth_service.cookie_args(Settings(_env_file=None, **PROD))
+    assert args["samesite"] == "none" and args["secure"] is True and args["httponly"] is True

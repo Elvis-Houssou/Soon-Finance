@@ -23,7 +23,7 @@ export default defineConfig({
     {
       command: `${BACKEND} alembic -c "${BACKEND_DIR}/alembic.ini" upgrade head && ${BACKEND} uvicorn app.main:app --port 8100`,
       cwd: E2E_DIR,
-      env: { ENV: "development", RESEND_API_KEY: "", DATABASE_URL: `sqlite:///${E2E_DIR}/e2e.db`, APP_URL: "http://127.0.0.1:3100", LOGIN_LIMIT_PER_IP: "1000", ADMIN_EMAILS: "Admin.E2E@exemple.com" },
+      env: { ENV: "development", RESEND_API_KEY: "", DATABASE_URL: `sqlite:///${E2E_DIR}/e2e.db`, APP_URL: "http://127.0.0.1:3100", API_URL: "http://127.0.0.1:8100", LOGIN_LIMIT_PER_IP: "1000", ADMIN_EMAILS: "Admin.E2E@exemple.com" },
       url: "http://127.0.0.1:8100/api/health",
       reuseExistingServer: false,
       timeout: 120_000,
@@ -31,7 +31,7 @@ export default defineConfig({
     {
       command: "npm run build && npm run start -- -p 3100",
       url: "http://127.0.0.1:3100/fr",
-      env: { API_ORIGIN: "http://127.0.0.1:8100", NEXT_BASE_API_URL: "/api", NEXT_PUBLIC_E2E: "1" }, // NEXT_PUBLIC_E2E : sonde motion et /labo-motion
+      env: { NEXT_BASE_API_URL: "http://127.0.0.1:8100/api", NEXT_PUBLIC_E2E: "1" }, // NEXT_PUBLIC_E2E : sonde motion et /labo-motion
       reuseExistingServer: false,
       timeout: 300_000,
     },

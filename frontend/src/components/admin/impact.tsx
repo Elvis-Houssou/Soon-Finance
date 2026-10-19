@@ -30,8 +30,12 @@ export function Impact({ locale, t }: { locale: Locale; t: Dictionary["impact"] 
   const num = new Intl.NumberFormat(tag);
   const dec = new Intl.NumberFormat(tag, { maximumFractionDigits: 1 });
 
-  // Non-admin : la page introuvable du site, sans aucun habillage de zone admin.
+  // Non-admin : la page introuvable du site. Rien de la zone admin n'est rendu avant une première réponse de l'API.
+  const [admitted, setAdmitted] = useState(false);
   if (error?.status === 404) notFound();
+  if (data && !admitted) setAdmitted(true);
+  if (!admitted && !data)
+    return <p role="status" aria-busy={!error} className="container-site min-h-svh py-8 text-muted">{error ? t.error : t.loading}</p>;
 
   // null = groupe de moins de 5 personnes : « — », annoncé « chiffre masqué » aux lecteurs d'écran.
   const show = (v: N, f: (n: number) => string) => (v === null ? <span aria-label={t.maskedShort}>—</span> : f(v));

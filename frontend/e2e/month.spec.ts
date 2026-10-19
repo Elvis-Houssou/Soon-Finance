@@ -11,7 +11,7 @@ async function setup(page: Page) {
   await page.getByRole("button", { name: "Recevoir mon lien de connexion" }).click();
   await page.getByRole("link", { name: "Ouvrir le lien (développement)" }).click();
   await expect(page).toHaveURL(/\/fr\/tableau-de-bord$/);
-  expect((await page.request.put(`/api/months/${ym}`, { data: PLAN })).ok()).toBe(true);
+  expect((await page.request.put(`http://127.0.0.1:8100/api/months/${ym}`, { data: PLAN })).ok()).toBe(true);
   await page.goto(`/fr/bilan/${ym}`);
 }
 

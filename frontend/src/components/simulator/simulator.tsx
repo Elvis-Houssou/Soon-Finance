@@ -91,7 +91,7 @@ export function Simulator({ locale, t }: { locale: Locale; t: PlanStrings }) {
 
   // The session cookie is HttpOnly: ask the API (plain fetch, a 401 must not redirect here).
   useEffect(() => {
-    fetch(apiUrl("/dashboard")).then((r) => setSignedIn(r.ok), () => {});
+    fetch(apiUrl("/dashboard"), { credentials: "include" }).then((r) => setSignedIn(r.ok), () => {});
   }, []);
 
   const shown = !!sim && sim.income > 0 && run > 0;

@@ -5,6 +5,7 @@ from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import current_user
+from app.core.config import Settings, get_settings
 from app.db.models import Goal, LoginToken, Month, Profile, User
 from app.db.session import get_session
 from app.schemas.account import MePatch
@@ -57,11 +58,11 @@ def export(db: Session = Depends(get_session), user: User = Depends(current_user
 
 
 @router.delete("/me", status_code=204)
-def delete_me(db: Session = Depends(get_session), user: User = Depends(current_user)):
+def delete_me(db: Session = Depends(get_session), user: User = Depends(current_user), settings: Settings = Depends(get_settings)):
     # Sessions, profile, months, goals go via ON DELETE CASCADE; login tokens are keyed by email, not FK.
     db.execute(delete(LoginToken).where(LoginToken.email == user.email))
     db.delete(user)
     db.commit()
     resp = Response(status_code=204)
-    resp.delete_cookie(auth.SESSION_COOKIE, path="/")
+    resp.delete_cookie(auth.SESSION_COOKIE, **auth.cookie_args(settings))
     return resp

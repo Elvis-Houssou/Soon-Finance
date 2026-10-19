@@ -1,28 +1,9 @@
-import { cookies } from "next/headers";
 import Link from "next/link";
-import { Suspense } from "react";
-import type { Locale } from "@/i18n/config";
-import type { Dictionary } from "@/i18n/dictionaries/fr";
-import { LogoutButton } from "./auth/logout-button";
+import { AccountLinks } from "./auth/account-links";
 import { getDictionary, getLocale } from "@/i18n/server";
 import { LanguageSwitcher } from "./language-switcher";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-controls";
-
-const ITEM = "flex min-h-11 items-center px-2 text-[15px] font-semibold text-ink hover:text-brand-ink sm:px-3";
-
-async function AccountLinks({ locale, t }: { locale: Locale; t: Dictionary["auth"] }) {
-  // Présence du cookie seulement : la session est vérifiée par l'API.
-  const signedIn = (await cookies()).has("sf_session");
-  return signedIn ? (
-    <>
-      <Link href={`/${locale}/tableau-de-bord`} className={ITEM}>{t.dashboard}</Link>
-      <LogoutButton locale={locale} label={t.signOut} />
-    </>
-  ) : (
-    <Link href={`/${locale}/connexion`} className={ITEM}>{t.signIn}</Link>
-  );
-}
 
 export async function SiteHeader() {
   const locale = await getLocale();
@@ -50,9 +31,7 @@ export async function SiteHeader() {
                 {item.label}
               </Link>
             ))}
-            <Suspense fallback={<Link href={`/${locale}/connexion`} className={ITEM}>{t.auth.signIn}</Link>}>
-              <AccountLinks locale={locale} t={t.auth} />
-            </Suspense>
+            <AccountLinks locale={locale} t={t.auth} />
           </nav>
           <LanguageSwitcher locale={locale} label={t.language.label} />
           <ThemeToggle labels={t.theme} />

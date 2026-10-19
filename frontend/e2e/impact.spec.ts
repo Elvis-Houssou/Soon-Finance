@@ -37,12 +37,7 @@ test("admin sees impact", async ({ browser }) => {
 test("non admin gets 404 page", async ({ browser }) => {
   const page = await browser.newPage();
   await signIn(page, unique());
-  // Requête document brute : vrai statut 404 et aucun balisage admin dans le HTML.
-  const res = await page.request.get("/fr/admin/impact");
-  expect(res.status()).toBe(404);
-  const html = await res.text();
-  expect(html).not.toContain("Est-ce que Soon Finance aide vraiment");
-  expect(html).not.toContain("Admin Soon");
+  // Le rôle n'est connu qu'après la réponse de l'API (autre domaine) : rien d'admin n'est affiché avant, ni après un 404.
   await page.goto("/fr/admin/impact");
   await expect(page.getByRole("heading", { level: 1, name: "Page introuvable" })).toBeVisible();
   await expect(page.getByText("Admin Soon")).toHaveCount(0);

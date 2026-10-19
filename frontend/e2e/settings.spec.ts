@@ -28,7 +28,7 @@ test.describe.serial("settings", () => {
     await expect(page.getByRole("status").filter({ hasText: "ne sont pas convertis" }).first()).toBeVisible();
     await page.getByRole("button", { name: "Enregistrer" }).click();
     await expect(page.getByRole("status").filter({ hasText: "Modifications enregistrées" })).toBeVisible();
-    const me = await (await page.request.get("/api/me")).json();
+    const me = await (await page.request.get("http://127.0.0.1:8100/api/me")).json();
     expect([me.first_name, me.currency]).toEqual(["Ama", "EUR"]);
   });
 
@@ -51,7 +51,7 @@ test.describe.serial("settings", () => {
     await page.getByRole("button", { name: "English" }).click();
     await expect(page).toHaveURL(/\/en\/parametres$/);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Settings");
-    expect((await (await page.request.get("/api/me")).json()).locale).toBe("en");
+    expect((await (await page.request.get("http://127.0.0.1:8100/api/me")).json()).locale).toBe("en");
   });
 
   test("sign out returns home", async () => {

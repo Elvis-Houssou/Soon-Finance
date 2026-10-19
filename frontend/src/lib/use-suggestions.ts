@@ -23,6 +23,7 @@ export function useSuggestions(sim: Simulation): State {
       limit = setTimeout(() => ctrl.abort(), 5000);
       try {
         const res = await fetch(apiUrl("/suggestions"), {
+          credentials: "include",
           method: "POST", headers: { "Content-Type": "application/json" }, body, signal: ctrl.signal,
         });
         // 422: the request is not adviceable (nothing to show); any other failure is an outage.

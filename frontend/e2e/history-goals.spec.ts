@@ -23,16 +23,16 @@ async function signIn(page: Page) {
   await expect(page).toHaveURL(/\/fr\/tableau-de-bord$/);
 }
 async function plan(page: Page, key = ym(0)) {
-  expect((await page.request.put(`/api/months/${key}`, { data: PLAN })).ok()).toBe(true);
+  expect((await page.request.put(`http://127.0.0.1:8100/api/months/${key}`, { data: PLAN })).ok()).toBe(true);
 }
 async function seedClosed(page: Page) {
   for (const [back, actuals] of [[-2, [250000, 150000, 100000]], [-1, [240000, 140000, 120000]]] as const) {
     await plan(page, ym(back));
-    expect((await page.request.post(`/api/months/${ym(back)}/close`, { data: { actuals } })).ok()).toBe(true);
+    expect((await page.request.post(`http://127.0.0.1:8100/api/months/${ym(back)}/close`, { data: { actuals } })).ok()).toBe(true);
   }
   await plan(page);
 }
-const goal = (page: Page, body: object) => page.request.post("/api/goals", { data: { saved: 0, ...body } });
+const goal = (page: Page, body: object) => page.request.post("http://127.0.0.1:8100/api/goals", { data: { saved: 0, ...body } });
 
 test("history lists closed months", async ({ page }) => {
   await signIn(page);

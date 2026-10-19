@@ -10,13 +10,14 @@ export function redirectToLogin(locale: string, nextPath: string) {
   window.location.assign(`/${locale}/connexion?next=${encodeURIComponent(nextPath)}`);
 }
 
-/** Base de l'API : NEXT_BASE_API_URL (ex. http://localhost:3000/api), « /api » (même origine) par défaut. */
-export const API_URL = (process.env.NEXT_BASE_API_URL || "/api").replace(/\/$/, "");
+/** Base de l'API FastAPI, appelée en direct par le navigateur : NEXT_BASE_API_URL (ex. http://localhost:8000/api). */
+export const API_URL = (process.env.NEXT_BASE_API_URL || "http://localhost:8000/api").replace(/\/$/, "");
 export const apiUrl = (path: string) => `${API_URL}${path}`;
 
 /** Appel JSON vers l'API, chemin relatif à API_URL (ex. "/me"). Sur 401, renvoie vers la connexion puis lève ApiError. */
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(apiUrl(path), {
+    credentials: "include", // cookie de session de l'API (autre origine)
     ...init,
     headers: { ...(init?.body ? { "Content-Type": "application/json" } : {}), ...init?.headers },
   });
