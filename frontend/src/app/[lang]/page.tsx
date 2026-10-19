@@ -12,7 +12,8 @@ export default async function HomePage() {
   const h2 = "font-display text-3xl font-semibold";
 
   return (
-    <>
+    // Rogne les horizons pleine largeur (sans créer de conteneur de défilement : l'épinglage reste possible).
+    <div className="overflow-x-clip">
       <HeroSunrise title={t.home.title} lead={t.home.lead}>
         <QuickStart locale={locale} t={t} />
       </HeroSunrise>
@@ -45,6 +46,6 @@ export default async function HomePage() {
           <Link href={sim} className="flex min-h-12 items-center rounded-[10px] bg-brand px-5 font-semibold text-on-brand">{t.home.trustCta}</Link>
         </section>
       </div>
-    </>
+    </div>
   );
 }
