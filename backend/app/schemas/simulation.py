@@ -46,7 +46,7 @@ class SimulationIn(PlanIn):
 
 class Suggestion(BaseModel):
     id: str
-    params: dict[str, int] = Field(default_factory=dict)
+    params: dict[str, int | str] = Field(default_factory=dict)
 
 
 class SuggestionsOut(BaseModel):
