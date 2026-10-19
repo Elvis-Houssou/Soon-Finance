@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import methodsRaw from "@/content/methods.json";
 import type { Locale } from "@/i18n/config";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, apiUrl } from "@/lib/api";
 import { track } from "@/lib/events";
 import { CURRENCIES, formatAmount, formatMoney, MAX_INCOME_MINOR, parseAmount } from "@/lib/money";
 import { planDetails } from "@/lib/plan";
@@ -91,7 +91,7 @@ export function Simulator({ locale, t }: { locale: Locale; t: PlanStrings }) {
 
   // The session cookie is HttpOnly: ask the API (plain fetch, a 401 must not redirect here).
   useEffect(() => {
-    fetch("/api/dashboard").then((r) => setSignedIn(r.ok), () => {});
+    fetch(apiUrl("/dashboard")).then((r) => setSignedIn(r.ok), () => {});
   }, []);
 
   const shown = !!sim && sim.income > 0 && run > 0;
@@ -133,7 +133,7 @@ export function Simulator({ locale, t }: { locale: Locale; t: PlanStrings }) {
   };
 
   const onSave = () =>
-    apiFetch("/api/onboarding", { method: "POST", body: JSON.stringify(onboardingBody(sim)) }).then(
+    apiFetch("/onboarding", { method: "POST", body: JSON.stringify(onboardingBody(sim)) }).then(
       () => router.push(`/${locale}/tableau-de-bord`),
       () => setSaveError(true),
     );

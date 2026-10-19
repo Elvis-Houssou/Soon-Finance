@@ -43,7 +43,7 @@ function Form({ month, locale, t }: { month: Month; locale: Locale; t: MonthStri
     setSending(true);
     setErr("");
     try {
-      await apiFetch(`/api/months/${month.year_month}/close`, {
+      await apiFetch(`/months/${month.year_month}/close`, {
         method: "POST",
         body: JSON.stringify({ actuals, went_well: well.trim() || null, change_next: change.trim() || null, helpfulness: rating }),
       });
@@ -131,7 +131,7 @@ function Form({ month, locale, t }: { month: Month; locale: Locale; t: MonthStri
 }
 
 export function CloseForm({ ym, locale, t }: { ym: string; locale: Locale; t: MonthStrings }) {
-  const { data, error, reload } = useApi<Month>(`/api/months/${ym}`);
+  const { data, error, reload } = useApi<Month>(`/months/${ym}`);
   const m = t.month;
   let body;
   if (error) {

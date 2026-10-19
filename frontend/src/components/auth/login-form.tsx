@@ -56,7 +56,7 @@ export function LoginForm({ locale, t, variant }: Props) {
   async function send() {
     setBusy(true);
     try {
-      const res = await apiFetch<{ dev_link?: string }>("/api/auth/request-link", {
+      const res = await apiFetch<{ dev_link?: string }>("/auth/request-link", {
         method: "POST",
         body: JSON.stringify({ email: email.trim(), consent: true, locale, next }),
       });

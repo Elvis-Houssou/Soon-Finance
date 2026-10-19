@@ -8,7 +8,7 @@ import { fill, FIELD } from "@/components/simulator/shared";
 import { ThemePreferencePicker } from "@/components/theme-controls";
 import { locales, type Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries/fr";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, apiUrl } from "@/lib/api";
 import { CURRENCIES } from "@/lib/money";
 import { useApi } from "@/lib/use-api";
 
@@ -24,9 +24,9 @@ const setLangCookie = (v: string) => {
 };
 
 export function Settings({ locale, t }: { locale: Locale; t: Strings }) {
-  const { data: me, error, reload } = useApi<Me>("/api/me");
-  const months = useApi<unknown[]>("/api/months");
-  const goals = useApi<unknown[]>("/api/goals");
+  const { data: me, error, reload } = useApi<Me>("/me");
+  const months = useApi<unknown[]>("/months");
+  const goals = useApi<unknown[]>("/goals");
   const router = useRouter();
   const s = t.settings;
   const id = useId();
@@ -42,7 +42,7 @@ export function Settings({ locale, t }: { locale: Locale; t: Strings }) {
   }, [confirming]);
 
   const patch = (m: Me, change: Partial<Pick<Me, "first_name" | "locale" | "currency">>) =>
-    apiFetch("/api/me", { method: "PATCH", body: JSON.stringify({ first_name: m.first_name, locale: m.locale, currency: m.currency, ...change }) });
+    apiFetch("/me", { method: "PATCH", body: JSON.stringify({ first_name: m.first_name, locale: m.locale, currency: m.currency, ...change }) });
 
   let body;
   if (error) {
@@ -81,14 +81,14 @@ export function Settings({ locale, t }: { locale: Locale; t: Strings }) {
       }
     };
     const signOut = async () => {
-      await apiFetch("/api/auth/logout", { method: "POST" }).catch(() => {});
+      await apiFetch("/auth/logout", { method: "POST" }).catch(() => {});
       // Navigation complète voulue : le cookie de session doit être relu côté serveur.
       // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.assign(`/${locale}`);
     };
     const erase = async () => {
       try {
-        await apiFetch("/api/me", { method: "DELETE" });
+        await apiFetch("/me", { method: "DELETE" });
         // eslint-disable-next-line @next/next/no-location-assign-relative-destination
         window.location.assign(`/${locale}`);
       } catch {
@@ -141,7 +141,7 @@ export function Settings({ locale, t }: { locale: Locale; t: Strings }) {
           <h2 id={`${id}-data`} className="font-display text-xl font-semibold">{s.data}</h2>
           <p className="text-muted">{s.dataText}</p>
           <Link href={`/${locale}/confidentialite`} className="flex min-h-11 items-center font-semibold text-brand-ink underline">{s.keepLink}</Link>
-          <a href="/api/me/export" download className={OUTLINE}>{s.download}</a>
+          <a href={apiUrl("/me/export")} download className={OUTLINE}>{s.download}</a>
           {!confirming && (
             <button type="button" onClick={() => setConfirming(true)} className={`${OUTLINE} text-danger`}>{s.delete}</button>
           )}

@@ -7,7 +7,7 @@ export function LogoutButton({ locale, label }: { locale: string; label: string 
     <button
       type="button"
       onClick={async () => {
-        await apiFetch("/api/auth/logout", { method: "POST" }).catch(() => {});
+        await apiFetch("/auth/logout", { method: "POST" }).catch(() => {});
         // Navigation complète voulue : l'état de session (cookie) doit être relu côté serveur.
         // eslint-disable-next-line @next/next/no-location-assign-relative-destination
         window.location.assign(`/${locale}`);

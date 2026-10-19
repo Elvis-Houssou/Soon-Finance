@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { Impact } from "@/components/admin/impact";
 import { getDictionary, getLocale } from "@/i18n/server";
+import { apiUrl } from "@/lib/api";
 
 // Titre générique : la page ne signale pas son existence (404 pour les non-admins).
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -13,8 +14,7 @@ export const instant = false;
 export default async function Page() {
   const locale = await getLocale();
   // Contrôle admin côté serveur, avant tout rendu : un non-admin reçoit un vrai 404 sans une ligne de la page admin.
-  const origin = process.env.API_ORIGIN || "http://127.0.0.1:8000";
-  const res = await fetch(`${origin}/api/admin/impact?days=30`, {
+  const res = await fetch(new URL(apiUrl("/admin/impact?days=30"), `http://${(await headers()).get("host")}`), {
     headers: { cookie: (await cookies()).toString() },
     cache: "no-store",
     signal: AbortSignal.timeout(3000),

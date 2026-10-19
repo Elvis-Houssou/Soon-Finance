@@ -25,7 +25,7 @@ export function Impact({ locale, t }: { locale: Locale; t: Dictionary["impact"] 
   const [days, setDays] = useState("30");
   const [currency, setCurrency] = useState("all");
   const [lang, setLang] = useState("all");
-  const { data, error, reload } = useApi<Data>(`/api/admin/impact?days=${days}&currency=${currency}&locale=${lang}`);
+  const { data, error, reload } = useApi<Data>(`/admin/impact?days=${days}&currency=${currency}&locale=${lang}`);
   const tag = locale === "fr" ? "fr-FR" : "en-GB";
   const num = new Intl.NumberFormat(tag);
   const dec = new Intl.NumberFormat(tag, { maximumFractionDigits: 1 });

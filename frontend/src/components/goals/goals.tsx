@@ -37,9 +37,9 @@ const plannedSaving = (months: Row[], ym: string) => {
 };
 
 export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
-  const goals = useApi<Goal[]>("/api/goals");
-  const me = useApi<Me>("/api/me");
-  const months = useApi<Row[]>("/api/months");
+  const goals = useApi<Goal[]>("/goals");
+  const me = useApi<Me>("/me");
+  const months = useApi<Row[]>("/months");
   const g = t.goals;
   const my = (key: string) => `${monthName(key, locale)} ${key.slice(0, 4)}`;
 
@@ -93,7 +93,7 @@ export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
       if (sending || !nameOk || !targetOk || !monthsOk) return;
       setSending(true);
       await run(async () => {
-        await apiFetch("/api/goals", {
+        await apiFetch("/goals", {
           method: "POST",
           body: JSON.stringify({ label: name.trim(), target, deadline: addMonths(ym, n), saved: 0 }),
         });
@@ -156,7 +156,7 @@ export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button" className={`${OUTLINE} border-danger text-danger`}
-                      onClick={async () => { await run(() => apiFetch(`/api/goals/${goal.id}`, { method: "DELETE" })); setConfirming(null); }}
+                      onClick={async () => { await run(() => apiFetch(`/goals/${goal.id}`, { method: "DELETE" })); setConfirming(null); }}
                     >{g.confirmYes}</button>
                     <button type="button" className={`${OUTLINE} border-line`} onClick={() => setConfirming(null)}>{g.cancel}</button>
                   </div>
@@ -166,7 +166,7 @@ export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
                   {behind && projected && (
                     <button
                       type="button" className={`${OUTLINE} border-brand-ink text-brand-ink`}
-                      onClick={() => run(() => apiFetch(`/api/goals/${goal.id}`, { method: "PATCH", body: JSON.stringify({ deadline: projected }) }))}
+                      onClick={() => run(() => apiFetch(`/goals/${goal.id}`, { method: "PATCH", body: JSON.stringify({ deadline: projected }) }))}
                     >{fill(g.postpone, { month: my(projected) })}</button>
                   )}
                   {behind && (

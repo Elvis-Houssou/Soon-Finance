@@ -10,9 +10,13 @@ export function redirectToLogin(locale: string, nextPath: string) {
   window.location.assign(`/${locale}/connexion?next=${encodeURIComponent(nextPath)}`);
 }
 
-/** Appel JSON vers l'API (même origine). Sur 401, renvoie vers la connexion puis lève ApiError. */
+/** Base de l'API : NEXT_BASE_API_URL (ex. http://localhost:3000/api), « /api » (même origine) par défaut. */
+export const API_URL = (process.env.NEXT_BASE_API_URL || "/api").replace(/\/$/, "");
+export const apiUrl = (path: string) => `${API_URL}${path}`;
+
+/** Appel JSON vers l'API, chemin relatif à API_URL (ex. "/me"). Sur 401, renvoie vers la connexion puis lève ApiError. */
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(path, {
+  const res = await fetch(apiUrl(path), {
     ...init,
     headers: { ...(init?.body ? { "Content-Type": "application/json" } : {}), ...init?.headers },
   });

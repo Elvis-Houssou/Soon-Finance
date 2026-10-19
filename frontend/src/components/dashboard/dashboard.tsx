@@ -152,7 +152,7 @@ function Tracking({ data, locale, t }: Ctx & { data: DashboardData }) {
 }
 
 export function Dashboard({ locale, t }: { locale: Locale; t: DashStrings }) {
-  const { data, error, reload } = useApi<DashboardData>("/api/dashboard");
+  const { data, error, reload } = useApi<DashboardData>("/dashboard");
   const [importing, setImporting] = useState(false);
   const tried = useRef(false);
   const d = t.dashboard;
@@ -165,7 +165,7 @@ export function Dashboard({ locale, t }: { locale: Locale; t: DashStrings }) {
     if (draft.income <= 0) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setImporting(true);
-    apiFetch("/api/onboarding", { method: "POST", body: JSON.stringify(onboardingBody(draft)) })
+    apiFetch("/onboarding", { method: "POST", body: JSON.stringify(onboardingBody(draft)) })
       .then(reload, () => setImporting(false));
   }, [data, reload]);
 

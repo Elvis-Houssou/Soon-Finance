@@ -21,7 +21,7 @@ const LINK = "flex min-h-11 w-fit items-center rounded-[10px] bg-brand px-5 font
 const CHART_MONTHS = 6;
 
 export function History({ locale, t }: { locale: Locale; t: Strings }) {
-  const { data, error, reload } = useApi<Row[]>("/api/months");
+  const { data, error, reload } = useApi<Row[]>("/months");
   const h = t.history;
   const pct = new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-GB", { maximumFractionDigits: 1 });
   const rate = (bp: number) => `${pct.format(bp / 100)} %`;

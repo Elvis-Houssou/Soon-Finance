@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { Locale } from "@/i18n/config";
+import { apiUrl } from "@/lib/api";
 import { formatMoney } from "@/lib/money";
 import { belowFold, DUR, EASE, gsap, MOTION_OK, rise, useGSAP } from "@/lib/motion";
 import type { Horizon, Plan } from "@/lib/plan";
@@ -183,7 +184,7 @@ export function PlanDownload({ data, locale, p, autoStart }: { data: PdfData; lo
 
   const download = async () => {
     setStatus("busy");
-    const me = await fetch("/api/me").catch(() => null);
+    const me = await fetch(apiUrl("/me")).catch(() => null);
     if (!me?.ok) return setStatus("gate");
     try {
       const { buildPlanPdf } = await import("./plan-pdf");

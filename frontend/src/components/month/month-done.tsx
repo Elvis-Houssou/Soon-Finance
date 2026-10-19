@@ -50,8 +50,8 @@ const nextYm = (ym: string) => {
 };
 
 export function MonthDone({ ym, locale, t }: { ym: string; locale: Locale; t: MonthStrings }) {
-  const dash = useApi<DashboardData>("/api/dashboard");
-  const mon = useApi<Month>(`/api/months/${ym}`);
+  const dash = useApi<DashboardData>("/dashboard");
+  const mon = useApi<Month>(`/months/${ym}`);
   const m = t.month;
   const dashLink = `/${locale}/tableau-de-bord`;
   const data = dash.data, month = mon.data;

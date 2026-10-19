@@ -19,7 +19,7 @@ export async function track(type: EventType, locale: string, currency: string): 
       if (sessionStorage.getItem("sf-sim-sent")) return;
       sessionStorage.setItem("sf-sim-sent", "1");
     }
-    await apiFetch("/api/events", { method: "POST", body: JSON.stringify({ type, anon_id: anonId(), locale, currency }) });
+    await apiFetch("/events", { method: "POST", body: JSON.stringify({ type, anon_id: anonId(), locale, currency }) });
   } catch {
     /* swallowed on purpose */
   }

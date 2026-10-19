@@ -31,7 +31,7 @@ export default defineConfig({
     {
       command: "npm run build && npm run start -- -p 3100",
       url: "http://127.0.0.1:3100/fr",
-      env: { API_ORIGIN: "http://127.0.0.1:8100", NEXT_PUBLIC_E2E: "1" }, // NEXT_PUBLIC_E2E : sonde motion et /labo-motion
+      env: { API_ORIGIN: "http://127.0.0.1:8100", NEXT_BASE_API_URL: "/api", NEXT_PUBLIC_E2E: "1" }, // NEXT_PUBLIC_E2E : sonde motion et /labo-motion
       reuseExistingServer: false,
       timeout: 300_000,
     },
