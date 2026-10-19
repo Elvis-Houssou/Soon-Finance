@@ -36,7 +36,7 @@ export async function SiteHeader() {
   return (
     <header className="border-b border-line">
       <div className="container-site flex min-h-16 flex-wrap items-center justify-between gap-x-4 gap-y-2 py-2">
-        <Link href={`/${locale}`} aria-label={`Soon Finance — ${t.nav.home}`} className="shrink-0">
+        <Link href={`/${locale}`} aria-label={`Soon Finance — ${t.nav.home}`} className="group shrink-0">
           <Logo />
         </Link>
         <div className="flex flex-wrap items-center justify-end gap-x-2 sm:gap-x-4">

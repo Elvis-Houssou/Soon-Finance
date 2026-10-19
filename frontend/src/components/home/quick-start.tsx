@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries/fr";
 import { CURRENCIES, formatAmount, MAX_INCOME_MINOR, parseAmount, split } from "@/lib/money";
+import { DUR, EASE, gsap, MOTION_OK, useGSAP } from "@/lib/motion";
 import type { Allocation } from "@/lib/simulation";
 import methods from "@/content/methods.json";
+import { CountUp } from "../motion/count-up";
+import { HorizonReveal } from "../motion/horizon-reveal";
 import { AllocationBar } from "../simulator/allocation-bar";
 import { envelopeLabel, FIELD, KIND_BG } from "../simulator/shared";
 
@@ -28,6 +31,26 @@ export function QuickStart({ locale, t }: Props) {
   const rows: Allocation[] = envs.map((e, i) => ({ key: e.key, kind: e.kind as Allocation["kind"], pct: e.pct, amount: amounts[i], children: [] }));
   const href = `/${locale}/simulateur` + (income ? `?revenu=${income}&devise=${currency}` : "");
 
+  // Votre revenu remplace l'exemple (ou la devise change) : la barre se recompose de gauche à droite.
+  const bar = useRef<HTMLDivElement>(null);
+  const mounted = useRef(false);
+  useGSAP(
+    () => {
+      if (!mounted.current) {
+        mounted.current = true; // premier rendu : rien à recomposer
+        return;
+      }
+      gsap.matchMedia().add(MOTION_OK, () => {
+        gsap.fromTo(
+          bar.current!.querySelectorAll(":scope > div > div"),
+          { scaleX: 0, transformOrigin: "0% 50%" },
+          { scaleX: 1, duration: DUR.state, stagger: 0.05, ease: EASE.out, clearProps: "transform" },
+        );
+      });
+    },
+    { dependencies: [isExample, currency], revertOnUpdate: true },
+  );
+
   return (
     <div className="flex flex-col gap-4 rounded-[14px] border border-line bg-surface p-5 sm:p-6">
       <label htmlFor="qs-income" className="font-semibold">{t.home.income}</label>
@@ -37,9 +60,10 @@ export function QuickStart({ locale, t }: Props) {
           className={`${FIELD} min-h-14 flex-1 font-display text-2xl font-semibold`}
           value={text} onChange={(e) => setText(e.target.value)}
         />
+        {/* w-28! : FIELD porte w-full, généré après w-28 dans la feuille de style. */}
         <select
           aria-label={t.home.currency} value={currency} onChange={(e) => setCurrency(e.target.value)}
-          className={`${FIELD} min-h-14 w-28 shrink-0 font-mono`}
+          className={`${FIELD} min-h-14 w-28! shrink-0 font-mono`}
         >
           {Object.keys(CURRENCIES).map((c) => <option key={c} value={c}>{c} — {names.of(c)}</option>)}
         </select>
@@ -48,19 +72,24 @@ export function QuickStart({ locale, t }: Props) {
         <span>{t.home.preview}</span>
         {isExample && <span>{t.home.example}</span>}
       </div>
-      <AllocationBar rows={rows} />
+      <div ref={bar}>
+        <AllocationBar rows={rows} />
+      </div>
       <ul className="flex flex-col gap-2">
         {rows.map((r) => (
           <li key={r.key} className="flex items-center gap-3">
             <span aria-hidden="true" className={`size-3 shrink-0 rounded-full ${KIND_BG[r.kind]}`} />
             <span className="flex-1">{envelopeLabel(t, r.key)} · {r.pct} %</span>
-            <span className="font-semibold tabular-nums">{formatAmount(r.amount, currency, locale)}</span>
+            <CountUp value={r.amount} format={(n) => formatAmount(n, currency, locale)} duration={DUR.view} className="font-semibold tabular-nums" />
           </li>
         ))}
       </ul>
-      <Link href={href} className="flex min-h-12 items-center justify-center rounded-[10px] bg-brand px-5 font-semibold text-on-brand">
-        {t.home.cta}
-      </Link>
+      {/* Le CTA principal arrive en dernier dans la séquence du hero. */}
+      <HorizonReveal firstLoad delay={0.8}>
+        <Link href={href} className="flex min-h-12 items-center justify-center rounded-[10px] bg-brand px-5 font-semibold text-on-brand">
+          {t.home.cta}
+        </Link>
+      </HorizonReveal>
     </div>
   );
 }

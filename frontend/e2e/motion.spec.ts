@@ -70,7 +70,8 @@ test.describe("with motion", () => {
   test("no orphan ScrollTrigger after navigation", async ({ page }) => {
     const count = () => page.evaluate(() => window.__sfMotion?.ScrollTrigger.getAll().length ?? -1);
     await page.goto("/fr");
-    await expect.poll(count).toBeGreaterThanOrEqual(0);
+    // L'accueil épingle « Comment ça marche » (≥ 1024 px) : au moins un ScrollTrigger actif.
+    await expect.poll(count).toBeGreaterThan(0);
     const base = await count();
     await page.getByRole("link", { name: "Essayer les 6 méthodes" }).first().click();
     await expect(page).toHaveURL(/\/fr\/simulateur/);
