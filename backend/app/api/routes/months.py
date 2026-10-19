@@ -57,6 +57,17 @@ def _create_if_missing(db: Session, user: User, ym: str, income: int, currency: 
         return _get(db, user, ym)
 
 
+def carry_forward(db: Session, user: User, ym: str, src: Month) -> Month:
+    """Create month `ym` from `src` (income, currency, method, custom envelopes with labels)."""
+    custom = [{"label": e["label"], "kind": e["kind"], "pct": e["pct"]} for e in src.envelopes] if src.method == "custom" else None
+    return _create_if_missing(db, user, ym, src.income, src.currency, src.method, custom)
+
+
+def _replan(m: Month, income: int, currency: str, method: str, custom: list[dict] | None) -> None:
+    m.income, m.currency, m.method = income, currency, method
+    m.envelopes = plan_envelopes(income, method, custom)
+
+
 def _set_profile(db: Session, user: User, body) -> None:
     profile = db.get(Profile, user.id) or Profile(user_id=user.id)
     db.add(profile)
@@ -69,6 +80,8 @@ def onboarding(body: SimulationIn, db: Session = Depends(get_session), user: Use
     user.currency = body.currency
     ym = auth.now().strftime("%Y-%m")
     m = _get(db, user, ym) or _create_if_missing(db, user, ym, body.income, body.currency, body.method, _custom(body))
+    if m.closed_at is None:  # saving again from the simulator replaces an open plan; a closed month is left alone
+        _replan(m, body.income, body.currency, body.method, _custom(body))
     db.commit()
     return month_out(m)
 
@@ -97,8 +110,7 @@ def put_month(ym: str, body: MonthPlanIn, db: Session = Depends(get_session), us
     m = _get(db, user, ym) or _create_if_missing(db, user, ym, body.income, body.currency, body.method, _custom(body))
     if m.closed_at is not None:
         return JSONResponse({"detail": "closed"}, status_code=409)
-    m.income, m.currency, m.method = body.income, body.currency, body.method
-    m.envelopes = plan_envelopes(body.income, body.method, _custom(body))
+    _replan(m, body.income, body.currency, body.method, _custom(body))
     db.commit()
     return month_out(m)
 
@@ -112,6 +124,8 @@ def _claim_close(db: Session, m: Month, now) -> bool:
 def close_month(ym: str, body: CloseIn, db: Session = Depends(get_session), user: User = Depends(current_user)):
     m = _get_or_404(db, user, ym)
     now = auth.now()
+    if ym > now.strftime("%Y-%m"):
+        return JSONResponse({"detail": "future"}, status_code=409)
     if m.closed_at is not None and now - m.closed_at > EDIT_WINDOW:
         return JSONResponse({"detail": "locked"}, status_code=409)
     if len(body.actuals) != len(m.envelopes):
@@ -127,8 +141,7 @@ def close_month(ym: str, body: CloseIn, db: Session = Depends(get_session), user
     m.review_went_well, m.review_change_next, m.helpfulness = body.went_well, body.change_next, body.helpfulness
     nxt = next_ym(ym)
     if _get(db, user, nxt) is None:
-        custom = [{"label": e["label"], "kind": e["kind"], "pct": e["pct"]} for e in m.envelopes] if m.method == "custom" else None
-        _create_if_missing(db, user, nxt, m.income, m.currency, m.method, custom)
+        carry_forward(db, user, nxt, m)
     if first:
         db.add(Event(type="month_closed", occurred_at=now, locale=user.locale, currency=m.currency))
     db.commit()

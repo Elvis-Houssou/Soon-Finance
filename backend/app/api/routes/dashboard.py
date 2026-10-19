@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import current_user
 from app.api.routes.goals import goals_out
-from app.api.routes.months import month_out
+from app.api.routes.months import carry_forward, month_out
 from app.db.models import Goal, Month, Profile, User
 from app.db.session import get_session
 from app.domain.account_rules import account_suggestions
@@ -40,6 +40,10 @@ class DashboardOut(BaseModel):
 def dashboard(db: Session = Depends(get_session), user: User = Depends(current_user)):
     ym = auth.now().strftime("%Y-%m")
     months = list(db.scalars(select(Month).where(Month.user_id == user.id).order_by(Month.year_month)))
+    if months and not any(m.year_month == ym for m in months):  # returning user: the new month starts like the last one
+        months.append(carry_forward(db, user, ym, months[-1]))
+        db.commit()
+        months.sort(key=lambda m: m.year_month)
     closed = [m for m in months if m.closed_at is not None]
     rates = [rate_bp(m.income, m.envelopes) for m in closed]
     goals = list(db.scalars(select(Goal).where(Goal.user_id == user.id).order_by(Goal.created_at)))

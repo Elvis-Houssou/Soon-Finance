@@ -50,7 +50,7 @@ function Form({ month, locale, t }: { month: Month; locale: Locale; t: MonthStri
       router.push(`/${locale}/bilan/${month.year_month}/termine`);
     } catch (e) {
       const detail = e instanceof ApiError ? (e.detail as { detail?: string } | undefined)?.detail : undefined;
-      setErr(detail === "totals_mismatch" ? m.errMismatch : detail === "locked" ? m.errLocked : m.errGeneric);
+      setErr(detail === "totals_mismatch" ? m.errMismatch : detail === "locked" ? m.errLocked : detail === "future" ? m.errFuture : m.errGeneric);
       setSending(false);
     }
   }

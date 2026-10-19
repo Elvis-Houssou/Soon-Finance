@@ -74,3 +74,16 @@ def test_rule_8_goal_behind_and_plan1_rules(client, login):
     assert [x["id"] for x in s][0] == "essentials-not-covered"
     g = next(x for x in s if x["id"] == "goal-behind")
     assert g["params"]["monthly_needed"] == 169_375 and g["params"]["projected"] == "2027-12"
+
+
+def test_dashboard_carries_forward_latest_month(client, login):
+    c = login("a@x.com")
+    plan = {"income": 700000, "currency": "EUR", "method": "custom",
+            "envelopes": [{"kind": "need", "pct": 70, "label": "Loyer"}, {"kind": "save", "pct": 30}]}
+    assert c.put("/api/months/2026-08", json=plan).status_code == 200
+    d = c.get("/api/dashboard").json()
+    cur = d["current_month"]
+    assert cur["year_month"] == "2026-10" and (cur["income"], cur["currency"], cur["method"]) == (700000, "EUR", "custom")
+    assert [(e["label"], e["planned"]) for e in cur["envelopes"]] == [("Loyer", 490000), ("save", 210000)]
+    assert len(c.get("/api/months").json()) == 2
+    assert c.get("/api/dashboard").json()["current_month"]["year_month"] == "2026-10"  # no duplicate

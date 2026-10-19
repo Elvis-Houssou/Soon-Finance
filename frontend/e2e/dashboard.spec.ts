@@ -82,3 +82,23 @@ test("no horizontal scroll at 360px", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Votre épargne progresse");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
+
+test("stale draft does not overwrite a returning user's month", async ({ page }) => {
+  await signIn(page);
+  const old = await page.request.put(`/api/months/${ym(3)}`, { data: { income: 700000, currency: "EUR", method: "80-20" } });
+  expect(old.ok()).toBe(true);
+  await page.evaluate((d) => localStorage.setItem("sf-simulation", JSON.stringify(d)), DRAFT);
+  await page.reload();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Bienvenue, votre budget");
+  const cur = await (await page.request.get(`/api/months/${ym(0)}`)).json();
+  expect([cur.income, cur.currency, cur.method]).toEqual([700000, "EUR", "80-20"]);
+});
+
+test("saving from the simulator updates this month's plan", async ({ page }) => {
+  await signIn(page, DRAFT);
+  await page.goto("/fr/simulateur");
+  await page.getByLabel("Revenu mensuel net").fill("800000");
+  await page.getByRole("button", { name: "Enregistrer dans mon budget" }).click();
+  await expect(page).toHaveURL(/\/fr\/tableau-de-bord$/);
+  await expect(page.getByRole("listitem").filter({ hasText: /^Épargne/ })).toContainText(nf(160000));
+});

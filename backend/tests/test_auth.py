@@ -13,6 +13,9 @@ from app.services import email as email_service
 from app.services.auth import SESSION_COOKIE
 
 
+PROD = {"env": "production", "resend_api_key": "k", "app_url": "https://soon.example"}
+
+
 @pytest.fixture
 def sent(monkeypatch):
     """R1: never send real mail; capture (email, link, locale)."""
@@ -49,7 +52,7 @@ def test_request_link_returns_dev_link_in_development(client, sent):
 
 
 def test_no_dev_link_in_production(client, sent):
-    app.dependency_overrides[get_settings] = lambda: Settings(_env_file=None, env="production")
+    app.dependency_overrides[get_settings] = lambda: Settings(_env_file=None, **PROD)
     r = request_link(client)
     assert r.status_code == 202 and "dev_link" not in r.json()
 
@@ -210,7 +213,7 @@ def test_existing_user_signs_in_without_duplicate(client, sent):
 
 
 def test_production_rate_limit_uses_forwarded_ip(client, sent):
-    app.dependency_overrides[get_settings] = lambda: Settings(_env_file=None, env="production")
+    app.dependency_overrides[get_settings] = lambda: Settings(_env_file=None, **PROD)
     a, b = {"X-Forwarded-For": " 1.1.1.1 , 10.0.0.1"}, {"X-Forwarded-For": "2.2.2.2"}
     for i in range(20):
         assert client.post("/api/auth/request-link", json={"email": f"u{i}@x.co", "locale": "fr", "consent": True}, headers=a).status_code == 202
@@ -257,3 +260,31 @@ def test_rate_limit_ip_follows_setting(client, sent):
     for i in range(2):
         assert request_link(client, email=f"s{i}@example.com").status_code == 202
     assert request_link(client, email="s9@example.com").status_code == 429
+
+
+def test_no_dev_link_when_key_is_set_in_development(client, sent):
+    app.dependency_overrides[get_settings] = lambda: Settings(_env_file=None, resend_api_key="k")
+    assert "dev_link" not in request_link(client).json()
+
+
+def test_production_cookie_is_secure(client, sent):
+    app.dependency_overrides[get_settings] = lambda: Settings(_env_file=None, **PROD)
+    request_link(client)
+    assert "secure" in verify(client, sent[0][1]).headers["set-cookie"].lower()
+
+
+def test_production_settings_validation(caplog, monkeypatch):
+    monkeypatch.setattr("app.core.config.log.disabled", False)  # alembic fileConfig disables existing loggers
+    with pytest.raises(ValueError, match="RESEND_API_KEY"):
+        Settings(_env_file=None, env="production", app_url="https://x.co")
+    with pytest.raises(ValueError, match="https"):
+        Settings(_env_file=None, env="production", resend_api_key="k")
+    Settings(_env_file=None, env="development")  # no key, http: fine locally
+    caplog.set_level("WARNING")
+    Settings(_env_file=None, **PROD)  # default email_from is on resend.dev: warning only
+    assert "resend.dev" in caplog.text
+
+
+def test_login_limit_must_be_positive():
+    with pytest.raises(ValueError):
+        Settings(_env_file=None, login_limit_per_ip=0)

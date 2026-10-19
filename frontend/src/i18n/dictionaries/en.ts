@@ -239,6 +239,7 @@ const en: Dictionary = {
     note: "You can correct this review for 7 days. The next month will be prefilled with the same method.",
     errMismatch: "The amounts do not match your income. Check them and try again.",
     errLocked: "This review is locked: the 7-day window to correct it has passed.",
+    errFuture: "This month has not started yet: you can review it once it has begun.",
     errGeneric: "The review could not be saved. Your amounts are kept: please try again shortly.",
     doneUp: "One step further.",
     doneSame: "Month closed.",

@@ -237,6 +237,7 @@ const fr = {
     note: "Vous pourrez corriger ce bilan pendant 7 jours. Le mois suivant sera prérempli avec la même méthode.",
     errMismatch: "Les montants ne correspondent pas à votre revenu. Vérifiez-les puis réessayez.",
     errLocked: "Ce bilan est verrouillé : le délai de 7 jours pour le corriger est passé.",
+    errFuture: "Ce mois n’a pas encore commencé : vous pourrez faire son bilan une fois qu’il aura débuté.",
     errGeneric: "Le bilan n’a pas pu être enregistré. Vos montants sont conservés : réessayez dans un instant.",
     doneUp: "Un pas de plus.",
     doneSame: "Mois bouclé.",

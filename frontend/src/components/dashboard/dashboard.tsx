@@ -53,6 +53,7 @@ function Tracking({ data, locale, t }: Ctx & { data: DashboardData }) {
   const hello = data.first_name ? fill(d.hello, { name: data.first_name }) : d.helloNoName;
   const method = cur ? (t.methods as Record<string, { name: string }>)[cur.method]?.name ?? cur.method : "";
   const tips = suggestionTexts(data, { locale, t });
+  const prev = data.suggestions.find((s) => s.id === "close-previous-month");
   const label = data.steps === 1 ? d.sunLabelOne : fill(d.sunLabel, { n: data.steps });
   const title = cur ? fill(d.monthTitle, { month: cap(monthName(cur.year_month, locale)) }) : "";
 
@@ -106,6 +107,11 @@ function Tracking({ data, locale, t }: Ctx & { data: DashboardData }) {
         <section aria-label={d.tips} className="flex flex-col gap-3">
           <h2 className="text-[17px] font-semibold">{d.tips}</h2>
           {tips.map((text, i) => <article key={i} className="rounded-[14px] bg-tint p-5"><p>{text}</p></article>)}
+          {prev && (
+            <Link href={`/${locale}/bilan/${String(prev.params.year_month)}`} className={LINK}>
+              {fill(d.close, { month: monthName(String(prev.params.year_month), locale) })}
+            </Link>
+          )}
         </section>
       )}
       {data.goals.length > 0 && (
@@ -144,7 +150,7 @@ export function Dashboard({ locale, t }: { locale: Locale; t: DashStrings }) {
 
   // The simulator draft becomes this month's budget once, right after sign-up.
   useEffect(() => {
-    if (!data || data.current_month || tried.current) return;
+    if (!data || data.current_month || data.closed_count > 0 || tried.current) return;
     tried.current = true;
     const draft = loadDraft();
     if (draft.income <= 0) return;

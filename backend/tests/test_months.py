@@ -42,7 +42,23 @@ def test_onboarding_is_idempotent(client, login):
     onboard(c)
     onboard(c, income=999)
     assert len(c.get("/api/months").json()) == 1
-    assert c.get(f"/api/months/{YM}").json()["income"] == 500000
+
+
+def test_onboarding_updates_open_month_but_not_closed(client, login):
+    c = login("a@x.com")
+    onboard(c)
+    m = onboard(c, income=600000, currency="EUR", method="custom", envelopes=[{"kind": "need", "pct": 70, "label": "Loyer"}, {"kind": "save", "pct": 30}])
+    assert (m["income"], m["currency"], m["method"]) == (600000, "EUR", "custom")
+    assert [e["planned"] for e in m["envelopes"]] == [420000, 180000]
+    assert close(c, (420000, 180000)).status_code == 200
+    assert onboard(c, income=1000)["income"] == 600000
+
+
+def test_close_future_month_is_409(client, login):
+    c = login("a@x.com")
+    assert c.put("/api/months/2026-11", json={k: SIM[k] for k in ("income", "currency", "method")}).status_code == 200
+    r = close(c, ym="2026-11")
+    assert r.status_code == 409 and r.json() == {"detail": "future"}
 
 
 def test_custom_plan_keeps_labels(client, login):
@@ -140,10 +156,11 @@ def test_put_profile(client, login):
     assert c.put("/api/profile", json={"essentials": 1, "has_debt": True, "savings": 2}).status_code == 200
 
 
-def test_steps_over_closed_months_and_previous_rate(client, login):
+def test_steps_over_closed_months_and_previous_rate(client, login, clock):
     c = login("a@x.com")
     onboard(c)
     close(c)  # 1860
+    clock["now"] = datetime(2026, 11, 15, tzinfo=UTC)
     r = close(c, (240000, 150000, 110000), ym="2026-11")
     assert r.json()["previous_rate_bp"] == 1860 and r.json()["steps"] == 2
 

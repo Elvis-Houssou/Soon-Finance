@@ -65,7 +65,7 @@ def request_link(body: RequestLink, request: Request, db: Session = Depends(get_
         send_login_link(body.email, link, body.locale, settings)
     except EmailError:
         return JSONResponse({"detail": "email_failed"}, status_code=502)
-    return {"sent": True, **({"dev_link": link} if settings.env == "development" else {})}
+    return {"sent": True, **({"dev_link": link} if settings.env == "development" and not settings.resend_api_key else {})}
 
 
 @router.get("/verify")
