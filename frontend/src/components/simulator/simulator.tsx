@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import methodsRaw from "@/content/methods.json";
 import type { Locale } from "@/i18n/config";
 import { apiFetch } from "@/lib/api";
+import { track } from "@/lib/events";
 import { CURRENCIES, formatAmount, MAX_INCOME_MINOR, parseAmount } from "@/lib/money";
 import {
   DEFAULT_SIMULATION, loadDraft, onboardingBody, saveDraft, totals, type MethodsData, type Simulation,
@@ -76,6 +77,12 @@ export function Simulator({ locale, t }: { locale: Locale; t: SimStrings }) {
   useEffect(() => {
     fetch("/api/dashboard").then((r) => setSignedIn(r.ok), () => {});
   }, []);
+
+  const shown = !!sim && sim.income > 0;
+  const currency = sim?.currency ?? "";
+  useEffect(() => {
+    if (shown) void track("simulation_completed", locale, currency);
+  }, [shown, locale, currency]);
 
   if (!sim) return <div className="min-h-svh" aria-busy="true" />;
 

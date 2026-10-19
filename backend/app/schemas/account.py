@@ -24,6 +24,6 @@ class MePatch(BaseModel):
 class EventIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
     type: Literal["simulation_completed", "comparison_viewed", "signup_started"]
-    anon_id: Annotated[str, Field(max_length=64)]
+    anon_id: Annotated[str, Field(pattern=r"^[A-Za-z0-9_-]{8,64}$")]
     locale: Literal["fr", "en"]
     currency: Currency

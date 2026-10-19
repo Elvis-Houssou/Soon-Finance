@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import methodsRaw from "@/content/methods.json";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries/fr";
+import { track } from "@/lib/events";
 import { CURRENCIES, formatAmount, formatMoney, parseAmount } from "@/lib/money";
 import { allocate, loadDraft, saveDraft, totals, type MethodsData, type Simulation } from "@/lib/simulation";
 import { AllocationBar } from "../simulator/allocation-bar";
@@ -40,6 +41,11 @@ export function Compare({ locale, t }: { locale: Locale; t: Strings }) {
     setIds(parseIds(new URLSearchParams(window.location.search).get("m")));
     setIncomeText(s.income ? formatAmount(s.income, s.currency, locale) : "");
   }, [locale]);
+
+  const currency = sim?.currency;
+  useEffect(() => {
+    if (currency) void track("comparison_viewed", locale, currency);
+  }, [currency, locale]);
 
   if (!sim) return <div className="min-h-svh" aria-busy="true" />;
 

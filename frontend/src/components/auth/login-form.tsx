@@ -6,6 +6,7 @@ import { useEffect, useId, useState, type FormEvent } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries/fr";
 import { ApiError, apiFetch } from "@/lib/api";
+import { track } from "@/lib/events";
 import { loadDraft } from "@/lib/simulation";
 import { FIELD } from "../simulator/shared";
 
@@ -21,17 +22,6 @@ const BTN = "flex min-h-12 w-full items-center justify-center rounded-[10px] px-
 
 const fill = (text: string, vars: Record<string, string | number>) =>
   text.replace(/\{(\w+)\}/g, (_, k: string) => String(vars[k]));
-
-/** Identifiant anonyme stable, pour compter les inscriptions commencées sans identifier la personne. */
-function anonId() {
-  try {
-    let id = localStorage.getItem("sf-anon");
-    if (!id) localStorage.setItem("sf-anon", (id = crypto.randomUUID()));
-    return id;
-  } catch {
-    return "anon";
-  }
-}
 
 type Props = {
   locale: Locale;
@@ -90,10 +80,7 @@ export function LoginForm({ locale, t, variant }: Props) {
     if (!emailOk || (needsConsent && !consent)) return;
     if (needsConsent) {
       // Mesure anonyme : ne bloque jamais la connexion.
-      apiFetch("/api/events", {
-        method: "POST",
-        body: JSON.stringify({ type: "signup_started", anon_id: anonId(), locale, currency: loadDraft().currency }),
-      }).catch(() => {});
+      void track("signup_started", locale, loadDraft().currency);
     }
     void send();
   }
