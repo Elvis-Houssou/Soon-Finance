@@ -3,7 +3,7 @@ import type { LearnEntry } from "./types";
 
 export const articleEntries: LearnEntry[] = [
   {
-    slug: "epargner-ou-investir", kind: "basics", minutes: 5,
+    slug: "epargner-ou-investir", kind: "basics",
     title: { fr: "Épargner ou investir : quelle différence ?", en: "Saving or investing: what is the difference?" },
     summary: {
       fr: "L’épargne garde votre argent disponible. Investir le fait travailler, avec des risques.",
@@ -63,7 +63,7 @@ export const articleEntries: LearnEntry[] = [
     ],
   },
   {
-    slug: "reserve-urgence", kind: "basics", minutes: 4,
+    slug: "reserve-urgence", kind: "basics",
     title: { fr: "La réserve d’urgence", en: "The emergency fund" },
     summary: {
       fr: "Combien, où la garder, comment la construire.",
@@ -98,10 +98,10 @@ export const articleEntries: LearnEntry[] = [
         heading: { fr: "Où la garder", en: "Where to keep it" },
         paragraphs: {
           fr: [
-            "Gardez-la accessible et peu risquée : vous devez pouvoir la reprendre en quelques jours, sans perdre de valeur. Une réserve placée là où elle peut baisser ou être bloquée ne remplit plus son rôle.",
+            "Gardez-la accessible et peu risquée : elle doit rester disponible en quelques jours, sans perdre de valeur. Une réserve placée là où elle peut baisser ou être bloquée ne remplit plus son rôle.",
           ],
           en: [
-            "Keep it accessible and low-risk: you must be able to take it back within days, without losing value. A fund placed where it can fall or be locked no longer does its job.",
+            "Keep it accessible and low-risk: it should stay available within days, without losing value. A fund placed where it can fall or be locked no longer does its job.",
           ],
         },
       },
@@ -121,7 +121,7 @@ export const articleEntries: LearnEntry[] = [
     ],
   },
   {
-    slug: "dettes-dabord", kind: "basics", minutes: 4,
+    slug: "dettes-dabord", kind: "basics",
     title: { fr: "Rembourser ses dettes d’abord", en: "Repay debts first" },
     summary: {
       fr: "Pourquoi une dette coûteuse passe avant l’épargne.",
@@ -181,7 +181,7 @@ export const articleEntries: LearnEntry[] = [
     ],
   },
   {
-    slug: "risques-frais-duree", kind: "basics", minutes: 6,
+    slug: "risques-frais-duree", kind: "basics",
     title: { fr: "Risques, frais et durée", en: "Risks, fees and time" },
     summary: {
       fr: "Les trois questions à poser avant tout placement.",
@@ -243,7 +243,7 @@ export const articleEntries: LearnEntry[] = [
     ],
   },
   {
-    slug: "types-de-placements", kind: "basics", minutes: 7,
+    slug: "types-de-placements", kind: "basics",
     title: { fr: "Les grands types de placements", en: "The main types of investments" },
     summary: {
       fr: "Compte d’épargne, tontine, obligations, actions, immobilier : les familles, leurs risques et leur horizon.",

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LearnIndex } from "@/components/learn/learn-index";
 import { learnEntries } from "@/content/learn/articles";
+import { readingMinutes } from "@/content/learn/types";
 import { getDictionary, getLocale } from "@/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -11,7 +12,7 @@ export default async function LearnPage() {
   const locale = await getLocale();
   const { learn, methods } = await getDictionary(locale);
   const items = learnEntries.map((e) => ({
-    slug: e.slug, kind: e.kind, minutes: e.minutes, title: e.title[locale], summary: e.summary[locale],
+    slug: e.slug, kind: e.kind, minutes: readingMinutes(e, locale), title: e.title[locale], summary: e.summary[locale],
     hint: e.kind === "method" ? methods[e.slug as keyof typeof methods].hint : undefined,
   }));
   return (

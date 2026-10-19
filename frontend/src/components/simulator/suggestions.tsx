@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import { formatMoney } from "@/lib/money";
 import type { Suggestion } from "@/lib/use-suggestions";
+import { SuggestionText } from "@/components/learn/suggestion-text";
 import { fill, type SimStrings } from "./shared";
 
 type Props = {
@@ -24,7 +25,7 @@ export function Suggestions({ status, items, currency, locale, t, canSave, onSav
     const tpl = (t.suggestions as Record<string, string>)[it.id];
     if (!tpl) return [];
     const vars = Object.fromEntries(Object.entries(it.params).map(([k, v]) => [k, formatMoney(v, currency, locale)]));
-    return [fill(tpl, vars)];
+    return [{ id: it.id, text: fill(tpl, vars) }];
   });
   const more = texts.length - 2;
 
@@ -37,12 +38,10 @@ export function Suggestions({ status, items, currency, locale, t, canSave, onSav
       {status === "loading" && <p role="status" className="text-muted">{s.tipsLoading}</p>}
       {status === "ready" && texts.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-2">
-          {texts.slice(0, 2).map((text, i) => (
+          {texts.slice(0, 2).map(({ id, text }, i) => (
             <article key={i} className="rounded-[14px] bg-tint p-5">
               <p>
-                {text === t.suggestions["learn-investing"]
-                  ? <Link href={`/${locale}/apprendre/risques-frais-duree`} className="font-semibold text-brand-ink underline">{text}</Link>
-                  : text}
+                <SuggestionText id={id} text={text} locale={locale} />
               </p>
             </article>
           ))}

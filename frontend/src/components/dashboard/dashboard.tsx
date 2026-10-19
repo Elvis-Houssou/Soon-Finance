@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AccountNav } from "@/components/account/account-nav";
+import { SuggestionText } from "@/components/learn/suggestion-text";
 import { SunHorizon } from "@/components/horizon/sun-horizon";
 import { fill } from "@/components/simulator/shared";
 import type { Locale } from "@/i18n/config";
@@ -17,7 +18,7 @@ import type { Ctx, DashboardData, DashStrings } from "./types";
 const LINK = "flex min-h-11 w-fit items-center rounded-[10px] bg-brand px-5 font-semibold text-on-brand";
 const monthYear = (ym: string, locale: Locale) => `${monthName(ym, locale)} ${ym.slice(0, 4)}`;
 
-export function suggestionTexts(data: DashboardData, { locale, t }: Ctx) {
+export function suggestionItems(data: DashboardData, { locale, t }: Ctx) {
   return data.suggestions.flatMap((s) => {
     const tpl = (t.suggestions as Record<string, string>)[s.id];
     if (!tpl) return [];
@@ -33,13 +34,15 @@ export function suggestionTexts(data: DashboardData, { locale, t }: Ctx) {
       // `projected` can be absent: that part of the sentence is then left out.
       const extra = typeof s.params.projected === "string"
         ? ` ${fill(t.dashboard.goalProjected, { month: monthYear(s.params.projected, locale) })}` : "";
-      return [fill(tpl, vars) + extra];
+      return [{ id: s.id, text: fill(tpl, vars) + extra }];
     } else {
       for (const [k, v] of Object.entries(s.params)) vars[k] = typeof v === "number" ? money(v) : v;
     }
-    return [fill(tpl, vars)];
+    return [{ id: s.id, text: fill(tpl, vars) }];
   });
 }
+
+export const suggestionTexts = (data: DashboardData, c: Ctx) => suggestionItems(data, c).map((i) => i.text);
 
 function Tracking({ data, locale, t }: Ctx & { data: DashboardData }) {
   const d = t.dashboard;
@@ -52,7 +55,7 @@ function Tracking({ data, locale, t }: Ctx & { data: DashboardData }) {
     .join(", ");
   const hello = data.first_name ? fill(d.hello, { name: data.first_name }) : d.helloNoName;
   const method = cur ? (t.methods as Record<string, { name: string }>)[cur.method]?.name ?? cur.method : "";
-  const tips = suggestionTexts(data, { locale, t });
+  const tips = suggestionItems(data, { locale, t });
   const prev = data.suggestions.find((s) => s.id === "close-previous-month");
   const label = data.steps === 1 ? d.sunLabelOne : fill(d.sunLabel, { n: data.steps });
   const title = cur ? fill(d.monthTitle, { month: cap(monthName(cur.year_month, locale)) }) : "";
@@ -106,12 +109,10 @@ function Tracking({ data, locale, t }: Ctx & { data: DashboardData }) {
       {tips.length > 0 && (
         <section aria-label={d.tips} className="flex flex-col gap-3">
           <h2 className="text-[17px] font-semibold">{d.tips}</h2>
-          {tips.map((text, i) => (
+          {tips.map(({ id, text }, i) => (
             <article key={i} className="rounded-[14px] bg-tint p-5">
               <p>
-                {text === t.suggestions["learn-investing"]
-                  ? <Link href={`/${locale}/apprendre/risques-frais-duree`} className="font-semibold text-brand-ink underline">{text}</Link>
-                  : text}
+                <SuggestionText id={id} text={text} locale={locale} />
               </p>
             </article>
           ))}

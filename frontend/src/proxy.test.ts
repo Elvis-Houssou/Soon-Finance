@@ -27,6 +27,12 @@ describe("proxy", () => {
     expect(proxy(at("/api/health"))).toBeUndefined();
     expect(proxy(at("/fr/simulateur"))).toBeUndefined();
   });
+  it("réécrit une fiche Apprendre inconnue en 404", () => {
+    const res = proxy(at("/fr/apprendre/xyz"));
+    expect(res?.headers.get("x-middleware-rewrite")).toMatch(/\/fr\/introuvable$/);
+    expect(proxy(at("/fr/apprendre/80-20"))).toBeUndefined();
+    expect(proxy(at("/fr/apprendre"))).toBeUndefined();
+  });
   it("redirige une page de compte sans session vers la connexion", () => {
     const res = proxy(at("/fr/tableau-de-bord"));
     expect(new URL(res!.headers.get("location")!).pathname + new URL(res!.headers.get("location")!).search).toBe(

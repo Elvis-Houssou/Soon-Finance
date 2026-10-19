@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { LEARN_SLUGS } from "@/content/learn/slugs";
 import { defaultLocale, hasLocale, locales, type Locale } from "@/i18n/config";
 
 /** Choisit la langue : cookie du sélecteur de langue, sinon Accept-Language, sinon français. */
@@ -27,7 +28,17 @@ export function proxy(request: NextRequest) {
   const hasPrefix = locales.some((locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`));
   if (hasPrefix) {
     // Présence seule du cookie : la validité est vérifiée par l'API (401 → connexion).
-    const [, , page] = pathname.split("/");
+    const [, , page, slug] = pathname.split("/");
+    // Fiche inconnue : vrai 404 (statut compris) avec la page introuvable du site.
+    if (page === "apprendre" && slug && !LEARN_SLUGS.includes(slug)) {
+      // Chemin sans route : Next rend app/global-not-found.tsx avec un vrai statut 404 (langue via x-lang).
+      const lang = pathname.split("/")[1];
+      const url = request.nextUrl.clone();
+      url.pathname = `/${lang}/introuvable`;
+      const headers = new Headers(request.headers);
+      headers.set("x-lang", lang);
+      return NextResponse.rewrite(url, { request: { headers } });
+    }
     if (ACCOUNT_PATHS.includes(page) && !request.cookies.has("sf_session")) {
       const url = request.nextUrl.clone();
       url.pathname = `/${pathname.split("/")[1]}/connexion`;

@@ -40,10 +40,9 @@ test("simulator understand link is always active", async ({ page }) => {
 });
 
 test("unknown slug is 404", async ({ page }) => {
-  // Le statut HTTP reste 200 quand la page est streamée (cacheComponents) ; on vérifie la page 404 du site.
-  await page.goto("/fr/apprendre/xyz");
+  const res = await page.goto("/fr/apprendre/xyz");
+  expect(res?.status()).toBe(404);
   await expect(page.getByRole("heading", { level: 1, name: "Page introuvable" })).toBeVisible();
-  await expect(page.locator("meta[name=robots][content*=noindex]")).toHaveCount(1);
 });
 
 test("english pages have no french", async ({ page }) => {
@@ -56,8 +55,11 @@ test("english pages have no french", async ({ page }) => {
 
 test("search filters entries", async ({ page }) => {
   await page.goto("/fr/apprendre");
-  await page.getByRole("searchbox", { name: "Rechercher" }).fill("tontine");
-  await expect(page.locator("main a[href^='/fr/apprendre/']")).toHaveCount(1);
+  // fill() avant l'hydratation est perdu : on réessaie jusqu'à ce que le filtre réagisse.
+  await expect(async () => {
+    await page.getByRole("searchbox", { name: "Rechercher" }).fill("tontine");
+    await expect(page.locator("main a[href^='/fr/apprendre/']")).toHaveCount(1, { timeout: 1000 });
+  }).toPass();
   await expect(page.getByRole("status")).toContainText("1 résultat");
   await page.getByRole("searchbox", { name: "Rechercher" }).fill("zzzz");
   await expect(page.getByRole("status")).toContainText("Aucun résultat");

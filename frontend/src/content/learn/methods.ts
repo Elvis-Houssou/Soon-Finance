@@ -5,12 +5,12 @@ const WHO: Localized = { fr: "Pour qui", en: "Who it suits" };
 const LIMIT: Localized = { fr: "Limite", en: "Limit" };
 
 type Sheet = {
-  slug: string; minutes: number; title: Localized; summary: Localized;
+  slug: string; title: Localized; summary: Localized;
   how: Localized<string[]>; who: Localized<string[]>; limit: Localized<string[]>;
 };
 
 const sheet = (s: Sheet): LearnEntry => ({
-  slug: s.slug, kind: "method", minutes: s.minutes, title: s.title, summary: s.summary,
+  slug: s.slug, kind: "method", title: s.title, summary: s.summary,
   sections: [
     { heading: HOW, paragraphs: s.how },
     { heading: WHO, paragraphs: s.who },
@@ -21,7 +21,7 @@ const sheet = (s: Sheet): LearnEntry => ({
 
 export const methodEntries: LearnEntry[] = [
   sheet({
-    slug: "50-30-20", minutes: 5,
+    slug: "50-30-20",
     title: { fr: "50/30/20", en: "50/30/20" },
     summary: {
       fr: "Une moitié pour vos besoins, un peu moins d’un tiers pour vos envies, le reste pour épargner.",
@@ -49,7 +49,7 @@ export const methodEntries: LearnEntry[] = [
     },
   }),
   sheet({
-    slug: "70-20-10", minutes: 4,
+    slug: "70-20-10",
     title: { fr: "70/20/10", en: "70/20/10" },
     summary: {
       fr: "Dépenses courantes, épargne, et une part pour les dons ou la dîme.",
@@ -77,7 +77,7 @@ export const methodEntries: LearnEntry[] = [
     },
   }),
   sheet({
-    slug: "80-20", minutes: 3,
+    slug: "80-20",
     title: { fr: "80/20", en: "80/20" },
     summary: {
       fr: "Mettez 20 % de côté, vivez avec le reste. La plus simple.",
@@ -103,7 +103,7 @@ export const methodEntries: LearnEntry[] = [
     },
   }),
   sheet({
-    slug: "six-jars", minutes: 5,
+    slug: "six-jars",
     title: { fr: "Les 6 comptes", en: "The 6 accounts" },
     summary: {
       fr: "Six enveloppes, chacune avec un rôle précis.",
@@ -131,7 +131,7 @@ export const methodEntries: LearnEntry[] = [
     },
   }),
   sheet({
-    slug: "soon-10-70-20", minutes: 6,
+    slug: "soon-10-70-20",
     title: { fr: "Modèle Soon 10/70/20", en: "Soon 10/70/20 model" },
     summary: {
       fr: "Une épargne très élevée, pour avancer vite vers l’indépendance financière. Exigeant.",
@@ -165,7 +165,7 @@ export const methodEntries: LearnEntry[] = [
     },
   }),
   sheet({
-    slug: "custom", minutes: 3,
+    slug: "custom",
     title: { fr: "Répartition personnalisée", en: "Custom split" },
     summary: {
       fr: "Vos catégories, vos pourcentages. À votre façon.",

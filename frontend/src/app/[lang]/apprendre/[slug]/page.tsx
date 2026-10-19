@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArticleBody } from "@/components/learn/article-body";
 import { fill } from "@/components/simulator/shared";
 import { learnEntries } from "@/content/learn/articles";
+import { readingMinutes } from "@/content/learn/types";
 import methodsData from "@/content/methods.json";
 import { locales } from "@/i18n/config";
 import { getDictionary, getLocale } from "@/i18n/server";
@@ -73,7 +74,7 @@ export default async function LearnEntryPage({ params }: Props) {
       </Link>
       <header className="flex flex-col gap-3">
         <p className="text-[13px] font-semibold text-muted">
-          {entry.kind === "method" ? learn.sheet : learn.article} · {fill(learn.minutesRead, { n: entry.minutes })}
+          {entry.kind === "method" ? learn.sheet : learn.article} · {fill(learn.minutesRead, { n: readingMinutes(entry, locale) })}
         </p>
         <h1 className="font-display text-3xl font-semibold sm:text-5xl">
           {entry.kind === "method" ? methods[entry.slug as keyof typeof methods].name : entry.title[locale]}
