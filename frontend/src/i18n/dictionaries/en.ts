@@ -74,7 +74,7 @@ const en: Dictionary = {
       description: "Six envelopes, each with a precise role.",
     },
     "soon-10-70-20": {
-      name: "Soon 10/70/20 model",
+      name: "FIRE 10/70/20",
       hint: "Very ambitious",
       description: "A very high savings rate, to move fast towards financial independence.",
     },
