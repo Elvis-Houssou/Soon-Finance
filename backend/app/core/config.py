@@ -23,6 +23,16 @@ class Settings(BaseSettings):
     admin_emails: Annotated[list[str], NoDecode] = []  # comma-separated in the environment
     login_limit_per_ip: Annotated[int, Field(ge=1)] = 20  # login links per IP per hour; raised only by the e2e backend
 
+    @model_validator(mode="before")
+    @classmethod
+    def _production_url_defaults(cls, values):
+        # Use deployed URLs as safe fallbacks on Render when these variables are omitted.
+        # Local development keeps the localhost defaults declared above.
+        if isinstance(values, dict) and values.get("env") == "production":
+            values.setdefault("app_url", "https://soon-finance.vercel.app")
+            values.setdefault("api_url", "https://soon-finance.onrender.com")
+        return values
+
     @field_validator("admin_emails", mode="before")
     @classmethod
     def _split_emails(cls, v):
