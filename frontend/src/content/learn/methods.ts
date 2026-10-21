@@ -132,7 +132,7 @@ export const methodEntries: LearnEntry[] = [
   }),
   sheet({
     slug: "soon-10-70-20",
-    title: { fr: "Modèle Soon 10/70/20", en: "Soon 10/70/20 model" },
+    title: { fr: "FIRE 10/70/20", en: "FIRE 10/70/20" },
     summary: {
       fr: "Une épargne très élevée, pour avancer vite vers l’indépendance financière. Exigeant.",
       en: "A very high savings share, to move fast towards financial independence. Demanding.",
