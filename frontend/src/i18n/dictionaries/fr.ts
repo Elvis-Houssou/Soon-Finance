@@ -72,7 +72,7 @@ const fr = {
       description: "Six enveloppes, chacune avec un rôle précis.",
     },
     "soon-10-70-20": {
-      name: "Modèle Soon 10/70/20",
+      name: "FIRE 10/70/20",
       hint: "Très ambitieuse",
       description: "Une épargne très élevée, pour avancer vite vers l’indépendance financière.",
     },
