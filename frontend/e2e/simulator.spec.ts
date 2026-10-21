@@ -11,11 +11,11 @@ test("shows amounts as you type", async ({ page }) => {
   await expect(page.getByRole("listitem").filter({ hasText: "Besoins" })).toContainText(nf(250000, "fr-FR"));
 });
 
-test("soon model shows warning", async ({ page }) => {
+test("FIRE 10/70/20 model shows warning", async ({ page }) => {
   await page.goto("/fr/simulateur");
   await page.getByLabel("Revenu mensuel net").fill("500000");
   await calc(page);
-  await page.getByRole("radio", { name: /Modèle Soon 10\/70\/20/ }).click();
+  await page.getByRole("radio", { name: /FIRE 10\/70\/20/ }).click();
   await expect(page.getByText("Ce modèle convient si vos dépenses essentielles sont déjà couvertes.")).toBeVisible();
 });
 
@@ -75,7 +75,7 @@ test("essentials not covered suggestion", async ({ page }) => {
   await page.getByLabel("Revenu mensuel net").fill("500000");
   await calc(page);
   await page.getByLabel(/Dépenses essentielles/).fill("300000");
-  await page.getByRole("radio", { name: /Modèle Soon 10\/70\/20/ }).click();
+  await page.getByRole("radio", { name: /FIRE 10\/70\/20/ }).click();
   await expect(page.getByText(/moins que vos dépenses essentielles/)).toBeVisible();
 });
 
@@ -223,7 +223,7 @@ ${e.stack}`));
     await seedDraft(page);
     await page.goto("/fr/simulateur");
     await expect.poll(() => settled(page)).toBe(true);
-    for (const name of [/6 comptes/, /Soon 10\/70\/20/, /Méthode 70\/20\/10/, /Méthode 80\/20/, /Méthode 50\/30\/20/])
+    for (const name of [/6 comptes/, /FIRE 10\/70\/20/, /Méthode 70\/20\/10/, /Méthode 80\/20/, /Méthode 50\/30\/20/])
       await page.getByRole("radio", { name }).click({ delay: 0 });
     await expect.poll(() => amounts(page)).toEqual(cfa(250000, 150000, 100000));
     await expect.poll(() => settled(page)).toBe(true);
