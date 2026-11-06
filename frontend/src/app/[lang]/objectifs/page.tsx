@@ -6,9 +6,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getDictionary(await getLocale())).goals.title };
 }
 
-export default async function Page({ searchParams }: { searchParams: Promise<{ projet?: string }> }) {
+export default async function Page() {
   const locale = await getLocale();
   const { goals, account, dashboard } = await getDictionary(locale);
-  const params = await searchParams;
-  return <Goals locale={locale} t={{ goals, account, dashboard }} initialProjectId={params.projet} />;
+  return <Goals locale={locale} t={{ goals, account, dashboard }} />;
 }
