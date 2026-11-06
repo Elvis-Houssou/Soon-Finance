@@ -212,14 +212,13 @@ def test_existing_user_signs_in_without_duplicate(client, sent):
     assert count(client, User) == 1 and count(client, Event) == 1 and count(client, SessionToken) == 2
 
 
-def test_production_rate_limit_uses_forwarded_ip(client, sent):
+def test_production_rate_limit_does_not_trust_spoofable_forwarded_ip(client, sent):
     app.dependency_overrides[get_settings] = lambda: Settings(_env_file=None, **PROD)
-    a, b = {"X-Forwarded-For": " 1.1.1.1 , 10.0.0.1"}, {"X-Forwarded-For": "2.2.2.2"}
     for i in range(20):
-        assert client.post("/api/auth/request-link", json={"email": f"u{i}@x.co", "locale": "fr", "consent": True}, headers=a).status_code == 202
+        assert client.post("/api/auth/request-link", json={"email": f"u{i}@x.co", "locale": "fr", "consent": True}, headers={"X-Forwarded-For": f"1.1.1.{i}"}).status_code == 202
     body = {"email": "z@x.co", "locale": "fr", "consent": True}
-    assert client.post("/api/auth/request-link", json=body, headers=a).status_code == 429
-    assert client.post("/api/auth/request-link", json=body, headers=b).status_code == 202
+    # Changing a client-controlled forwarding header must not create a new rate-limit identity.
+    assert client.post("/api/auth/request-link", json=body, headers={"X-Forwarded-For": "203.0.113.99"}).status_code == 429
 
 
 def test_claim_is_atomic(client, sent):
