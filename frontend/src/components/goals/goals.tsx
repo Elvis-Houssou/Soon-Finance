@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
+import { findBusinessProject } from "@/lib/business-projects";
 import { AccountNav } from "@/components/account/account-nav";
 import { monthName } from "@/components/dashboard/format";
 import type { Envelope } from "@/components/dashboard/types";
@@ -17,8 +18,6 @@ type Goal = {
   pace: { monthly_needed: number; on_track: boolean; projected: string | null };
 };
 type Me = { currency: string; essentials: number | null };
-type ProjectTemplate = { id: string; category_id: string; label: Record<string, string>; guidance: Record<string, string[]> };
-type ProjectCatalogue = { categories: { id: string; label: Record<string, string> }[]; templates: ProjectTemplate[] };
 type Row = { year_month: string; income: number; envelopes: Envelope[] };
 type Strings = Pick<Dictionary, "goals" | "account" | "dashboard">;
 
@@ -38,34 +37,35 @@ const plannedSaving = (months: Row[], ym: string) => {
   return m ? m.envelopes.filter((e) => SAVE.includes(e.kind)).reduce((a, e) => a + e.planned, 0) : 0;
 };
 
-export function Goals({ locale, t, initialProjectId }: { locale: Locale; t: Strings; initialProjectId?: string }) {
+export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
   const goals = useApi<Goal[]>("/goals");
   const me = useApi<Me>("/me");
   const months = useApi<Row[]>("/months");
-  const catalogue = useApi<ProjectCatalogue>("/projects/catalogue");
   const g = t.goals;
   const my = (key: string) => `${monthName(key, locale)} ${key.slice(0, 4)}`;
 
   const [name, setName] = useState("");
   const [amountText, setAmountText] = useState("");
   const [monthsText, setMonthsText] = useState("");
-  const [templateId, setTemplateId] = useState("");
+  const [selectedProjectId, setSelectedProjectId] = useState("");
   useEffect(() => {
-    if (!initialProjectId || !catalogue.data) return;
-    const project = catalogue.data.templates.find((item) => item.id === initialProjectId);
-    if (project) {
-      setTemplateId(project.id);
-      setName(project.label[locale] ?? project.label.fr ?? project.id);
-    }
-  }, [initialProjectId, catalogue.data, locale]);
+    const projectId = new URLSearchParams(window.location.search).get("projet");
+    if (!projectId) return;
+    const project = findBusinessProject(projectId);
+    if (!project) return;
+    setSelectedProjectId(project.id);
+    setName(project.title[locale]);
+    setAmountText(formatAmount(project.budgetMin, "XOF", locale));
+    setMonthsText("12");
+  }, [locale]);
   const [tried, setTried] = useState(false);
   const [sending, setSending] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
   const [confirming, setConfirming] = useState<string | null>(null);
 
-  const failed = goals.error || me.error || months.error || catalogue.error;
-  const ready = goals.data && me.data && months.data && catalogue.data;
-  const retry = () => { goals.reload(); me.reload(); months.reload(); catalogue.reload(); };
+  const failed = goals.error || me.error || months.error;
+  const ready = goals.data && me.data && months.data;
+  const retry = () => { goals.reload(); me.reload(); months.reload(); };
 
   let body;
   if (failed) {
@@ -80,8 +80,7 @@ export function Goals({ locale, t, initialProjectId }: { locale: Locale; t: Stri
   } else {
     const ym = new Date().toISOString().slice(0, 7); // only after data: the prerender must not freeze the date
     const list = goals.data!, cur = me.data!.currency;
-    const templates = catalogue.data!.templates;
-    const selectedTemplate = templates.find((item) => item.id === templateId);
+    const selectedProject = findBusinessProject(selectedProjectId);
     const money = (v: number) => formatMoney(v, cur, locale);
     const planned = plannedSaving(months.data!, ym);
     const income = (months.data!.find((x) => x.year_month === ym) ?? months.data![0])?.income ?? 0;
@@ -109,9 +108,9 @@ export function Goals({ locale, t, initialProjectId }: { locale: Locale; t: Stri
       await run(async () => {
         await apiFetch("/goals", {
           method: "POST",
-          body: JSON.stringify({ label: name.trim(), target, deadline: addMonths(ym, n), saved: 0, ...(templateId ? { template_id: templateId } : {}) }),
+          body: JSON.stringify({ label: name.trim(), target, deadline: addMonths(ym, n), saved: 0 }),
         });
-        setName(""); setAmountText(""); setMonthsText(""); setTemplateId(""); setTried(false);
+        setName(""); setAmountText(""); setMonthsText(""); setSelectedProjectId(""); setTried(false);
       });
       setSending(false);
     };
@@ -124,23 +123,11 @@ export function Goals({ locale, t, initialProjectId }: { locale: Locale; t: Stri
           <h1 className="font-display text-3xl font-semibold sm:text-4xl">{g.heading}</h1>
           <p className="text-muted">{count}</p>
         </div>
-        {selectedTemplate && (
-          <section className="flex flex-col gap-3 rounded-[14px] border border-brand/30 bg-tint p-5">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-brand-ink">{locale === "fr" ? "Projet sélectionné" : "Selected project"}</p>
-              <h2 className="mt-1 font-display text-xl font-semibold">{selectedTemplate.label[locale] ?? selectedTemplate.id}</h2>
-              <p className="mt-1 text-sm text-muted">{locale === "fr" ? "Associe ce projet à un objectif existant ou crée un nouvel objectif dédié." : "Link this project to an existing goal or create a new dedicated goal."}</p>
-            </div>
-            {list.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {list.map((goal) => (
-                  <button key={goal.id} type="button" className={`${OUTLINE} border-brand-ink text-brand-ink`}
-                    onClick={() => run(() => apiFetch(`/goals/${goal.id}`, { method: "PATCH", body: JSON.stringify({ template_id: selectedTemplate.id }) }))}>
-                    {locale === "fr" ? `Lier à « ${goal.label} »` : `Link to “${goal.label}”`}
-                  </button>
-                ))}
-              </div>
-            )}
+        {selectedProject && (
+          <section className="rounded-[14px] border border-brand/30 bg-tint p-5">
+            <p className="text-xs font-semibold uppercase tracking-wide text-brand-ink">{locale === "fr" ? "Activité sélectionnée" : "Selected business"}</p>
+            <h2 className="mt-1 font-display text-xl font-semibold">{selectedProject.title[locale]}</h2>
+            <p className="mt-1 text-sm text-muted">{locale === "fr" ? "L’objectif ci-dessous servira à constituer le capital de lancement. Le montant prérempli correspond à la borne basse indicative : ajuste-le selon ton étude de terrain." : "The goal below will build your startup capital. The prefilled amount is the illustrative lower estimate: adjust it after local research."}</p>
           </section>
         )}
         {list.length === 0 && (
