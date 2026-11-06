@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { AccountNav } from "@/components/account/account-nav";
 import { monthName } from "@/components/dashboard/format";
 import type { Envelope } from "@/components/dashboard/types";
@@ -38,7 +38,7 @@ const plannedSaving = (months: Row[], ym: string) => {
   return m ? m.envelopes.filter((e) => SAVE.includes(e.kind)).reduce((a, e) => a + e.planned, 0) : 0;
 };
 
-export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
+export function Goals({ locale, t, initialProjectId }: { locale: Locale; t: Strings; initialProjectId?: string }) {
   const goals = useApi<Goal[]>("/goals");
   const me = useApi<Me>("/me");
   const months = useApi<Row[]>("/months");
@@ -50,6 +50,14 @@ export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
   const [amountText, setAmountText] = useState("");
   const [monthsText, setMonthsText] = useState("");
   const [templateId, setTemplateId] = useState("");
+  useEffect(() => {
+    if (!initialProjectId || !catalogue.data) return;
+    const project = catalogue.data.templates.find((item) => item.id === initialProjectId);
+    if (project) {
+      setTemplateId(project.id);
+      setName(project.label[locale] ?? project.label.fr ?? project.id);
+    }
+  }, [initialProjectId, catalogue.data, locale]);
   const [tried, setTried] = useState(false);
   const [sending, setSending] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
@@ -116,6 +124,25 @@ export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
           <h1 className="font-display text-3xl font-semibold sm:text-4xl">{g.heading}</h1>
           <p className="text-muted">{count}</p>
         </div>
+        {selectedTemplate && (
+          <section className="flex flex-col gap-3 rounded-[14px] border border-brand/30 bg-tint p-5">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand-ink">{locale === "fr" ? "Projet sélectionné" : "Selected project"}</p>
+              <h2 className="mt-1 font-display text-xl font-semibold">{selectedTemplate.label[locale] ?? selectedTemplate.id}</h2>
+              <p className="mt-1 text-sm text-muted">{locale === "fr" ? "Associe ce projet à un objectif existant ou crée un nouvel objectif dédié." : "Link this project to an existing goal or create a new dedicated goal."}</p>
+            </div>
+            {list.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {list.map((goal) => (
+                  <button key={goal.id} type="button" className={`${OUTLINE} border-brand-ink text-brand-ink`}
+                    onClick={() => run(() => apiFetch(`/goals/${goal.id}`, { method: "PATCH", body: JSON.stringify({ template_id: selectedTemplate.id }) }))}>
+                    {locale === "fr" ? `Lier à « ${goal.label} »` : `Link to “${goal.label}”`}
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
         {list.length === 0 && (
           <section aria-label={g.emptyTitle} className="flex flex-col items-start gap-3 rounded-[14px] border border-dashed border-line-input p-5">
             <h2 className="font-display text-xl font-semibold">{g.emptyTitle}</h2>
@@ -193,20 +220,6 @@ export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
         ) : (
           <form onSubmit={submit} noValidate className="flex flex-col gap-3.5 rounded-[14px] border border-line bg-surface p-5">
             <h2 className="font-display text-xl font-semibold">{g.formTitle}</h2>
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="gtemplate" className="font-semibold">{locale === "fr" ? "Type de projet (facultatif)" : "Project type (optional)"}</label>
-              <select id="gtemplate" value={templateId} onChange={(e) => setTemplateId(e.target.value)} className={INPUT}>
-                <option value="">{locale === "fr" ? "Objectif libre, sans modèle" : "Custom goal, no template"}</option>
-                {catalogue.data!.categories.map((category) => (
-                  <optgroup key={category.id} label={category.label[locale] ?? category.id}>
-                    {templates.filter((item) => item.category_id === category.id).map((item) => (
-                      <option key={item.id} value={item.id}>{item.label[locale] ?? item.id}</option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-              {selectedTemplate && <ul className="list-disc space-y-1 pl-5 text-sm text-muted">{(selectedTemplate.guidance[locale] ?? []).map((step) => <li key={step}>{step}</li>)}</ul>}
-            </div>
             <div className="flex flex-col gap-1.5">
               <label htmlFor="gname" className="font-semibold">{g.name}</label>
               <input
