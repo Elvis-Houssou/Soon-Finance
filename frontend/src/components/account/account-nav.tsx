@@ -16,7 +16,7 @@ export function AccountNav({ locale, t }: { locale: Locale; t: Dictionary["accou
     { slug: "simulateur", label: t.method, desktopOnly: true },
     { slug: "bilan-intelligent", label: fr ? "Bilan intelligent" : "Smart review", desktopOnly: true },
     { slug: "fire", label: "Simulateur FIRE", desktopOnly: true },
-    { slug: "apprendre", label: t.learn, desktopOnly: true },
+    { slug: "apprendre", label: t.learn },
     { slug: "parametres", label: t.settings, desktopOnly: true },
   ];
   return (
