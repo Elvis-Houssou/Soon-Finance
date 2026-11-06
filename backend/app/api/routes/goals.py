@@ -9,6 +9,7 @@ from app.api.deps import current_user
 from app.db.models import Goal, Month, User
 from app.db.session import get_session
 from app.domain.progress import goal_pace, monthly_saving
+from app.domain.projects import PROJECT_TEMPLATES
 from app.schemas.goals import GoalIn, GoalOut, GoalPatch
 from app.services import auth
 
@@ -20,7 +21,7 @@ def goals_out(db: Session, user: User, goals: list[Goal]) -> list[GoalOut]:
     months = db.scalars(select(Month).where(Month.user_id == user.id)).all()
     ym = auth.now().strftime("%Y-%m")
     rhythm = monthly_saving(months, ym)
-    return [GoalOut(id=g.id, label=g.label, target=g.target, deadline=g.deadline, saved=g.saved, pace=goal_pace(g, rhythm, ym)) for g in goals]
+    return [GoalOut(id=g.id, label=g.label, target=g.target, deadline=g.deadline, saved=g.saved, template_id=g.template_id, pace=goal_pace(g, rhythm, ym)) for g in goals]
 
 
 def _mine(db: Session, user: User, gid: str) -> Goal:
@@ -43,6 +44,8 @@ def list_goals(db: Session = Depends(get_session), user: User = Depends(current_
 @router.post("/goals", response_model=GoalOut, status_code=201)
 def create_goal(body: GoalIn, db: Session = Depends(get_session), user: User = Depends(current_user)):
     _check_deadline(body.deadline)
+    if body.template_id and body.template_id not in {item["id"] for item in PROJECT_TEMPLATES}:
+        raise HTTPException(422, "unknown_project_template")
     # shortcut: count-then-insert is not atomic, two concurrent POSTs could reach 4; upgrade with a lock if it matters
     if len(db.scalars(select(Goal.id).where(Goal.user_id == user.id)).all()) >= MAX_GOALS:
         return JSONResponse({"detail": "limit"}, status_code=409)
@@ -58,6 +61,8 @@ def patch_goal(gid: str, body: GoalPatch, db: Session = Depends(get_session), us
     fields = body.model_dump(exclude_none=True)
     if "deadline" in fields:
         _check_deadline(fields["deadline"])
+    if fields.get("template_id") and fields["template_id"] not in {item["id"] for item in PROJECT_TEMPLATES}:
+        raise HTTPException(422, "unknown_project_template")
     for k, v in fields.items():
         setattr(g, k, v)
     db.commit()

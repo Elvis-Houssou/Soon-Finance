@@ -15,6 +15,7 @@ class GoalIn(BaseModel):
     target: Target
     deadline: Deadline
     saved: Amount = 0
+    template_id: Annotated[str, Field(min_length=1, max_length=64)] | None = None
 
 
 class GoalPatch(BaseModel):
@@ -23,6 +24,7 @@ class GoalPatch(BaseModel):
     target: Target | None = None
     deadline: Deadline | None = None
     saved: Amount | None = None
+    template_id: Annotated[str, Field(min_length=1, max_length=64)] | None = None
 
 
 class Pace(BaseModel):
@@ -37,4 +39,5 @@ class GoalOut(BaseModel):
     target: int
     deadline: str
     saved: int
+    template_id: str | None = None
     pace: Pace
