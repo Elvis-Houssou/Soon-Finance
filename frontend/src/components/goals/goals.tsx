@@ -13,10 +13,12 @@ import { formatAmount, formatMoney, parseAmount } from "@/lib/money";
 import { useApi } from "@/lib/use-api";
 
 type Goal = {
-  id: string; label: string; target: number; deadline: string; saved: number;
+  id: string; label: string; target: number; deadline: string; saved: number; template_id?: string | null;
   pace: { monthly_needed: number; on_track: boolean; projected: string | null };
 };
 type Me = { currency: string; essentials: number | null };
+type ProjectTemplate = { id: string; category_id: string; label: Record<string, string>; guidance: Record<string, string[]> };
+type ProjectCatalogue = { categories: { id: string; label: Record<string, string> }[]; templates: ProjectTemplate[] };
 type Row = { year_month: string; income: number; envelopes: Envelope[] };
 type Strings = Pick<Dictionary, "goals" | "account" | "dashboard">;
 
@@ -40,20 +42,22 @@ export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
   const goals = useApi<Goal[]>("/goals");
   const me = useApi<Me>("/me");
   const months = useApi<Row[]>("/months");
+  const catalogue = useApi<ProjectCatalogue>("/projects/catalogue");
   const g = t.goals;
   const my = (key: string) => `${monthName(key, locale)} ${key.slice(0, 4)}`;
 
   const [name, setName] = useState("");
   const [amountText, setAmountText] = useState("");
   const [monthsText, setMonthsText] = useState("");
+  const [templateId, setTemplateId] = useState("");
   const [tried, setTried] = useState(false);
   const [sending, setSending] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
   const [confirming, setConfirming] = useState<string | null>(null);
 
-  const failed = goals.error || me.error || months.error;
-  const ready = goals.data && me.data && months.data;
-  const retry = () => { goals.reload(); me.reload(); months.reload(); };
+  const failed = goals.error || me.error || months.error || catalogue.error;
+  const ready = goals.data && me.data && months.data && catalogue.data;
+  const retry = () => { goals.reload(); me.reload(); months.reload(); catalogue.reload(); };
 
   let body;
   if (failed) {
@@ -68,6 +72,8 @@ export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
   } else {
     const ym = new Date().toISOString().slice(0, 7); // only after data: the prerender must not freeze the date
     const list = goals.data!, cur = me.data!.currency;
+    const templates = catalogue.data!.templates;
+    const selectedTemplate = templates.find((item) => item.id === templateId);
     const money = (v: number) => formatMoney(v, cur, locale);
     const planned = plannedSaving(months.data!, ym);
     const income = (months.data!.find((x) => x.year_month === ym) ?? months.data![0])?.income ?? 0;
@@ -95,9 +101,9 @@ export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
       await run(async () => {
         await apiFetch("/goals", {
           method: "POST",
-          body: JSON.stringify({ label: name.trim(), target, deadline: addMonths(ym, n), saved: 0 }),
+          body: JSON.stringify({ label: name.trim(), target, deadline: addMonths(ym, n), saved: 0, ...(templateId ? { template_id: templateId } : {}) }),
         });
-        setName(""); setAmountText(""); setMonthsText(""); setTried(false);
+        setName(""); setAmountText(""); setMonthsText(""); setTemplateId(""); setTried(false);
       });
       setSending(false);
     };
@@ -187,6 +193,20 @@ export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
         ) : (
           <form onSubmit={submit} noValidate className="flex flex-col gap-3.5 rounded-[14px] border border-line bg-surface p-5">
             <h2 className="font-display text-xl font-semibold">{g.formTitle}</h2>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="gtemplate" className="font-semibold">{locale === "fr" ? "Type de projet (facultatif)" : "Project type (optional)"}</label>
+              <select id="gtemplate" value={templateId} onChange={(e) => setTemplateId(e.target.value)} className={INPUT}>
+                <option value="">{locale === "fr" ? "Objectif libre, sans modèle" : "Custom goal, no template"}</option>
+                {catalogue.data!.categories.map((category) => (
+                  <optgroup key={category.id} label={category.label[locale] ?? category.id}>
+                    {templates.filter((item) => item.category_id === category.id).map((item) => (
+                      <option key={item.id} value={item.id}>{item.label[locale] ?? item.id}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+              {selectedTemplate && <ul className="list-disc space-y-1 pl-5 text-sm text-muted">{(selectedTemplate.guidance[locale] ?? []).map((step) => <li key={step}>{step}</li>)}</ul>}
+            </div>
             <div className="flex flex-col gap-1.5">
               <label htmlFor="gname" className="font-semibold">{g.name}</label>
               <input
