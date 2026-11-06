@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { AccountNav } from "@/components/account/account-nav";
 import { monthName } from "@/components/dashboard/format";
 import type { Envelope } from "@/components/dashboard/types";
@@ -38,7 +38,7 @@ const plannedSaving = (months: Row[], ym: string) => {
   return m ? m.envelopes.filter((e) => SAVE.includes(e.kind)).reduce((a, e) => a + e.planned, 0) : 0;
 };
 
-export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
+export function Goals({ locale, t, initialProjectId }: { locale: Locale; t: Strings; initialProjectId?: string }) {
   const goals = useApi<Goal[]>("/goals");
   const me = useApi<Me>("/me");
   const months = useApi<Row[]>("/months");
@@ -50,6 +50,14 @@ export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
   const [amountText, setAmountText] = useState("");
   const [monthsText, setMonthsText] = useState("");
   const [templateId, setTemplateId] = useState("");
+  useEffect(() => {
+    if (!initialProjectId || !catalogue.data) return;
+    const project = catalogue.data.templates.find((item) => item.id === initialProjectId);
+    if (project) {
+      setTemplateId(project.id);
+      setName(project.label[locale] ?? project.label.fr ?? project.id);
+    }
+  }, [initialProjectId, catalogue.data, locale]);
   const [tried, setTried] = useState(false);
   const [sending, setSending] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
