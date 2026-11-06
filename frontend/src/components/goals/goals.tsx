@@ -108,7 +108,7 @@ export function Goals({ locale, t }: { locale: Locale; t: Strings }) {
       await run(async () => {
         await apiFetch("/goals", {
           method: "POST",
-          body: JSON.stringify({ label: name.trim(), target, deadline: addMonths(ym, n), saved: 0,  }),
+          body: JSON.stringify({ label: name.trim(), target, deadline: addMonths(ym, n), saved: 0 }),
         });
         setName(""); setAmountText(""); setMonthsText(""); setSelectedProjectId(""); setTried(false);
       });
