@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 import { BELOW_HORIZON, belowFold, EASE, gsap, MOTION_OK, REDUCED, rise, ScrollTrigger, useGSAP, useHydrating } from "@/lib/motion";
 
 /** Blocs révélés au défilement sur toutes les pages (les sections qui gèrent leur propre entrée portent data-reveal). */
@@ -11,7 +11,7 @@ const BLOCKS = "section, article, form, li, h2, figure, table";
  * balaie le haut de page. Jamais de transform sur [data-page] : il deviendrait le bloc conteneur de la barre
  * de compte `position: fixed` (mobile). Premier chargement : rien, le HTML serveur est déjà peint.
  */
-export default function Template({ children }: { children: React.ReactNode }) {
+export default function Template({ children }: { children: ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
   const hydrating = useHydrating();
 
