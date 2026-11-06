@@ -43,4 +43,5 @@ class Goal(Base):
     target: Mapped[int] = mapped_column(BigInteger)
     deadline: Mapped[str] = mapped_column(String(7))
     saved: Mapped[int] = mapped_column(BigInteger, default=0)
+    template_id: Mapped[str | None] = mapped_column(String(64), index=True)
     created_at: Mapped[datetime] = mapped_column(UTCDateTime)
