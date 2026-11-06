@@ -32,11 +32,10 @@ def _retry_after(db: Session, column, value: str, limit: int) -> int | None:
 
 
 def _client_ip(request: Request, settings: Settings) -> str:
-    # In production the API sits behind Render's proxy, so client.host is the proxy.
-    # shortcut: trusts the leftmost X-Forwarded-For entry, spoofable if the proxy appends rather than overwrites.
-    forwarded = request.headers.get("x-forwarded-for", "").split(",")[0].strip()
-    if settings.env == "production" and forwarded:
-        return forwarded
+    # Do not trust X-Forwarded-For blindly: clients can supply it themselves unless
+    # the reverse proxy is explicitly configured to sanitize the header. Using the
+    # transport peer is conservative (it may group traffic behind Render's proxy),
+    # but prevents attackers from bypassing the per-IP limit by spoofing this header.
     return request.client.host if request.client else "unknown"
 
 

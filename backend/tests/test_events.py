@@ -25,3 +25,13 @@ def test_events_store_no_personal_fields(client):
         e = s.scalar(select(Event))
         assert (e.type, e.anon_id, e.locale, e.currency) == ("simulation_completed", "abcdefgh1", "fr", "XOF")
         assert not {c.name for c in Event.__table__.columns} & {"email", "user_id", "first_name", "amount"}
+
+
+def test_events_are_rate_limited_per_anonymous_id(client):
+    for _ in range(60):
+        assert client.post("/api/events", json=E).status_code == 204
+    response = client.post("/api/events", json=E)
+    assert response.status_code == 429
+    assert response.json() == {"detail": "event_rate_limited"}
+    # A separate browser identifier has an independent quota.
+    assert client.post("/api/events", json={**E, "anon_id": "different123"}).status_code == 204
