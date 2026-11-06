@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.routes import admin, auth, dashboard, events, goals, health, me, methods, months, suggestions
+from app.api.routes import admin, auth, dashboard, events, goals, health, me, methods, months, projects, suggestions
 
 api_router = APIRouter(prefix="/api")
 api_router.include_router(health.router, tags=["health"])
@@ -11,5 +11,6 @@ api_router.include_router(me.router, tags=["me"])
 api_router.include_router(months.router, tags=["months"])
 api_router.include_router(events.router, tags=["events"])
 api_router.include_router(goals.router, tags=["goals"])
+api_router.include_router(projects.router, tags=["projects"])
 api_router.include_router(dashboard.router, tags=["dashboard"])
 api_router.include_router(admin.router, tags=["admin"])
